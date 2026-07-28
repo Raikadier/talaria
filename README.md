@@ -44,7 +44,7 @@ Mapa: `_META/organism.md` · Arquitectura: `_META/architecture.md` · Marca: `_M
 
 ## Documentación web
 
-**Sitio:** [mimir-docs-three.vercel.app](https://mimir-docs-three.vercel.app)  
+**Sitio:** [talaria-docs.vercel.app](https://talaria-docs.vercel.app)  
 Código estático en `docs-web/public/` (qué es, órganos, SPINE, FORGE, AXON, CLI, garantías A–F, quickstart, futuro).
 
 ## Licencia / uso
