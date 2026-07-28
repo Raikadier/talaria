@@ -1,6 +1,6 @@
 const links = [
   { href: "/", label: "Inicio" },
-  { href: "/que-es.html", label: "Qué es Mímir" },
+  { href: "/que-es.html", label: "Qué es Talaria" },
   { href: "/organismos.html", label: "Órganos" },
   { href: "/spine.html", label: "SPINE" },
   { href: "/forge.html", label: "FORGE" },
@@ -15,7 +15,7 @@ const el = document.getElementById("nav");
 if (el) {
   const path = location.pathname.replace(/index\.html$/, "/") || "/";
   el.innerHTML =
-    `<a class="brand" href="/">Mímir</a><div class="brand-sub">SkillGraph COS · SGCOS</div>` +
+    `<a class="brand" href="/">Talaria</a><div class="brand-sub">SkillGraph COS · SGCOS</div>` +
     links
       .map((l) => {
         const active =

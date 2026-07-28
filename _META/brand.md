@@ -1,24 +1,26 @@
 ---
-tags: [meta, brand, mimir, skillgraph]
-aliases: [Mimir, Mímir, brand, SGCOS]
-version: 1.0
+tags: [meta, brand, talaria, skillgraph]
+aliases: [Talaria, brand, SGCOS, Mímir]
+version: 1.1
 ---
 
-# Marca — Mímir / SkillGraph
+# Marca — Talaria / SkillGraph
 
 | Capa | Nombre |
 |------|--------|
-| **Comercial** | **Mímir** |
+| **Comercial** | **Talaria** |
 | **Técnico** | SkillGraph Cognitive Operating System |
 | **Acrónimo** | **SGCOS** |
 | **Repo / vault** | SkillGraph |
 | **Protocolo** | SPINE |
 | **Órganos** | Memoria · AXON · FORGE · SPINE · API · Tools |
 
-## Por qué Mímir
+## Por qué Talaria
 
-En la mitología nórdica, **Mímir** custodia el pozo de la sabiduría y aconseja a los dioses. SkillGraph es ese pozo para agentes: memoria durable, skills enlazadas y roles que no se diluyen en un solo chat.
+En la mitología griega, las **Talaria** son las sandalias aladas de Hermes: el mensajero las calza y atraviesa mundos con velocidad y alcance que no tendría a pie. SkillGraph es ese calzado para agentes: un traje/arnés (Memoria, AXON, FORGE, SPINE, API) que multiplica capacidad sin sustituir al piloto.
+
+> Alias legacy: *Mímir* (pozo de sabiduría). La marca canónica es **Talaria**.
 
 ## Tagline
 
-> El pozo de sabiduría que cualquier agente puede beber — con garantías.
+> El calzado alado de los agentes — memoria, skills y gates en un solo traje.

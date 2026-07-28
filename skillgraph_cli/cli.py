@@ -22,7 +22,7 @@ from skillgraph_cli.vault import find_vault
 
 
 HELP_SPINE = """
-Mimir / SkillGraph CLI — SPINE + órganos.
+Talaria / SkillGraph CLI — SPINE + órganos.
 
 describe | connect | mcp | doctor | smoke | status
 verify boot|close   forge list|show|check|run

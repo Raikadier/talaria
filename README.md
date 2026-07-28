@@ -1,10 +1,10 @@
-# Mímir — SkillGraph Cognitive Operating System (SGCOS)
+# Talaria — SkillGraph Cognitive Operating System (SGCOS)
 
-**Marca comercial:** Mímir  
+**Marca comercial:** Talaria  
 **Nombre técnico:** SkillGraph Cognitive Operating System (**SGCOS**)  
-**Qué es:** un organismo + API para que cualquier agente (Cursor, Hermes, Claude Code, …) maximice capacidad con memoria durable, skills interconectadas, perfiles elite y gates verificables.
+**Qué es:** un traje + API para que cualquier agente (Cursor, Hermes, Claude Code, …) multiplique capacidad con memoria durable, skills interconectadas, perfiles elite y gates verificables.
 
-> Mitología: *Mímir* custodia el pozo de la sabiduría. Este proyecto es ese pozo — operable por máquinas.
+> Mitología: las *Talaria* son las sandalias aladas de Hermes. Este proyecto es ese calzado — el agente las “calza” y opera entre vault, tools y mundos MCP.
 
 ## Arranque en 60 segundos
 

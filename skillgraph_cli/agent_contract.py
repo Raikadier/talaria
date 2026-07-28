@@ -19,10 +19,10 @@ def agent_contract(vault: Path) -> dict[str, Any]:
         "vault": vault_s,
         "canonical_memory": vault_s,
         "brand": {
-            "commercial": "Mímir",
+            "commercial": "Talaria",
             "technical": "SkillGraph Cognitive Operating System",
             "acronym": "SGCOS",
-            "mythology": "Mímir — guardian of the well of wisdom in Norse myth; advisor of the gods",
+            "mythology": "Talaria — winged sandals of Hermes; the suit that lets the messenger cross worlds",
         },
         "mode": mode_contract(resolve_mode(vault)),
         "pipeline": "ingest->normalize->orient->retrieve->memorize->act->notify",
