@@ -44,7 +44,8 @@ Mapa: `_META/organism.md` · Arquitectura: `_META/architecture.md` · Marca: `_M
 
 ## Documentación web
 
-Sitio en `docs-web/` (desplegado en Vercel). Código y vault viven en este repo.
+**Sitio:** [mimir-docs.vercel.app](https://mimir-docs-raikadiers-projects.vercel.app)  
+Código estático en `docs-web/public/` (qué es, órganos, SPINE, FORGE, AXON, CLI, garantías A–F, quickstart, futuro).
 
 ## Licencia / uso
 

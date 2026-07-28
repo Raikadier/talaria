@@ -1,18 +1,42 @@
 <!doctype html>
-<html lang="es"><head>
-<meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Órganos — Mímir</title>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,650&family=Manrope:wght@400;600;700&display=swap" rel="stylesheet"/>
-<link rel="stylesheet" href="/styles.css"/>
-</head><body><div class="shell"><aside class="nav" id="nav"></aside><main class="main">
-<h1>Órganos</h1>
-<p class="lead">Cada órgano tiene una función vital. Ninguno es un producto aparte.</p>
-<table><thead><tr><th>Órgano</th><th>Función</th><th>Ubicación</th></tr></thead><tbody>
-<tr><td>Memoria</td><td>Episodios y decisiones</td><td><code>memory/</code></td></tr>
-<tr><td>AXON</td><td>Skills interconectadas</td><td><code>skills/</code></td></tr>
-<tr><td>FORGE</td><td>Perfiles de rol</td><td><code>_META/forge/</code></td></tr>
-<tr><td>SPINE</td><td>Protocolo nervioso</td><td><code>_META/spine-framework.md</code></td></tr>
-<tr><td>API</td><td>CLI + MCP</td><td><code>skillgraph_cli/</code></td></tr>
-<tr><td>Tools</td><td>Ingest/act</td><td><code>tools/</code></td></tr>
-</tbody></table>
-</main></div><script src="/nav.js"></script></body></html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Órganos — Mímir</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,650&family=Manrope:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <div class="shell">
+    <aside class="nav" id="nav"></aside>
+    <main class="main">
+      <h1>Órganos del sistema</h1>
+      <p class="lead">SGCOS se modela como un organismo: cada órgano tiene una función vital. Si dos órganos hacen lo mismo, hay un bug de diseño.</p>
+
+      <table>
+        <thead><tr><th>Órgano</th><th>Función</th><th>Ubicación</th><th>CLI</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Memoria</strong></td><td>Episodios, decisiones, contexto de proyectos y conversaciones</td><td><code>memory/</code></td><td>vía MCP obsidian / lectura vault</td></tr>
+          <tr><td><strong>AXON</strong></td><td>Red de skills interconectadas (el “sistema nervioso” de capacidades)</td><td><code>skills/</code> · <code>_META/axon.md</code></td><td><code>axon search|for-profile|stats</code></td></tr>
+          <tr><td><strong>FORGE</strong></td><td>Perfiles de rol con Leyes I/II, gates y scorecards</td><td><code>_META/forge/</code></td><td><code>forge list|show|check|run</code></td></tr>
+          <tr><td><strong>SPINE</strong></td><td>Protocolo de 7 capas (antes IRONMAN como alias legacy)</td><td><code>_META/spine-framework.md</code></td><td>contrato de sesión</td></tr>
+          <tr><td><strong>API</strong></td><td>Superficie machine-readable: CLI + MCP</td><td><code>skillgraph_cli/</code></td><td><code>describe</code>, <code>mcp</code>, …</td></tr>
+          <tr><td><strong>Tools</strong></td><td>Ingest y actuación (MarkItDown, Graphify, bootstrap)</td><td><code>tools/</code></td><td><code>bootstrap.py</code></td></tr>
+        </tbody>
+      </table>
+
+      <h2>Mapa mental</h2>
+      <p>Un agente entra por la <strong>API</strong>, carga contexto de <strong>Memoria</strong>, elige un perfil <strong>FORGE</strong>, recupera skills vía <strong>AXON</strong>, ejecuta bajo <strong>SPINE</strong> y usa <strong>Tools</strong> cuando necesita ingerir o actuar fuera del vault. Al cerrar, deja evidencia (scorecard / notas) en Memoria.</p>
+
+      <h2>Documentos canónicos</h2>
+      <ul>
+        <li><code>_META/organism.md</code> — mapa de órganos</li>
+        <li><code>_META/architecture.md</code> — arquitectura organismo + API</li>
+        <li><code>_META/brand.md</code> — Mímir / SGCOS</li>
+      </ul>
+    </main>
+  </div>
+  <script src="/nav.js"></script>
+</body>
+</html>

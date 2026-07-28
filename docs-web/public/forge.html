@@ -1,14 +1,39 @@
 <!doctype html>
-<html lang="es"><head>
-<meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>FORGE — Mímir</title>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,650&family=Manrope:wght@400;600;700&display=swap" rel="stylesheet"/>
-<link rel="stylesheet" href="/styles.css"/>
-</head><body><div class="shell"><aside class="nav" id="nav"></aside><main class="main">
-<h1>FORGE</h1>
-<p class="lead">Perfiles con Ley I (efectividad) y Ley II (superior a modelo potente).</p>
-<pre>skillgraph forge list --ensembles --json
-skillgraph forge run researcher --with-axon --json
-skillgraph forge check --profile researcher --deliverable note.md --json</pre>
-<p>Perfiles: researcher · social-advisor · sw-architect · sw-engineer · programmer</p>
-</main></div><script src="/nav.js"></script></body></html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>FORGE — Mímir</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,650&family=Manrope:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <div class="shell">
+    <aside class="nav" id="nav"></aside>
+    <main class="main">
+      <h1>FORGE</h1>
+      <p class="lead">FORGE forja perfiles de rol elite: no un system prompt genérico, sino contratos con leyes, skills preferidas, gates y scorecards.</p>
+
+      <h2>Idea</h2>
+      <p>Un perfil FORGE define <em>quién</em> actúa (rol), <em>qué no puede romper</em> (Leyes I/II), <em>qué skills AXON prioriza</em> y <em>cómo se mide el cierre</em>. Así el mismo vault sirve a research, engineering o producto sin mezclar criterios.</p>
+
+      <h2>Comandos</h2>
+<pre>python -m skillgraph_cli forge list --json
+python -m skillgraph_cli forge show &lt;profile&gt; --json
+python -m skillgraph_cli forge run &lt;profile&gt; --with-axon --json
+python -m skillgraph_cli forge check &lt;profile&gt; --json</pre>
+
+      <h2>Leyes I / II</h2>
+      <ul>
+        <li><strong>Ley I</strong> — invariantes del rol (lo que siempre debe cumplirse).</li>
+        <li><strong>Ley II</strong> — límites y anti-patrones (lo que nunca debe hacerse).</li>
+      </ul>
+      <p><code>forge check</code> evalúa evidencia contra el perfil; en modo <code>strict</code> los fallos bloquean el cierre.</p>
+
+      <h2>Ubicación</h2>
+      <p>Perfiles en <code>_META/forge/</code>. Extiende con nuevos YAML/Markdown siguiendo el builder documentado en el vault.</p>
+    </main>
+  </div>
+  <script src="/nav.js"></script>
+</body>
+</html>

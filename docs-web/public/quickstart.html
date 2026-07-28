@@ -1,18 +1,48 @@
 <!doctype html>
-<html lang="es"><head>
-<meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Quickstart — Mímir</title>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,650&family=Manrope:wght@400;600;700&display=swap" rel="stylesheet"/>
-<link rel="stylesheet" href="/styles.css"/>
-</head><body><div class="shell"><aside class="nav" id="nav"></aside><main class="main">
-<h1>Quickstart</h1>
-<ol>
-<li>Clona el repo / abre el vault.</li>
-<li><code>pip install -e .</code></li>
-<li><code>python -m skillgraph_cli verify boot --json</code></li>
-<li>MCP <code>skillgraph</code> + <code>obsidian</code></li>
-<li><code>forge run</code> → Act → <code>forge check</code> → scorecard → <code>verify close</code></li>
-</ol>
-<pre>python -m skillgraph_cli doctor --json
-python -m skillgraph_cli mode set strict</pre>
-</main></div><script src="/nav.js"></script></body></html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Quickstart — Mímir</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,650&family=Manrope:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <div class="shell">
+    <aside class="nav" id="nav"></aside>
+    <main class="main">
+      <h1>Quickstart</h1>
+      <p class="lead">De cero a organismo operativo en unos minutos.</p>
+
+      <h2>1. Obtener el vault</h2>
+      <p>Clona <a href="https://github.com/Raikadier/mimir-skillgraph">github.com/Raikadier/mimir-skillgraph</a> o abre tu carpeta SkillGraph local.</p>
+
+      <h2>2. Instalar la CLI</h2>
+<pre>pip install -e .
+python -m skillgraph_cli describe --json</pre>
+
+      <h2>3. Verificar salud</h2>
+<pre>python -m skillgraph_cli verify boot --json
+python -m skillgraph_cli doctor --json
+python -m skillgraph_cli smoke --json</pre>
+
+      <h2>4. Conectar MCP</h2>
+      <p>Configura servidores <code>skillgraph</code> + <code>obsidian</code> según <code>_META/agent-connect.md</code> y las plantillas en <code>tools/connect/</code>.</p>
+
+      <h2>5. Sesión tipo SPINE</h2>
+      <ol>
+        <li><code>forge list</code> → elige perfil → <code>forge run … --with-axon</code></li>
+        <li>Actúa (escribe al vault, usa tools).</li>
+        <li><code>forge check</code> + scorecard.</li>
+        <li><code>verify close</code>.</li>
+      </ol>
+
+<pre>python -m skillgraph_cli mode set strict
+python -m skillgraph_cli eval run --json</pre>
+
+      <p>No subas secretos: <code>.gitignore</code> excluye settings locales y <code>.env</code>.</p>
+    </main>
+  </div>
+  <script src="/nav.js"></script>
+</body>
+</html>

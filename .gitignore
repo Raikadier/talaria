@@ -43,3 +43,8 @@ Thumbs.db
 memory/archives/*.zip
 memory/archives/*.db
 memory/context/**/*.bak
+
+docs-web/_deploy_payload.json
+docs-web/_mcp_args.json
+docs-web/_mcp_args_oneline.json
+

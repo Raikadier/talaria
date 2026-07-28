@@ -1,22 +1,51 @@
 <!doctype html>
-<html lang="es"><head>
-<meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Qué es Mímir</title>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,650&family=Manrope:wght@400;600;700&display=swap" rel="stylesheet"/>
-<link rel="stylesheet" href="/styles.css"/>
-</head><body><div class="shell"><aside class="nav" id="nav"></aside><main class="main">
-<h1>Qué es Mímir</h1>
-<p class="lead">Mímir (mitología nórdica) custodia el pozo de la sabiduría. <strong>SkillGraph Cognitive Operating System (SGCOS)</strong> es la implementación técnica: un segundo cerebro operable por agentes.</p>
-<h2>Dos metáforas</h2>
-<ul>
-<li><strong>Hacia fuera:</strong> super-API (<code>describe</code>, MCP, CLI).</li>
-<li><strong>Hacia dentro:</strong> organismo (Memoria, AXON, FORGE, SPINE, Tools).</li>
-</ul>
-<h2>Principio</h2>
-<p>Una sola verdad: el vault Markdown. Chat/mem0 = caché.</p>
-<table><thead><tr><th>Uso</th><th>Nombre</th></tr></thead><tbody>
-<tr><td>Comercial</td><td>Mímir</td></tr>
-<tr><td>Técnico</td><td>SkillGraph Cognitive Operating System</td></tr>
-<tr><td>Acrónimo</td><td>SGCOS</td></tr>
-</tbody></table>
-</main></div><script src="/nav.js"></script></body></html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Qué es Mímir — SGCOS</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,650&family=Manrope:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <div class="shell">
+    <aside class="nav" id="nav"></aside>
+    <main class="main">
+      <h1>Qué es Mímir</h1>
+      <p class="lead">En la mitología nórdica, <strong>Mímir</strong> custodia el pozo de la sabiduría y aconseja a los dioses. Aquí, Mímir es la marca comercial de un sistema que hace lo mismo para agentes de IA: un pozo operable, con memoria durable y garantías verificables.</p>
+
+      <h2>Nombre técnico</h2>
+      <p><strong>SkillGraph Cognitive Operating System (SGCOS)</strong> es la capa de ingeniería. No es un chatbot con prompts bonitos: es un <em>sistema operativo cognitivo</em> — estado canónico en un vault Markdown, protocolo de trabajo (SPINE), órganos con responsabilidades claras y una API (CLI + MCP) que cualquier piloto puede descubrir sin folklore.</p>
+
+      <table>
+        <thead><tr><th>Capa</th><th>Nombre</th><th>Uso</th></tr></thead>
+        <tbody>
+          <tr><td>Comercial</td><td>Mímir</td><td>Producto, docs, storytelling</td></tr>
+          <tr><td>Técnico</td><td>SkillGraph Cognitive Operating System</td><td>Arquitectura, código, CLI</td></tr>
+          <tr><td>Acrónimo</td><td>SGCOS</td><td>Referencias cortas</td></tr>
+          <tr><td>Vault / repo</td><td>SkillGraph · mimir-skillgraph</td><td>Carpeta y GitHub</td></tr>
+        </tbody>
+      </table>
+
+      <h2>Dos metáforas (misma verdad)</h2>
+      <ul>
+        <li><strong>Hacia fuera — super-API:</strong> <code>describe --json</code>, servidores MCP <code>skillgraph</code> y <code>obsidian</code>, comandos machine-readable. El agente no “adivina” el vault: lo consulta.</li>
+        <li><strong>Hacia dentro — organismo:</strong> Memoria, AXON, FORGE, SPINE, API y Tools. Cada órgano hace una cosa; ninguno es un producto aparte que rivalice con el resto.</li>
+      </ul>
+
+      <h2>Principio de una sola verdad</h2>
+      <p>El vault Markdown es la fuente canónica. Conversaciones, mem0 u otros caches son aceleradores — no la verdad. Si algo importa (decisión, perfil, skill, scorecard), vive en el filesystem versionable.</p>
+
+      <h2>Qué problema resuelve</h2>
+      <ul>
+        <li>Agentes que pierden contexto entre sesiones.</li>
+        <li>Skills sueltas sin grafo ni descubrimiento.</li>
+        <li>“Roles elite” que se diluyen en un único system prompt.</li>
+        <li>Promesas de calidad sin <code>verify</code>, <code>smoke</code> ni evals.</li>
+      </ul>
+      <p>Mímir convierte eso en un loop cerrado: boot → perfil FORGE → skills AXON → Act → check → scorecard → close — fallible en máquina.</p>
+    </main>
+  </div>
+  <script src="/nav.js"></script>
+</body>
+</html>

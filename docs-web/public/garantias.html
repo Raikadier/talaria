@@ -1,20 +1,46 @@
 <!doctype html>
-<html lang="es"><head>
-<meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Garantías — Mímir</title>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,650&family=Manrope:wght@400;600;700&display=swap" rel="stylesheet"/>
-<link rel="stylesheet" href="/styles.css"/>
-</head><body><div class="shell"><aside class="nav" id="nav"></aside><main class="main">
-<h1>Garantías A–F</h1>
-<p class="lead">De documentado a fallible en máquina. Todas las fases están.</p>
-<table><thead><tr><th>Fase</th><th>Entrega</th><th>Estado</th></tr></thead><tbody>
-<tr><td>A</td><td>verify + scorecard</td><td>Hecho</td></tr>
-<tr><td>B</td><td>doctor + smoke</td><td>Hecho</td></tr>
-<tr><td>C</td><td>forge CLI</td><td>Hecho</td></tr>
-<tr><td>D</td><td>axon search</td><td>Hecho</td></tr>
-<tr><td>E</td><td>eval harness</td><td>Hecho</td></tr>
-<tr><td>F</td><td>strict/draft</td><td>Hecho</td></tr>
-</tbody></table>
-<pre>skillgraph smoke --json
-skillgraph eval list --json</pre>
-</main></div><script src="/nav.js"></script></body></html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Garantías A–F — Mímir</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,650&family=Manrope:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <div class="shell">
+    <aside class="nav" id="nav"></aside>
+    <main class="main">
+      <h1>Garantías A–F</h1>
+      <p class="lead">De “documentado en Markdown” a “fallible en máquina”. Las seis fases están implementadas en CLI 1.0.</p>
+
+      <table>
+        <thead><tr><th>Fase</th><th>Entrega</th><th>Comando</th><th>Estado</th></tr></thead>
+        <tbody>
+          <tr><td><strong>A</strong></td><td>Boot/close + scorecard</td><td><code>verify boot|close</code></td><td>Hecho</td></tr>
+          <tr><td><strong>B</strong></td><td>Diagnóstico + humo</td><td><code>doctor</code>, <code>smoke</code></td><td>Hecho</td></tr>
+          <tr><td><strong>C</strong></td><td>Perfiles FORGE operables</td><td><code>forge …</code></td><td>Hecho</td></tr>
+          <tr><td><strong>D</strong></td><td>Búsqueda de skills</td><td><code>axon …</code></td><td>Hecho</td></tr>
+          <tr><td><strong>E</strong></td><td>Gold tasks + harness</td><td><code>eval list|run</code></td><td>Hecho</td></tr>
+          <tr><td><strong>F</strong></td><td>strict vs draft</td><td><code>mode get|set</code></td><td>Hecho</td></tr>
+        </tbody>
+      </table>
+
+      <h2>Evals (E)</h2>
+      <p>Specs en <code>_META/evals/*.json</code> con fixtures (p. ej. research brief). Sirven de regresión cuando cambias perfiles o skills.</p>
+
+      <h2>Modos (F)</h2>
+      <ul>
+        <li><strong>strict</strong> — gates fallan el proceso; pensado para cierre de sesión y CI.</li>
+        <li><strong>draft</strong> — avisos sin bloqueo; exploración y prototipos.</li>
+      </ul>
+      <p>Persistencia: <code>.skillgraph.mode</code>, env <code>SKILLGRAPH_MODE</code> o flag <code>--mode</code>.</p>
+
+<pre>python -m skillgraph_cli smoke --json
+python -m skillgraph_cli eval list --json
+python -m skillgraph_cli mode set strict</pre>
+    </main>
+  </div>
+  <script src="/nav.js"></script>
+</body>
+</html>
