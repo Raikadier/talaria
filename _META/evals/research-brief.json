@@ -1,0 +1,15 @@
+{
+  "id": "research-brief",
+  "title": "Brief de investigación defendible",
+  "forge_profile": "researcher",
+  "pass_score": 80,
+  "baseline_note": "Un chat genérico resume sin método ni citas auditables.",
+  "forge_advantage": "Método + fuentes + adversarial + nota en vault.",
+  "rubric": [
+    {"id": "scope", "description": "Pregunta/alcance explícitos", "must_contain": ["alcance", "pregunta"]},
+    {"id": "method", "description": "Método declarado", "must_contain": ["método", "fuentes"]},
+    {"id": "findings", "description": "Hallazgos", "must_contain": ["hallazgo"]},
+    {"id": "limits", "description": "Limitaciones", "must_contain": ["limitacion", "limitación"]},
+    {"id": "adversarial", "description": "Sección adversarial", "must_contain": ["podría estar mal", "adversarial", "sesgo"]}
+  ]
+}

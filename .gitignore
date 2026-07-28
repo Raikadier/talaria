@@ -1,0 +1,45 @@
+# Local / secrets
+.skillgraph.local.json
+.skillgraph.mode
+.env
+.env.*
+!.env.example
+*.pem
+credentials.json
+token.json
+client_secret.json
+memory/context/claude-code/settings.json
+memory/context/**/settings.local.json
+
+# Python
+.venv/
+venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+*.egg-info/
+skillgraph_cli.egg-info/
+
+# Node
+node_modules/
+docs-web/.next/
+docs-web/out/
+.vercel/
+
+# Graphify / tooling caches
+**/graphify-out/
+.graphify/
+
+# OS / editors
+.DS_Store
+Thumbs.db
+*.tmp
+~$*
+
+# OneDrive / sync noise
+*.lock
+
+# Large binary dumps (keep markdown notes)
+memory/archives/*.zip
+memory/archives/*.db
+memory/context/**/*.bak

@@ -1,0 +1,9 @@
+# SkillGraph — herramientas de ingestión
+# Instalar: python bootstrap.py
+# O: pip install -r tools/requirements.txt
+
+# Documentos → Markdown (LLM-ready)
+markitdown[all]>=0.1.0
+
+# Proyectos/código → grafo consultable (PyPI: graphifyy, CLI: graphify)
+graphifyy[pdf,office,mcp]>=0.1.0

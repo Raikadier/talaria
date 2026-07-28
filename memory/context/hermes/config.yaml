@@ -1,0 +1,65 @@
+model:
+  default: tencent/hy3:free
+  provider: nous
+  base_url: https://inference-api.nousresearch.com/v1
+agent:
+  verify_on_stop: false
+web:
+  backend: firecrawl
+  use_gateway: true
+browser:
+  cloud_provider: browser-use
+  use_gateway: true
+display:
+  tool_progress: all
+tts:
+  provider: openai
+  use_gateway: true
+stt:
+  provider: openai
+  use_gateway: true
+memory:
+  provider: mem0
+approvals:
+  mode: 'off'
+_config_version: 33
+mcp_servers:
+  anki:
+    command: C:\Users\david\AppData\Local\hermes\hermes-agent\venv\Scripts\python.exe
+    args:
+      - C:\Users\david\AppData\Local\hermes\mcp\anki-mcp\server.py
+    connect_timeout: 30
+  youtube:
+    command: C:\Users\david\AppData\Local\hermes\hermes-agent\venv\Scripts\python.exe
+    args:
+      - C:\Users\david\AppData\Local\hermes\mcp\youtube-mcp\server.py
+    connect_timeout: 30
+plugins:
+  enabled: []
+platform_toolsets:
+  cli:
+    - browser
+    - clarify
+    - code_execution
+    - computer_use
+    - cronjob
+    - delegation
+    - file
+    - image_gen
+    - kanban
+    - memory
+    - session_search
+    - skills
+    - terminal
+    - todo
+    - tts
+    - vision
+    - web
+known_plugin_toolsets:
+  cli:
+    - spotify
+image_gen:
+  use_gateway: true
+platforms:
+  whatsapp:
+    enabled: true

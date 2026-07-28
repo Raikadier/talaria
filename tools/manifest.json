@@ -1,0 +1,42 @@
+{
+  "vault": "SkillGraph",
+  "purpose": "Manifest of tools any agent should ensure are installed before ingesting docs/code into this second brain.",
+  "python": ">=3.10",
+  "node": ">=20",
+  "tools": [
+    {
+      "id": "markitdown",
+      "role": "documents",
+      "description": "Convert PDF/DOCX/PPTX/XLSX/HTML/images/URLs to Markdown for the vault",
+      "check": ["markitdown", "--version"],
+      "install": ["python", "-m", "pip", "install", "markitdown[all]"],
+      "pip": "markitdown[all]",
+      "docs": "tools/markitdown.md"
+    },
+    {
+      "id": "graphify",
+      "role": "code-projects",
+      "description": "Map codebases (+docs) into a queryable knowledge graph",
+      "check": ["graphify", "--help"],
+      "install": ["python", "-m", "pip", "install", "graphifyy[pdf,office,mcp]"],
+      "pip": "graphifyy[pdf,office,mcp]",
+      "docs": "tools/graphify.md",
+      "note": "PyPI package is graphifyy; CLI command is graphify"
+    },
+    {
+      "id": "obsidian-mcp",
+      "role": "mcp",
+      "description": "MCP filesystem bridge so agents can read/write this vault",
+      "check": ["node", "-e", "require('fs').accessSync(require('path').join(require('os').homedir(),'AppData','Roaming','npm','node_modules','obsidian-mcp','build','main.js'))"],
+      "install": ["npm", "install", "-g", "obsidian-mcp"],
+      "npm": "obsidian-mcp",
+      "docs": "_META/mcp-obsidian.md",
+      "optional_on_unix_check": true
+    }
+  ],
+  "ingest_dirs": {
+    "documents": "memory/inbox/docs",
+    "converted": "memory/inbox/converted",
+    "graphs": "memory/graphs"
+  }
+}

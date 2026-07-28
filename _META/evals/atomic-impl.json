@@ -1,0 +1,15 @@
+{
+  "id": "atomic-impl",
+  "title": "Implementación atómica verificada",
+  "forge_profile": "programmer",
+  "pass_score": 80,
+  "baseline_note": "Mega-diff sin verificación.",
+  "forge_advantage": "Task DoD + tests + report mínimo.",
+  "rubric": [
+    {"id": "task", "must_contain": ["task", "tarea"], "description": "Task id"},
+    {"id": "changes", "must_contain": ["change", "cambio", "diff", "archivo"], "description": "Cambios"},
+    {"id": "verify", "must_contain": ["test", "verif", "lint"], "description": "Verificación"},
+    {"id": "scope", "must_contain": ["scope", "mínimo", "minimo", "atomic"], "description": "Scope mínimo"},
+    {"id": "blockers", "must_contain": ["blocker", "bloqueo", "note", "nota"], "description": "Notas/blockers"}
+  ]
+}

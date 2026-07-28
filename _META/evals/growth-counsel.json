@@ -1,0 +1,15 @@
+{
+  "id": "growth-counsel",
+  "title": "Consejo de growth con apuestas medibles",
+  "forge_profile": "social-advisor",
+  "pass_score": 80,
+  "baseline_note": "Tips virales genéricos sin métrica norte.",
+  "forge_advantage": "Máx 3 apuestas + hipótesis + kill criteria.",
+  "rubric": [
+    {"id": "north", "must_contain": ["métrica", "objetivo"], "description": "Objetivo/métrica"},
+    {"id": "bets", "must_contain": ["apuesta", "hipótesis"], "description": "Apuestas"},
+    {"id": "kill", "must_contain": ["kill", "parar", "detener"], "description": "Kill criteria"},
+    {"id": "avoid", "must_contain": ["no hacer", "evitar"], "description": "Qué no hacer"},
+    {"id": "review", "must_contain": ["revisión", "siguiente"], "description": "Siguiente revisión"}
+  ]
+}

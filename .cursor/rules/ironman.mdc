@@ -1,0 +1,8 @@
+---
+description: LEGACY — redirige a spine.mdc (antes IRONMAN)
+alwaysApply: false
+---
+
+# Redirect
+
+Usar `.cursor/rules/spine.mdc`. IRONMAN fue renombrado a **SPINE**.

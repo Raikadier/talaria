@@ -1,0 +1,15 @@
+{
+  "id": "adr-boundaries",
+  "title": "ADR con boundaries",
+  "forge_profile": "sw-architect",
+  "pass_score": 80,
+  "baseline_note": "Salta a código sin opciones ni trade-offs.",
+  "forge_advantage": "Opciones ≥2 + ADR + contratos.",
+  "rubric": [
+    {"id": "context", "must_contain": ["contexto", "context"], "description": "Contexto"},
+    {"id": "decision", "must_contain": ["decisión", "decision"], "description": "Decisión"},
+    {"id": "alts", "must_contain": ["alternativa", "opción", "option"], "description": "Alternativas"},
+    {"id": "consequences", "must_contain": ["consecuencia", "consequence", "trade"], "description": "Consecuencias"},
+    {"id": "boundaries", "must_contain": ["boundary", "contrato", "api", "límite"], "description": "Boundaries"}
+  ]
+}

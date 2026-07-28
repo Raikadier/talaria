@@ -1,0 +1,14 @@
+---
+description: SPINE SkillGraph — sistema nervioso del organismo (siempre activo en este vault)
+alwaysApply: true
+---
+
+# SPINE — piloto Cursor en SkillGraph
+
+Este workspace es el vault canónico (organismo SkillGraph). Sigue `AGENTS.md` y `_META/spine-framework.md`.
+
+Órganos: Memoria · AXON (skills) · FORGE (roles) · SPINE (protocolo) · CLI/MCP · tools.
+
+Orden: Retrieve → Ingest/Normalize (si hace falta) → Orient → Act → Memorize + Notify.
+
+MCP obsidian vault: `skillgraph`. No uses el chat como memoria canónica. Español.

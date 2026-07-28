@@ -1,0 +1,25 @@
+{
+  "client": "cursor",
+  "vault": "D:\\OneDrive - unicesar.edu.co\\davidbarcelo0411@g\\Business Ideas\\SkillGraph",
+  "describe_cmd": "C:\\Users\\david\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe -m skillgraph_cli describe --json",
+  "config_file": "C:\\Users\\david\\.cursor\\mcp.json",
+  "mcpServers_fragment": {
+    "skillgraph": {
+      "command": "C:\\Users\\david\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+      "args": [
+        "-m",
+        "skillgraph_cli.mcp_server",
+        "--vault",
+        "D:\\OneDrive - unicesar.edu.co\\davidbarcelo0411@g\\Business Ideas\\SkillGraph"
+      ],
+      "env": {
+        "SKILLGRAPH_VAULT": "D:\\OneDrive - unicesar.edu.co\\davidbarcelo0411@g\\Business Ideas\\SkillGraph"
+      }
+    }
+  },
+  "instructions": [
+    "Merge mcpServers_fragment into ~/.cursor/mcp.json",
+    "Reload Cursor MCP settings",
+    "Call skillgraph_describe then skillgraph_status"
+  ]
+}

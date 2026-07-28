@@ -1,0 +1,19 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "skillgraph-cli"
+version = "0.2.0"
+description = "Thin IRONMAN CLI for the SkillGraph Obsidian second-brain vault"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [{ name = "David" }]
+dependencies = []
+
+[project.scripts]
+skillgraph = "skillgraph_cli.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["skillgraph_cli*"]

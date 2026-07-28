@@ -1,0 +1,31 @@
+{
+  "client": "generic",
+  "vault": "D:\\OneDrive - unicesar.edu.co\\davidbarcelo0411@g\\Business Ideas\\SkillGraph",
+  "describe_cmd": "C:\\Users\\david\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe -m skillgraph_cli describe --json",
+  "mcpServers_fragment": {
+    "skillgraph": {
+      "command": "C:\\Users\\david\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+      "args": [
+        "-m",
+        "skillgraph_cli.mcp_server",
+        "--vault",
+        "D:\\OneDrive - unicesar.edu.co\\davidbarcelo0411@g\\Business Ideas\\SkillGraph"
+      ],
+      "env": {
+        "SKILLGRAPH_VAULT": "D:\\OneDrive - unicesar.edu.co\\davidbarcelo0411@g\\Business Ideas\\SkillGraph"
+      }
+    }
+  },
+  "cli_fallback": [
+    "C:\\Users\\david\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+    "-m",
+    "skillgraph_cli",
+    "describe",
+    "--json"
+  ],
+  "instructions": [
+    "Prefer MCP stdio using mcp.command/args/env",
+    "Or shell out to CLI with --json on every command",
+    "Always start with: skillgraph describe --json"
+  ]
+}

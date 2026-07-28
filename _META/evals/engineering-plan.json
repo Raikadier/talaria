@@ -1,0 +1,15 @@
+{
+  "id": "engineering-plan",
+  "title": "Plan de ingeniería con tasks",
+  "forge_profile": "sw-engineer",
+  "pass_score": 80,
+  "baseline_note": "Código monolítico sin plan ni tests.",
+  "forge_advantage": "Work packages + contratos + test strategy.",
+  "rubric": [
+    {"id": "adr_ref", "must_contain": ["adr"], "description": "Ref ADR"},
+    {"id": "modules", "must_contain": ["módulo", "module"], "description": "Módulos"},
+    {"id": "sequence", "must_contain": ["secuencia", "orden", "sequence"], "description": "Secuencia"},
+    {"id": "tests", "must_contain": ["test"], "description": "Tests"},
+    {"id": "tasks", "must_contain": ["task", "tarea"], "description": "Tasks"}
+  ]
+}
