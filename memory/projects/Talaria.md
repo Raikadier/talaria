@@ -7,11 +7,11 @@ updated: 2026-07-28
 aliases: [SkillGraph]
 ---
 
-# Proyecto: SkillGraph
+# Proyecto: Talaria
 
 **Estado:** active  
 **Qué es:** el **único** proyecto unificado — organismo completo.  
-**Ruta vault:** `D:\OneDrive - unicesar.edu.co\davidbarcelo0411@g\Business Ideas\SkillGraph`
+**Ruta vault:** `D:\OneDrive - unicesar.edu.co\Business Ideas\SkillGraph`
 
 Mapa de órganos: [[organism]]
 
@@ -26,7 +26,7 @@ Un cuerpo vital: Memoria + **AXON** + **FORGE** + **SPINE** + CLI/MCP + tools �
 | **AXON** | skills interconectadas (`skills/`) | activo |
 | **SPINE** | protocolo (antes IRONMAN) | activo |
 | **FORGE** | perfiles de rol | activo |
-| CLI / MCP | `skillgraph` | activo |
+| CLI / MCP | `talaria` | activo |
 | Tools | MarkItDown, Graphify, … | Mk.2+ |
 
 ## Decisiones clave
@@ -36,5 +36,5 @@ Un cuerpo vital: Memoria + **AXON** + **FORGE** + **SPINE** + CLI/MCP + tools �
 
 ## Próximos pasos
 - [ ] `git init` / remoto si quieres publicar
-- [ ] Regenerar AXON con `build_skillgraph.py` al cambiar bancos
+- [ ] Regenerar AXON con `build_axon_graph.py` al cambiar bancos
 - [ ] Probar triad FORGE en un repo real

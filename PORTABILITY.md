@@ -16,7 +16,7 @@ aliases: [PORTABILITY, portable, repo]
 | `memory/` (conversaciones, decisiones, proyectos) | Sí (revisar secretos) |
 | `tools/`, `bootstrap.py`, `_tools/` | Sí — autoinstalación |
 | `_META/`, `_templates/`, `.obsidian/` básico | Sí |
-| `build_skillgraph.py` | Sí (reasigna `SOURCES` al nuevo PC) |
+| `build_axon_graph.py` | Sí (reasigna `SOURCES` al nuevo PC) |
 
 ## Qué NO subir (o sanitizar)
 
@@ -48,7 +48,7 @@ Luego:
 
 ## Limitaciones honestas
 
-1. **Skills origen** (Hermes/Skills de David) no van dentro del repo — solo el **índice** Markdown ya generado. Para regenerar el grafo en otro PC hace falta volver a apuntar `build_skillgraph.py` a las rutas locales de skills, o versionar solo las notas.
+1. **Skills origen** (Hermes/Skills de David) no van dentro del repo — solo el **índice** Markdown ya generado. Para regenerar el grafo en otro PC hace falta volver a apuntar `build_axon_graph.py` a las rutas locales de skills, o versionar solo las notas.
 2. **MCP Cursor/Hermes** fuera del vault (`~/.cursor/mcp.json`, `hermes/config.yaml`) hay que reconfigurarlos una vez (plantilla en [[mcp-obsidian]]).
 3. **Chats importados** conservan `source_path` absolutos de la máquina original; son evidencia, no dependencias.
 

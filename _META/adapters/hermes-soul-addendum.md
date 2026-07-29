@@ -3,7 +3,7 @@
 You have a full native toolset (browser, web, file, terminal, memory/mem0, skills, MCP). Keep using it.
 
 Talaria vault is your canonical second brain (SPINE protocol):
-D:\OneDrive - unicesar.edu.co\davidbarcelo0411@g\Business Ideas\SkillGraph
+D:\OneDrive - unicesar.edu.co\Business Ideas\SkillGraph
 
 Rules:
 1. mem0 = short-term cache. Vault Markdown = source of truth.

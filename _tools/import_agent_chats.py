@@ -12,7 +12,7 @@ from collections import defaultdict
 from datetime import datetime, timezone
 from pathlib import Path
 
-VAULT = Path(r"D:\OneDrive - unicesar.edu.co\davidbarcelo0411@g\Business Ideas\SkillGraph")
+VAULT = Path(r"D:\OneDrive - unicesar.edu.co\davidbarcelo0411@g\Business Ideas\Talaria")
 OUT_CONV = VAULT / "memory" / "conversations"
 OUT_CTX = VAULT / "memory" / "context"
 OUT_LEARN = VAULT / "memory" / "learnings"

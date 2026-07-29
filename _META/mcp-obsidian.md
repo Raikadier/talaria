@@ -9,7 +9,7 @@ Puente MCP al vault **Talaria** (segundo cerebro).
 
 ## Vault
 
-`D:\OneDrive - unicesar.edu.co\davidbarcelo0411@g\Business Ideas\SkillGraph`
+`D:\OneDrive - unicesar.edu.co\Business Ideas\SkillGraph`
 
 ## Paquete
 

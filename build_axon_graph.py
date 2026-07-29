@@ -11,7 +11,7 @@ import time
 from collections import defaultdict
 from pathlib import Path
 
-VAULT = Path(r"D:\OneDrive - unicesar.edu.co\davidbarcelo0411@g\Business Ideas\SkillGraph")
+VAULT = Path(r"D:\OneDrive - unicesar.edu.co\Business Ideas\SkillGraph")
 SOURCES = [
     Path(r"C:\Users\david\AppData\Local\hermes\skills"),
     Path(r"C:\Users\david\Skills"),
@@ -303,7 +303,13 @@ def main() -> None:
     domains_dir = meta / "domains"
 
     if skills_root.exists():
-        shutil.rmtree(skills_root)
+        # En Windows a veces Obsidian (o un watcher) mantiene archivos abiertos.
+        # En ese caso el borrado completo falla y el script no debe abortar.
+        try:
+            shutil.rmtree(skills_root)
+        except PermissionError as e:
+            print(f"[warn] PermissionError limpiando skills/: {e}. Continuo sin borrado completo.")
+            shutil.rmtree(skills_root, ignore_errors=True)
     for p in (meta, axes_dir, domains_dir, skills_root):
         p.mkdir(parents=True, exist_ok=True)
 
@@ -536,7 +542,7 @@ Los duplicados por nombre se indexan **una sola vez**; ambas rutas aparecen en e
 ## Regenerar el vault
 
 ```powershell
-python "{VAULT / 'build_skillgraph.py'}"
+python "{VAULT / 'build_axon_graph.py'}"
 ```
 
 Solo **lee** los `SKILL.md` origen; no los modifica.
@@ -557,7 +563,7 @@ Si no hay MCP de Obsidian instalado, este vault sigue siendo plenamente usable a
 ```
 SkillGraph/
   README.md
-  build_skillgraph.py
+  build_axon_graph.py
   _META/
     taxonomy.md
     domains/<dominio>.md

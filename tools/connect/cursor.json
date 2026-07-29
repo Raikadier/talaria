@@ -1,6 +1,6 @@
 {
   "client": "cursor",
-  "vault": "D:\\OneDrive - unicesar.edu.co\\davidbarcelo0411@g\\Business Ideas\SkillGraph",
+  "vault": "D:\\OneDrive - unicesar.edu.co\\davidbarcelo0411@g\\Business Ideas\\Talaria",
   "describe_cmd": "C:\\Users\\david\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe -m talaria_cli describe --json",
   "config_file": "C:\\Users\\david\\.cursor\\mcp.json",
   "mcpServers_fragment": {
@@ -10,10 +10,10 @@
         "-m",
         "talaria_cli.mcp_server",
         "--vault",
-        "D:\\OneDrive - unicesar.edu.co\\davidbarcelo0411@g\\Business Ideas\SkillGraph"
+        "D:\\OneDrive - unicesar.edu.co\\davidbarcelo0411@g\\Business Ideas\\Talaria"
       ],
       "env": {
-        "TALARIA_VAULT": "D:\\OneDrive - unicesar.edu.co\\davidbarcelo0411@g\\Business Ideas\SkillGraph"
+        "TALARIA_VAULT": "D:\\OneDrive - unicesar.edu.co\\davidbarcelo0411@g\\Business Ideas\\Talaria"
       }
     }
   },
