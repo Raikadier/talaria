@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from skillgraph_cli.util import EXIT_ERROR, EXIT_OK, emit, run_python_script
+from talaria_cli.util import EXIT_ERROR, EXIT_OK, emit, run_python_script
 
 
 def run_boot(vault: Path, *, check_only: bool = False, as_json: bool = False) -> int:

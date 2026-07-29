@@ -5,7 +5,7 @@ aliases: [pilotos, adapters]
 
 # Pilotos del organismo SPINE
 
-Cualquier IA con agente y tools propias puede “ponerse” SkillGraph.  
+Cualquier IA con agente y tools propias puede “ponerse” Talaria.  
 El traje es el mismo; cambia el **adaptador** del piloto.
 
 | Piloto | Adaptador | Tools nativas |
@@ -19,7 +19,7 @@ El traje es el mismo; cambia el **adaptador** del piloto.
 
 1. **No desactives** el arsenal nativo.  
 2. **Clasifícalo** en una capa SPINE (Ingest/Act/Retrieve…).  
-3. **Canónico** = vault SkillGraph. Memoria del agente (mem0, session, JSONL) = caché.  
+3. **Canónico** = vault Talaria. Memoria del agente (mem0, session, JSONL) = caché.  
 4. **Al cerrar** trabajo útil → Memorize + Notify en el vault.  
 5. Si el piloto tiene MCP: conecta `obsidian` al path del vault.
 

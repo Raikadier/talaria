@@ -6,14 +6,14 @@ aliases: [claude-adapter, piloto-claude]
 # Adaptador SPINE → Claude Code
 
 Claude Code ya trae agente con tools (bash, lectura/edición, grep, agentes, MCP, skills…).  
-SPINE convierte ese piloto en uno con **armadura compartida** (SkillGraph), sin desactivar sus tools.
+SPINE convierte ese piloto en uno con **armadura compartida** (Talaria), sin desactivar sus tools.
 
 ## Mapa Claude Code → capas SPINE
 
 | Capacidad Claude Code | Capa SPINE | Rol |
 |----------------------|--------------|-----|
 | Bash / shell | Act + Ingest | Correr `bootstrap.py`, markitdown, graphify, yt-dlp… |
-| Read / Edit / Write / Glob / Grep | Act + Retrieve | Sobre repos **y** sobre el vault si el cwd es SkillGraph |
+| Read / Edit / Write / Glob / Grep | Act + Retrieve | Sobre repos **y** sobre el vault si el cwd es Talaria |
 | Agent / Task tool | Act | Subagentes: indicarles `CLAUDE.md` + SPINE |
 | MCP servers | Retrieve / Memorize / Act | Añadir `obsidian` apuntando al vault |
 | Skills / plugins | Act | Complementan; el catálogo portable está en `skills/` del vault |
@@ -31,7 +31,7 @@ SPINE convierte ese piloto en uno con **armadura compartida** (SkillGraph), sin 
   "args": [
     "-y",
     "obsidian-mcp",
-    "D:\\OneDrive - unicesar.edu.co\\davidbarcelo0411@g\\Business Ideas\\SkillGraph"
+    "D:\\OneDrive - unicesar.edu.co\\davidbarcelo0411@g\\Business Ideas\SkillGraph"
   ]
 }
 ```
@@ -44,7 +44,7 @@ SPINE convierte ese piloto en uno con **armadura compartida** (SkillGraph), sin 
 ## Reglas Claude-específicas
 
 1. No uses solo el transcript de sesión como memoria de proyecto.  
-2. Si editas un repo externo, el **resumen/decisión** vive en SkillGraph (`memory/projects/` + conversation).  
+2. Si editas un repo externo, el **resumen/decisión** vive en Talaria (`memory/projects/` + conversation).  
 3. Skills de `.claude` y skills del vault no compiten: vault = índice portable; `.claude` = runtime local.  
 4. Subagentes: primera línea del prompt = “sigue CLAUDE.md / SPINE; vault canónico”.
 

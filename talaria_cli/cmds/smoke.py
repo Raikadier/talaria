@@ -1,13 +1,13 @@
-"""Smoke tests for SkillGraph API + organism (Phase B)."""
+"""Smoke tests for Talaria API + organism (Phase B)."""
 from __future__ import annotations
 
 from pathlib import Path
 from typing import Any
 
-from skillgraph_cli.agent_contract import agent_contract
-from skillgraph_cli.cmds import status as status_cmd
-from skillgraph_cli.cmds import verify as verify_cmd
-from skillgraph_cli.util import EXIT_ERROR, EXIT_OK, emit
+from talaria_cli.agent_contract import agent_contract
+from talaria_cli.cmds import status as status_cmd
+from talaria_cli.cmds import verify as verify_cmd
+from talaria_cli.util import EXIT_ERROR, EXIT_OK, emit
 
 
 def run_smoke(vault: Path, *, as_json: bool = False) -> int:
@@ -20,7 +20,7 @@ def run_smoke(vault: Path, *, as_json: bool = False) -> int:
         contract = agent_contract(vault)
         check(
             "describe_parseable",
-            isinstance(contract, dict) and contract.get("name") == "skillgraph",
+            isinstance(contract, dict) and contract.get("name") == "talaria",
             f"version={contract.get('version')}",
         )
         cmds = {c["name"] for c in contract.get("cli", {}).get("commands", [])}
@@ -79,7 +79,7 @@ done: true
 
     # Phase C — FORGE
     try:
-        from skillgraph_cli.cmds import forge as forge_cmd
+        from talaria_cli.cmds import forge as forge_cmd
 
         profiles = forge_cmd.list_profiles(vault)
         check("forge_list", len(profiles) >= 1, str(len(profiles)))
@@ -109,7 +109,7 @@ done: true
                 check("forge_check_deliverable", False, "no gates parsed")
 
         # Phase D — AXON
-        from skillgraph_cli.cmds import axon as axon_cmd
+        from talaria_cli.cmds import axon as axon_cmd
 
         stats = axon_cmd.axon_stats(vault)
         check("axon_stats", bool(stats.get("ok") and stats.get("skills_md", 0) > 0), str(stats.get("skills_md")))
@@ -129,8 +129,8 @@ done: true
             check("axon_for_profile", False, "no axon_queries")
 
         # Phase E/F
-        from skillgraph_cli.cmds import eval_cmd
-        from skillgraph_cli.mode import mode_contract, resolve_mode
+        from talaria_cli.cmds import eval_cmd
+        from talaria_cli.mode import mode_contract, resolve_mode
 
         evs = eval_cmd.list_evals(vault)
         check("eval_list", len(evs) >= 5, str(len(evs)))

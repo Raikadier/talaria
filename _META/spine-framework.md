@@ -8,7 +8,7 @@ formerly: IRONMAN
 
 # SPINE — Structured Protocol for Integrated Neural Execution
 
-**Órgano:** sistema nervioso de [[organism|SkillGraph]]  
+**Órgano:** sistema nervioso de [[organism|Talaria]]  
 **Nombre técnico:** *Structured Protocol for Integrated Neural Execution*  
 **Nombre de uso:** **SPINE**  
 **Alias legado:** IRONMAN (mismo protocolo; no es otro producto)  
@@ -19,7 +19,7 @@ formerly: IRONMAN
 
 ## Principio rector
 
-> **Una sola fuente de verdad: el vault Markdown (SkillGraph).**  
+> **Una sola fuente de verdad: el vault Markdown (Talaria).**  
 > Toda tool es un *adaptador* o un *índice*. Ninguna tool es otra memoria canónica.
 
 Si dos tools pueden escribir “la verdad”, una gana por contrato; la otra solo propone o indexa.
@@ -146,7 +146,7 @@ Al “ponerse el traje”, el agente obedece este orden:
 5. **Memorize + Notify** al cerrar trabajo útil  
 
 ### Prohibiciones
-- No crear una segunda base de notas fuera de SkillGraph  
+- No crear una segunda base de notas fuera de Talaria  
 - No guardar secretos  
 - No ejecutar dos converters sobre el mismo archivo sin `force: true` y nota de por qué  
 - No usar índices (engraph/nexus) ni memoria del agente (mem0, session) como sustituto de escribir decisiones  
@@ -168,7 +168,7 @@ Muchos agentes **ya** traen tools. SPINE no las reemplaza: las **mapea**.
                    │ se pone
                    ▼
 ┌─────────────────────────────────────────────┐
-│  ORGANISMO SkillGraph (SPINE)              │
+│  ORGANISMO Talaria (SPINE)              │
 │  vault MD = verdad · staging · graphs       │
 │  MarkItDown/Graphify/… = sistemas del traje │
 └─────────────────────────────────────────────┘
@@ -178,7 +178,7 @@ Muchos agentes **ya** traen tools. SPINE no las reemplaza: las **mapea**.
 |--------------------|-------------|------------|
 | Chat / sesión | Efímera | No |
 | mem0 / session store / JSONL agente | Retrieve corto / caché | No |
-| SkillGraph `memory/` | Memorize | **Sí** |
+| Talaria `memory/` | Memorize | **Sí** |
 | MCP / índices | Retrieve | No (no escriben verdad nueva) |
 
 ### Adaptadores oficiales
@@ -199,7 +199,7 @@ Muchos agentes **ya** traen tools. SPINE no las reemplaza: las **mapea**.
 
 ### Frase portátil (cualquier sistema prompt)
 
-> SkillGraph + SPINE es tu segundo cerebro canónico. Tus tools integradas son sensores y actuadores. La memoria interna del agente es caché. Decisiones, preferencias y resúmenes útiles se escriben en el vault.
+> Talaria + SPINE es tu segundo cerebro canónico. Tus tools integradas son sensores y actuadores. La memoria interna del agente es caché. Decisiones, preferencias y resúmenes útiles se escriben en el vault.
 
 ---
 
@@ -317,7 +317,7 @@ El agente declara en qué Mark opera. No inventa tools del Mark superior si no e
 
 **FORGE** = *Framework for Operational Role Generation & Excellence*.
 
-Es un **órgano** del organismo [[organism|SkillGraph]]: fabrica/aloja perfiles operativos. Comparte el mismo vault que memoria, [[axon|AXON]], CLI y tools.
+Es un **órgano** del organismo [[organism|Talaria]]: fabrica/aloja perfiles operativos. Comparte el mismo vault que memoria, [[axon|AXON]], CLI y tools.
 
 | Pieza | Nota |
 |-------|------|
@@ -336,7 +336,7 @@ Es un **órgano** del organismo [[organism|SkillGraph]]: fabrica/aloja perfiles 
 
 - Protocolo escritura: [[agent-protocol]]  
 - Portabilidad: [[PORTABILITY]]  
-- Tools: [[tools-index]] · investigación: [[2026-07-28-herramientas-gratis-skillgraph]]  
+- Tools: [[tools-index]] · investigación: [[2026-07-28-herramientas-gratis-talaria]]  
 - MCP: [[mcp-obsidian]]  
 - Perfiles: [[forge]]  
 - Home: [[Home]]

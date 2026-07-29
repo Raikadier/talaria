@@ -15,9 +15,9 @@
       <p class="lead">La API es la cara externa del organismo. Todo comando crítico ofrece <code>--json</code> para que un agente lo parsee sin ambigüedad.</p>
 
       <h2>Instalación</h2>
-<pre>cd <vault-Talaria>   # o clon de talaria
+<pre>cd SkillGraph   # o clon de talaria-skillgraph
 pip install -e .
-talaria describe --json</pre>
+python -m skillgraph_cli describe --json</pre>
 
       <h2>Familias de comandos (CLI 1.0)</h2>
       <table>
@@ -35,7 +35,7 @@ talaria describe --json</pre>
 
       <h2>MCP</h2>
       <ul>
-        <li><code>talaria</code> — orquestación del organismo (mismos conceptos que la CLI).</li>
+        <li><code>skillgraph</code> — orquestación del organismo (mismos conceptos que la CLI).</li>
         <li><code>obsidian</code> — lectura/escritura de notas del vault.</li>
       </ul>
       <p>Plantillas de conexión: <code>tools/connect/</code> y <code>_META/agent-connect.md</code>. Docs de CLI: <code>tools/cli.md</code>.</p>

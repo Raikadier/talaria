@@ -5,7 +5,7 @@ aliases: [mcp-obsidian, obsidian-mcp]
 
 # MCP Obsidian ↔ Cursor + Hermes
 
-Puente MCP al vault **SkillGraph** (segundo cerebro).
+Puente MCP al vault **Talaria** (segundo cerebro).
 
 ## Vault
 
@@ -33,7 +33,7 @@ Reinicia Claude Code tras cambiar MCP.
 
 Configurado en `config.yaml` → `mcp_servers.obsidian`  
 Launcher: `C:\Users\david\AppData\Local\hermes\mcp\obsidian-mcp\run-obsidian-mcp.cmd`  
-Addendum: `memories\SKILLGRAPH_IRONMAN.md` + puntero en `SOUL.md`
+Addendum: `memories\TALARIA_SPINE.md` + puntero en `SOUL.md`
 
 1. Reinicia el gateway / CLI de Hermes
 2. Verifica que el toolset MCP liste `obsidian`

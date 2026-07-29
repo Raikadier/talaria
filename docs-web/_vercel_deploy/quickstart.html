@@ -15,19 +15,19 @@
       <p class="lead">De cero a organismo operativo en unos minutos.</p>
 
       <h2>1. Obtener el vault</h2>
-      <p>Clona <a href="https://github.com/Raikadier/talaria">github.com/Raikadier/talaria</a> o abre tu carpeta Talaria local.</p>
+      <p>Clona <a href="https://github.com/Raikadier/talaria-skillgraph">github.com/Raikadier/talaria-skillgraph</a> o abre tu carpeta SkillGraph local.</p>
 
       <h2>2. Instalar la CLI</h2>
 <pre>pip install -e .
-talaria describe --json</pre>
+python -m skillgraph_cli describe --json</pre>
 
       <h2>3. Verificar salud</h2>
-<pre>talaria verify boot --json
-talaria doctor --json
-talaria smoke --json</pre>
+<pre>python -m skillgraph_cli verify boot --json
+python -m skillgraph_cli doctor --json
+python -m skillgraph_cli smoke --json</pre>
 
       <h2>4. Conectar MCP</h2>
-      <p>Configura servidores <code>talaria</code> + <code>obsidian</code> según <code>_META/agent-connect.md</code> y las plantillas en <code>tools/connect/</code>.</p>
+      <p>Configura servidores <code>skillgraph</code> + <code>obsidian</code> según <code>_META/agent-connect.md</code> y las plantillas en <code>tools/connect/</code>.</p>
 
       <h2>5. Sesión tipo SPINE</h2>
       <ol>
@@ -37,8 +37,8 @@ talaria smoke --json</pre>
         <li><code>verify close</code>.</li>
       </ol>
 
-<pre>talaria mode set strict
-talaria eval run --json</pre>
+<pre>python -m skillgraph_cli mode set strict
+python -m skillgraph_cli eval run --json</pre>
 
       <p>No subas secretos: <code>.gitignore</code> excluye settings locales y <code>.env</code>.</p>
     </main>

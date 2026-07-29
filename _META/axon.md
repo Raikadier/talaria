@@ -7,7 +7,7 @@ status: active
 
 # AXON — Ability Crosslink & Operational Network
 
-**Órgano:** red de capacidades de [[organism|SkillGraph]]  
+**Órgano:** red de capacidades de [[organism|Talaria]]  
 **Nombre técnico:** *Ability Crosslink & Operational Network*  
 **Nombre de uso:** **AXON**  
 **Antes llamado:** “skill web” / grafo de skills  
@@ -22,7 +22,7 @@ status: active
 | Hubs de dominio | `_META/domains/` |
 | Ejes transversales | `_META/axes/` |
 | Taxonomía | [[taxonomy]] |
-| Generador | `build_skillgraph.py` |
+| Generador | `build_axon_graph.py` |
 
 ## Función en el cuerpo
 
@@ -39,12 +39,12 @@ Memoria          ──no sustituye──► AXON (capacidades ≠ episodios)
 3. Bajo un perfil [[forge]], Retrieve solo el subconjunto relevante  
 4. **CLI (preferido para agentes):**
    ```bash
-   skillgraph axon search "refactor testing" --json
-   skillgraph axon search "architecture" --domain software-development --json
-   skillgraph axon for-profile researcher --json
-   skillgraph axon stats --json
+   talaria axon search "refactor testing" --json
+   talaria axon search "architecture" --domain software-development --json
+   talaria axon for-profile researcher --json
+   talaria axon stats --json
    ```
-5. Regenerar el grafo si cambian los bancos: `python build_skillgraph.py`
+5. Regenerar el grafo si cambian los bancos: `python build_axon_graph.py`
 
 ## Relación con hermanos
 

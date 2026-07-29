@@ -1,4 +1,4 @@
-# SkillGraph — herramientas de ingestión
+# Talaria — herramientas de ingestión
 # Instalar: python bootstrap.py
 # O: pip install -r tools/requirements.txt
 

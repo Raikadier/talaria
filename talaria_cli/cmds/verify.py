@@ -5,8 +5,8 @@ import re
 from pathlib import Path
 from typing import Any
 
-from skillgraph_cli.cmds import status as status_cmd
-from skillgraph_cli.util import EXIT_ERROR, EXIT_OK, emit
+from talaria_cli.cmds import status as status_cmd
+from talaria_cli.util import EXIT_ERROR, EXIT_OK, emit
 
 REQUIRED_FILES = [
     "Home.md",
@@ -27,7 +27,7 @@ REQUIRED_DIRS = [
     "memory/decisions",
     "memory/projects",
     "skills",
-    "skillgraph_cli",
+    "talaria_cli",
     "_META/forge/profiles",
     "tools",
 ]
@@ -37,7 +37,7 @@ ORGAN_FILES = {
     "axon": "_META/axon.md",
     "forge": "_META/forge/forge.md",
     "spine": "_META/spine-framework.md",
-    "api": "skillgraph_cli/cli.py",
+    "api": "talaria_cli/cli.py",
     "tools": "tools",
     "adapters": "_META/adapters/pilots.md",
 }
@@ -84,7 +84,7 @@ def run_doctor(vault: Path, *, as_json: bool = False) -> int:
         "status": st,
         "ok": tools_ok and org["ok"],
         "framework": "SPINE",
-        "hint": "If tools_ok is false: skillgraph boot",
+        "hint": "If tools_ok is false: talaria boot",
     }
     if as_json:
         emit(data, True)
@@ -128,7 +128,7 @@ def evaluate_boot(vault: Path) -> dict[str, Any]:
         "checks": checks,
         "mark": st.get("mark"),
         "organism": org,
-        "next": "Act allowed" if ok else "Run skillgraph boot / repair organism before serious Act",
+        "next": "Act allowed" if ok else "Run talaria boot / repair organism before serious Act",
     }
 
 

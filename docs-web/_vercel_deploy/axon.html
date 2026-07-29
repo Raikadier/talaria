@@ -18,9 +18,9 @@
       <p>Skills bajo <code>skills/</code> (por dominio: research, productivity, youtube, software-development, …). Cada skill es Markdown operable; AXON las hace consultables sin recorrer el árbol a mano.</p>
 
       <h2>Comandos</h2>
-<pre>talaria axon search "research brief" --json
-talaria axon for-profile &lt;profile&gt; --json
-talaria axon stats --json</pre>
+<pre>python -m skillgraph_cli axon search "research brief" --json
+python -m skillgraph_cli axon for-profile &lt;profile&gt; --json
+python -m skillgraph_cli axon stats --json</pre>
 
       <h2>Con FORGE</h2>
       <p><code>forge run --with-axon</code> resuelve el set de skills recomendado para el perfil activo. El agente deja de adivinar qué skill abrir.</p>

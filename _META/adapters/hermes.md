@@ -6,7 +6,7 @@ aliases: [hermes-adapter, piloto-hermes]
 # Adaptador SPINE → Hermes
 
 Hermes ya trae **toolsets integrados** (browser, web, file, memory/mem0, terminal, skills, MCP…).  
-SPINE no los apaga: los **encauza** para que el vault SkillGraph sea la armadura compartida.
+SPINE no los apaga: los **encauza** para que el vault Talaria sea la armadura compartida.
 
 ## Mapa toolset Hermes → capas SPINE
 
@@ -18,7 +18,7 @@ SPINE no los apaga: los **encauza** para que el vault SkillGraph sea la armadura
 | `memory` (mem0) | Retrieve **corto plazo** | Espejo/caché. **Canónico = vault** |
 | `session_search` | Retrieve | Buscar chats Hermes; si es durable → exportar a `memory/conversations/` |
 | `skills` | Retrieve / Act | Skills locales; el catálogo portable vive en `skills/` del vault |
-| MCP `obsidian` | Retrieve + Memorize | Leer/escribir SkillGraph |
+| MCP `obsidian` | Retrieve + Memorize | Leer/escribir Talaria |
 | MCP `youtube` | Ingest | Metadata/subs → Normalize |
 | `tts` / `stt` / `vision` | Ingest / Act | Multimodal; transcripciones → vault |
 | `kanban` / `todo` / `cronjob` | Act / Notify | Operación; estado de proyecto también en `memory/projects/` |
@@ -26,7 +26,7 @@ SPINE no los apaga: los **encauza** para que el vault SkillGraph sea la armadura
 
 ## Reglas Hermes-específicas
 
-1. **mem0 no gana al vault.** Si mem0 y SkillGraph discrepan → corregir vault y, si aplica, actualizar mem0.  
+1. **mem0 no gana al vault.** Si mem0 y Talaria discrepan → corregir vault y, si aplica, actualizar mem0.  
 2. Tras trabajo útil en CLI/WhatsApp: escribir nota vía MCP `obsidian` o archivo directo al path del vault.  
 3. Firecrawl/browser = Ingest; no dejes el hallazgo solo en el chat.  
 4. `SOUL.md` / `USER.md` de Hermes son contexto del piloto; preferencias duraderas también en `memory/learnings/`.  
@@ -44,7 +44,7 @@ SPINE no los apaga: los **encauza** para que el vault SkillGraph sea la armadura
 
 ## Frase de sistema (pegar en sesión / SOUL addendum)
 
-> Usas el vault SkillGraph como segundo cerebro canónico (marco SPINE). Tus tools nativas son sensores/actuadores. mem0 es caché. Toda decisión, preferencia y resumen útil se escribe en el vault vía MCP obsidian.
+> Usas el vault Talaria como segundo cerebro canónico (marco SPINE). Tus tools nativas son sensores/actuadores. mem0 es caché. Toda decisión, preferencia y resumen útil se escribe en el vault vía MCP obsidian.
 
 ## Enlaces
 

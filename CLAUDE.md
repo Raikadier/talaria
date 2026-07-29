@@ -1,6 +1,6 @@
-# CLAUDE.md — SkillGraph / SPINE (Claude Code)
+# CLAUDE.md — Talaria / SPINE (Claude Code)
 
-You are piloting the **SkillGraph** organism. This vault is the body; **SPINE** is the nervous-system protocol (formerly IRONMAN). Your built-in Claude Code tools stay on; they are sensors and actuators, not a second source of truth.
+You are piloting the **Talaria** organism. This vault is the body; **SPINE** is the nervous-system protocol (formerly IRONMAN). Your built-in Claude Code tools stay on; they are sensors and actuators, not a second source of truth.
 
 ## Constitution (read first)
 - `_META/organism.md` — one body, many organs
@@ -23,7 +23,7 @@ You are piloting the **SkillGraph** organism. This vault is the body; **SPINE** 
 
 ## Rules
 1. Canonical memory = this vault (Markdown). Session/chat memory is ephemeral.
-2. Do not create a parallel notes database outside SkillGraph.
+2. Do not create a parallel notes database outside Talaria.
 3. After useful work: write conversation/decision/learning/project notes.
 4. Never store secrets in the vault.
 5. Prefer Retrieve (vault + AXON) before re-ingesting the same source.
@@ -33,14 +33,14 @@ You are piloting the **SkillGraph** organism. This vault is the body; **SPINE** 
 ```bash
 python bootstrap.py --check-only
 # or agent discovery:
-python -m skillgraph_cli describe --json
+talaria describe --json
 ```
-If deps missing: `python bootstrap.py` or `python -m skillgraph_cli boot`
+If deps missing: `python bootstrap.py` or `talaria boot`
 
 Prefer MCP server `skillgraph` (tools `skillgraph_*`) + MCP `obsidian` for note CRUD. See `_META/agent-connect.md`.
 
 ## Ingest helpers
 ```bash
-python -m skillgraph_cli ingest doc <file-or-url>
-python -m skillgraph_cli ingest project <repo-path>
+talaria ingest doc <file-or-url>
+talaria ingest project <repo-path>
 ```

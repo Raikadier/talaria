@@ -1,13 +1,13 @@
 ---
-tags: [meta, skillgraph, architecture, organism]
-aliases: [organismo-skillgraph, skillgraph-organs, cuerpo-skillgraph]
+tags: [meta, talaria, architecture, organism]
+aliases: [organismo-talaria, talaria-organs, cuerpo-talaria]
 version: 1.1
 status: active
 ---
 
-# SkillGraph — un solo organismo
+# Talaria — un solo organismo
 
-**SkillGraph es un único proyecto.** Memoria, AXON, FORGE, SPINE, CLI/MCP y tools no son productos separados: son **órganos** del mismo cuerpo.
+**Talaria es un único proyecto.** Memoria, AXON, FORGE, SPINE, CLI/MCP y tools no son productos separados: son **órganos** del mismo cuerpo.
 
 ```
                     ┌─────────────────────────┐
@@ -33,7 +33,7 @@ status: active
 │                 └────────┬────────┘                      │
 │                          ▼                               │
 │         ┌────────────────┴────────────────┐              │
-│         │  CLI + MCP (`skillgraph`)       │  interfaz    │
+│         │  CLI + MCP (`talaria`)       │  interfaz    │
 │         │  + tools (MarkItDown, …)        │  / músculos  │
 │         └─────────────────────────────────┘              │
 │                                                           │
@@ -49,7 +49,7 @@ status: active
 | **AXON** | Ability Crosslink & Operational Network | Skills interconectadas listas para usar | `skills/` + `_META/domains\|axes` · [[axon]] |
 | **FORGE** | Framework for Operational Role Generation & Excellence | Perfiles de rol elite | `_META/forge/` · [[forge]] |
 | **SPINE** | Structured Protocol for Integrated Neural Execution | Protocolo que coordina órganos (antes IRONMAN) | [[spine-framework]] |
-| **CLI / MCP** | — | Cómo cualquier agente entra y opera | `skillgraph_cli/` · [[cli]] |
+| **CLI / MCP** | — | Cómo cualquier agente entra y opera | `talaria_cli/` · [[cli]] |
 | **Tools** | — | Ingest/normalize/act | `tools/` · [[tools-index]] |
 | **Adaptadores** | — | Encaje de cada piloto | `_META/adapters/` |
 
@@ -58,7 +58,7 @@ status: active
 1. **Un cuerpo, una verdad** — el vault Markdown es canónico.  
 2. **Órganos no rivalizan** — memoria ≠ AXON ≠ FORGE; CLI no es otra memoria.  
 3. **SPINE coordina** — sin protocolo, los órganos se pisan.  
-4. **El piloto no es el cuerpo** — chat/mem0 = caché; SkillGraph = organismo.
+4. **El piloto no es el cuerpo** — chat/mem0 = caché; Talaria = organismo.
 
 ## Mapa rápido
 
@@ -69,4 +69,4 @@ status: active
 - Roles: [[forge]]  
 - Memoria: [[memory-index]]  
 - Interfaz: [[cli]] · [[agent-connect]]  
-- Proyecto unificado: [[SkillGraph]]
+- Proyecto unificado: [[Talaria]]

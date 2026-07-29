@@ -10,7 +10,7 @@ pipeline: spine
 
 **Nombre técnico:** *Framework for Operational Role Generation & Excellence*  
 **Nombre de uso:** **FORGE** (acrónimo)  
-**Naturaleza:** **órgano** del organismo [[organism|SkillGraph]] — no es un proyecto aparte.  
+**Naturaleza:** **órgano** del organismo [[organism|Talaria]] — no es un proyecto aparte.  
 **Hogar:** módulo SPINE dentro del mismo vault · usable por cualquier piloto
 
 > FORGE **fabrica perfiles** (roles operativos) que un agente se pone como módulo del traje. Trabaja **con** la memoria (`memory/`) y la skill web (`skills/`), no las sustituye. No sustituye al modelo: lo **especializa, disciplina y verifica** para superar lo que un modelo potente hace “de corrido”.
@@ -60,7 +60,7 @@ FORGE **no** es otra memoria canónica. Es un **protocolo de rol** sobre la verd
 
 ```text
 Activación mínima:
-FORGE profile=<id> | laws=I+II | vault=SkillGraph | spine=on
+FORGE profile=<id> | laws=I+II | vault=Talaria | spine=on
 ```
 
 ## Inventario semilla (v1)

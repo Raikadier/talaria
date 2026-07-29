@@ -12,12 +12,17 @@ def resolve_mode(vault: Path, explicit: str | None = None) -> str:
     if explicit:
         m = explicit.strip().lower()
         return m if m in MODES else "strict"
-    env = (os.environ.get("SKILLGRAPH_MODE") or "").strip().lower()
+    env = (os.environ.get("TALARIA_MODE") or "").strip().lower()
     if env in MODES:
         return env
-    marker = vault / ".skillgraph.mode"
+    marker = vault / ".talaria.mode"
     if marker.is_file():
         m = marker.read_text(encoding="utf-8").strip().lower()
+        if m in MODES:
+            return m
+    legacy = vault / ".skillgraph.mode"
+    if legacy.is_file():
+        m = legacy.read_text(encoding="utf-8").strip().lower()
         if m in MODES:
             return m
     return "strict"

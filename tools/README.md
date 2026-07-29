@@ -17,7 +17,7 @@ Formas estándar de meter contenido externo al segundo cerebro.
 
 ```bash
 pip install -e .
-skillgraph boot
+talaria boot
 # o: python bootstrap.py
 ```
 
@@ -25,13 +25,13 @@ Instala lo que falte según `tools/manifest.json` + `tools/requirements.txt`.
 
 ## CLI
 
-Ver [[cli]] — `skillgraph doctor|status|ingest|import`
+Ver [[cli]] — `talaria doctor|status|ingest|import`
 
 ## Helpers
 
 ```bash
-skillgraph ingest doc <archivo|url>
-skillgraph ingest project <ruta-proyecto>
+talaria ingest doc <archivo|url>
+talaria ingest project <ruta-proyecto>
 # equivalentes:
 python _tools/ingest_document.py <archivo|url>
 python _tools/ingest_project.py <ruta>

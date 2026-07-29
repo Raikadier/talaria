@@ -3,25 +3,25 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Any
 
-from skillgraph_cli import __version__
-from skillgraph_cli.mode import mode_contract, resolve_mode
+from talaria_cli import __version__
+from talaria_cli.mode import mode_contract, resolve_mode
 
 
 def agent_contract(vault: Path) -> dict[str, Any]:
     """Machine-readable contract so any agent can connect without tribal knowledge."""
     py = _python()
     vault_s = str(vault)
-    module = "skillgraph_cli"
+    module = "talaria_cli"
     return {
-        "name": "skillgraph",
+        "name": "talaria",
         "version": __version__,
-        "role": "SPINE orchestration CLI + MCP for the SkillGraph organism",
+        "role": "SPINE orchestration CLI + MCP for Talaria organism",
         "vault": vault_s,
         "canonical_memory": vault_s,
         "brand": {
             "commercial": "Talaria",
-            "technical": "SkillGraph Cognitive Operating System",
-            "acronym": "SGCOS",
+            "technical": "Talaria Cognitive Operating System",
+            "acronym": "TCOS",
             "mythology": "Talaria — winged sandals of Hermes; the suit that lets the messenger cross worlds",
         },
         "mode": mode_contract(resolve_mode(vault)),
@@ -37,21 +37,22 @@ def agent_contract(vault: Path) -> dict[str, Any]:
             "adapters",
         ],
         "guarantees": {
-            "verify_boot": "skillgraph verify boot --json",
-            "verify_close": "skillgraph verify close --scorecard <path> --json",
+            "verify_boot": "talaria verify boot --json",
+            "verify_close": "talaria verify close --scorecard <path> --json",
             "scorecard_template": "_templates/scorecard.md",
-            "smoke": "skillgraph smoke --json",
+            "smoke": "talaria smoke --json",
             "modes": ["strict", "draft"],
         },
         "how_agents_connect": {
             "preferred": "mcp",
             "fallback": "cli_json",
-            "discovery": "skillgraph describe --json",
-            "session_start": "skillgraph verify boot --json",
-            "session_end": "skillgraph verify close --scorecard <path> --json",
+            "discovery": "talaria describe --json",
+            "session_start": "talaria verify boot --json",
+            "session_end": "talaria verify close --scorecard <path> --json",
         },
         "cli": {
-            "invoke": [py, "-m", module],
+            "invoke": ["talaria"],
+            "invoke_module": [py, "-m", module],
             "commands": [
                 {
                     "name": "doctor",
@@ -188,36 +189,36 @@ def agent_contract(vault: Path) -> dict[str, Any]:
             ],
         },
         "mcp": {
-            "server_name": "skillgraph",
+            "server_name": "talaria",
             "transport": "stdio",
             "command": py,
-            "args": ["-m", "skillgraph_cli.mcp_server", "--vault", vault_s],
+            "args": ["-m", "talaria_cli.mcp_server", "--vault", vault_s],
             "tools": [
-                "skillgraph_doctor",
-                "skillgraph_boot",
-                "skillgraph_status",
-                "skillgraph_vault_path",
-                "skillgraph_verify_boot",
-                "skillgraph_verify_close",
-                "skillgraph_smoke",
-                "skillgraph_forge_list",
-                "skillgraph_forge_show",
-                "skillgraph_forge_check",
-                "skillgraph_forge_run",
-                "skillgraph_axon_search",
-                "skillgraph_axon_for_profile",
-                "skillgraph_axon_stats",
-                "skillgraph_ingest_doc",
-                "skillgraph_ingest_project",
-                "skillgraph_import_chats",
-                "skillgraph_describe",
+                "talaria_doctor",
+                "talaria_boot",
+                "talaria_status",
+                "talaria_vault_path",
+                "talaria_verify_boot",
+                "talaria_verify_close",
+                "talaria_smoke",
+                "talaria_forge_list",
+                "talaria_forge_show",
+                "talaria_forge_check",
+                "talaria_forge_run",
+                "talaria_axon_search",
+                "talaria_axon_for_profile",
+                "talaria_axon_stats",
+                "talaria_ingest_doc",
+                "talaria_ingest_project",
+                "talaria_import_chats",
+                "talaria_describe",
             ],
-            "env": {"SKILLGRAPH_VAULT": vault_s},
+            "env": {"TALARIA_VAULT": vault_s},
         },
         "companion_mcp": {
             "name": "obsidian",
             "purpose": "Read/write vault notes (Retrieve/Memorize)",
-            "vault_mcp_name": "skillgraph",
+            "vault_mcp_name": "talaria",
         },
         "constitution": [
             "AGENTS.md",
@@ -229,12 +230,12 @@ def agent_contract(vault: Path) -> dict[str, Any]:
             "CLAUDE.md",
         ],
         "rules_for_agents": [
-            "Canonical memory is the SkillGraph vault Markdown — not chat history",
-            "Session start: skillgraph verify boot --json",
-            "Specialized work: skillgraph forge run <id> --with-axon then forge check --deliverable",
-            "Retrieve skills via skillgraph axon search / axon for-profile",
-            "After useful work: fill scorecard + skillgraph verify close --scorecard <path>",
-            "Use skillgraph_* / CLI for Ingest+Boot; use obsidian MCP for note CRUD",
+            "Canonical memory is the Talaria vault Markdown — not chat history",
+            "Session start: talaria verify boot --json",
+            "Specialized work: talaria forge run <id> --with-axon then forge check --deliverable",
+            "Retrieve skills via talaria axon search / axon for-profile",
+            "After useful work: fill scorecard + talaria verify close --scorecard <path>",
+            "Use talaria_* / CLI for Ingest+Boot; use obsidian MCP for note CRUD",
             "Retrieve before re-ingesting the same source",
             "Never store secrets in the vault",
         ],
@@ -248,11 +249,11 @@ def connection_snippet(vault: Path, client: str) -> dict[str, Any]:
     base = {
         "client": client,
         "vault": str(vault),
-        "describe_cmd": f"{mcp['command']} -m skillgraph_cli describe --json",
+        "describe_cmd": "talaria describe --json",
     }
 
     cursor_block = {
-        "skillgraph": {
+        "talaria": {
             "command": mcp["command"],
             "args": mcp["args"],
             "env": mcp["env"],
@@ -260,10 +261,10 @@ def connection_snippet(vault: Path, client: str) -> dict[str, Any]:
     }
     claude_block = dict(cursor_block)
     hermes_block = {
-        "skillgraph": {
+        "talaria": {
             "command": mcp["command"],
             "args": mcp["args"],
-            "env": {"SKILLGRAPH_VAULT": str(vault)},
+            "env": {"TALARIA_VAULT": str(vault)},
             "connect_timeout": 60,
         }
     }
@@ -274,7 +275,7 @@ def connection_snippet(vault: Path, client: str) -> dict[str, Any]:
         base["instructions"] = [
             "Merge mcpServers_fragment into ~/.cursor/mcp.json",
             "Reload Cursor MCP settings",
-            "Call skillgraph_describe then skillgraph_status",
+            "Call talaria_describe then talaria_status",
         ]
     elif client in {"claude", "claude-code"}:
         base["config_file"] = str(Path.home() / ".claude" / "settings.json")
@@ -282,15 +283,15 @@ def connection_snippet(vault: Path, client: str) -> dict[str, Any]:
         base["instructions"] = [
             "Merge into settings.json mcpServers (or project .mcp.json)",
             "Restart Claude Code",
-            "Open the SkillGraph folder so CLAUDE.md loads",
+            "Open Talaria folder so CLAUDE.md loads",
         ]
     elif client == "hermes":
         base["config_file"] = str(Path.home() / "AppData/Local/hermes/config.yaml")
         base["mcp_servers_yaml"] = hermes_block
         base["instructions"] = [
-            "Add mcp_servers.skillgraph entry to Hermes config.yaml",
+            "Add mcp_servers.talaria entry to Hermes config.yaml",
             "Restart Hermes gateway",
-            "Follow memories/SKILLGRAPH_SPINE.md (legacy: SKILLGRAPH_IRONMAN.md)",
+            "Follow memories/TALARIA_SPINE.md (legacy: TALARIA_SPINE.md)",
         ]
     else:
         base["mcpServers_fragment"] = cursor_block
@@ -298,7 +299,7 @@ def connection_snippet(vault: Path, client: str) -> dict[str, Any]:
         base["instructions"] = [
             "Prefer MCP stdio using mcp.command/args/env",
             "Or shell out to CLI with --json on every command",
-            "Always start with: skillgraph describe --json",
+            "Always start with: talaria describe --json",
         ]
     return base
 

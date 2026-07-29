@@ -6,7 +6,7 @@ aliases: [cursor-adapter, piloto-cursor]
 # Adaptador SPINE → Cursor
 
 Cursor ya es un agente con tools (edición, terminal, MCP, subagentes, browser…).  
-SkillGraph es la armadura; Cursor es un piloto de primera clase.
+Talaria es la armadura; Cursor es un piloto de primera clase.
 
 ## Mapa
 
@@ -26,9 +26,9 @@ SkillGraph es la armadura; Cursor es un piloto de primera clase.
 
 ## Alcance global (todos los chats)
 
-- **User Rule Cursor:** `SPINE SkillGraph (todos los chats)` (Settings → Rules, id `17018872`)
+- **User Rule Cursor:** `SPINE Talaria (todos los chats)` (Settings → Rules, id `17018872`)
 - **Project rule:** `.cursor/rules/spine.mdc` (`alwaysApply: true`) en este vault
-- Aunque el workspace sea otro proyecto: Act ahí; **Memorize** durable en SkillGraph
+- Aunque el workspace sea otro proyecto: Act ahí; **Memorize** durable en Talaria
 
 ## Estado SPINE (Cursor)
 

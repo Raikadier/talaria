@@ -5,7 +5,7 @@ import re
 from pathlib import Path
 from typing import Any
 
-from skillgraph_cli.util import EXIT_ERROR, EXIT_OK, emit
+from talaria_cli.util import EXIT_ERROR, EXIT_OK, emit
 
 SKILLS_DIR = "skills"
 
@@ -155,7 +155,7 @@ def run_for_profile(
     as_json: bool = False,
 ) -> int:
     """Run default axon_queries declared on a FORGE profile."""
-    from skillgraph_cli.cmds import forge as forge_cmd
+    from talaria_cli.cmds import forge as forge_cmd
 
     profile = forge_cmd.load_profile(vault, forge_id)
     if not profile:

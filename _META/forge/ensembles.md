@@ -15,7 +15,7 @@ Un **ensemble** es un equipo de perfiles con contratos de handoff. Sirve cuando 
 2. **Handoff solo con artefacto** (ADR, plan, task, research note)  
 3. **No pisar ownership** — architect no codea producto; programmer no redefine boundaries  
 4. Ley I/II aplican a **cada** rol y al **resultado conjunto**  
-5. Todo artefacto canónico → vault SkillGraph (SPINE)  
+5. Todo artefacto canónico → vault Talaria (SPINE)  
 
 ## Catálogo de ensembles
 

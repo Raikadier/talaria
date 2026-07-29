@@ -15,7 +15,7 @@ const el = document.getElementById("nav");
 if (el) {
   const path = location.pathname.replace(/index\.html$/, "/") || "/";
   el.innerHTML =
-    `<a class="brand" href="/">Talaria</a><div class="brand-sub">Talaria COS · TCOS</div>` +
+    `<a class="brand" href="/">Talaria</a><div class="brand-sub">SkillGraph COS · SGCOS</div>` +
     links
       .map((l) => {
         const active =

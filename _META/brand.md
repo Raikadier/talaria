@@ -1,25 +1,26 @@
 ---
-tags: [meta, brand, talaria, skillgraph]
-aliases: [Talaria, brand, SGCOS, Mímir]
-version: 1.1
+tags: [meta, brand, talaria]
+aliases: [Talaria, brand, TCOS, Mímir]
+version: 2.0
 ---
 
-# Marca — Talaria / SkillGraph
+# Marca — Talaria
 
 | Capa | Nombre |
 |------|--------|
-| **Comercial** | **Talaria** |
-| **Técnico** | SkillGraph Cognitive Operating System |
-| **Acrónimo** | **SGCOS** |
-| **Repo / vault** | SkillGraph |
+| **Comercial / producto** | **Talaria** |
+| **Técnico** | Talaria Cognitive Operating System |
+| **Acrónimo** | **TCOS** |
+| **Repo** | `talaria` |
+| **CLI** | `talaria` |
 | **Protocolo** | SPINE |
 | **Órganos** | Memoria · AXON · FORGE · SPINE · API · Tools |
 
 ## Por qué Talaria
 
-En la mitología griega, las **Talaria** son las sandalias aladas de Hermes: el mensajero las calza y atraviesa mundos con velocidad y alcance que no tendría a pie. SkillGraph es ese calzado para agentes: un traje/arnés (Memoria, AXON, FORGE, SPINE, API) que multiplica capacidad sin sustituir al piloto.
+En la mitología griega, las **Talaria** son las sandalias aladas de Hermes: el mensajero las calza y atraviesa mundos. Este proyecto es ese calzado para agentes: un traje/arnés (Memoria, AXON, FORGE, SPINE, API) que multiplica capacidad sin sustituir al piloto.
 
-> Alias legacy: *Mímir* (pozo de sabiduría). La marca canónica es **Talaria**.
+> Alias legacy: *Mímir* (pozo). El nombre de producto anterior *SkillGraph* quedó retirado; la marca canónica es **Talaria**.
 
 ## Tagline
 

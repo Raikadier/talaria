@@ -1,5 +1,5 @@
 {
-  "vault": "SkillGraph",
+  "vault": "Talaria",
   "purpose": "Manifest of tools any agent should ensure are installed before ingesting docs/code into this second brain.",
   "python": ">=3.10",
   "node": ">=20",

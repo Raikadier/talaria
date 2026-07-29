@@ -5,7 +5,7 @@
       "args": [
         "-y",
         "obsidian-mcp",
-        "REPLACE_WITH_ABSOLUTE_PATH_TO_SKILLGRAPH_VAULT"
+        "REPLACE_WITH_ABSOLUTE_PATH_TO_TALARIA_VAULT"
       ]
     }
   }

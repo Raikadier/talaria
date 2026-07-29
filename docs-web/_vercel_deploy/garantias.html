@@ -34,11 +34,11 @@
         <li><strong>strict</strong> — gates fallan el proceso; pensado para cierre de sesión y CI.</li>
         <li><strong>draft</strong> — avisos sin bloqueo; exploración y prototipos.</li>
       </ul>
-      <p>Persistencia: <code>.talaria.mode</code>, env <code>TALARIA_MODE</code> o flag <code>--mode</code>.</p>
+      <p>Persistencia: <code>.skillgraph.mode</code>, env <code>SKILLGRAPH_MODE</code> o flag <code>--mode</code>.</p>
 
-<pre>talaria smoke --json
-talaria eval list --json
-talaria mode set strict</pre>
+<pre>python -m skillgraph_cli smoke --json
+python -m skillgraph_cli eval list --json
+python -m skillgraph_cli mode set strict</pre>
     </main>
   </div>
   <script src="/nav.js"></script>

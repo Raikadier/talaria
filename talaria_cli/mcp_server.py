@@ -1,8 +1,8 @@
-"""MCP stdio server — lets any MCP client drive SkillGraph SPINE tools.
+"""MCP stdio server — lets any MCP client drive Talaria SPINE tools.
 
 Run:
-  python -m skillgraph_cli.mcp_server --vault <path>
-  skillgraph mcp
+  talaria.mcp_server --vault <path>
+  talaria mcp
 """
 from __future__ import annotations
 
@@ -22,51 +22,51 @@ def _ensure_path() -> Path:
 
 _ensure_path()
 
-from skillgraph_cli.agent_contract import agent_contract  # noqa: E402
-from skillgraph_cli.cmds import axon as axon_cmd  # noqa: E402
-from skillgraph_cli.cmds import boot as boot_cmd  # noqa: E402
-from skillgraph_cli.cmds import forge as forge_cmd  # noqa: E402
-from skillgraph_cli.cmds import import_chats as import_cmd  # noqa: E402
-from skillgraph_cli.cmds import ingest as ingest_cmd  # noqa: E402
-from skillgraph_cli.cmds import smoke as smoke_cmd  # noqa: E402
-from skillgraph_cli.cmds import status as status_cmd  # noqa: E402
-from skillgraph_cli.cmds import verify as verify_cmd  # noqa: E402
-from skillgraph_cli.vault import find_vault  # noqa: E402
+from talaria_cli.agent_contract import agent_contract  # noqa: E402
+from talaria_cli.cmds import axon as axon_cmd  # noqa: E402
+from talaria_cli.cmds import boot as boot_cmd  # noqa: E402
+from talaria_cli.cmds import forge as forge_cmd  # noqa: E402
+from talaria_cli.cmds import import_chats as import_cmd  # noqa: E402
+from talaria_cli.cmds import ingest as ingest_cmd  # noqa: E402
+from talaria_cli.cmds import smoke as smoke_cmd  # noqa: E402
+from talaria_cli.cmds import status as status_cmd  # noqa: E402
+from talaria_cli.cmds import verify as verify_cmd  # noqa: E402
+from talaria_cli.vault import find_vault  # noqa: E402
 
 
 TOOLS = [
     {
-        "name": "skillgraph_describe",
-        "description": "Return the SkillGraph agent connection contract (commands, MCP, rules).",
+        "name": "talaria_describe",
+        "description": "Return Talaria agent connection contract (commands, MCP, rules).",
         "inputSchema": {"type": "object", "properties": {}, "additionalProperties": False},
     },
     {
-        "name": "skillgraph_doctor",
+        "name": "talaria_doctor",
         "description": "Check tools + organism structure (Phase B doctor).",
         "inputSchema": {"type": "object", "properties": {}, "additionalProperties": False},
     },
     {
-        "name": "skillgraph_boot",
-        "description": "Install missing SkillGraph tools (markitdown, graphify, obsidian-mcp).",
+        "name": "talaria_boot",
+        "description": "Install missing Talaria tools (markitdown, graphify, obsidian-mcp).",
         "inputSchema": {"type": "object", "properties": {}, "additionalProperties": False},
     },
     {
-        "name": "skillgraph_status",
+        "name": "talaria_status",
         "description": "Return suit status: vault path, Mark level, tool presence.",
         "inputSchema": {"type": "object", "properties": {}, "additionalProperties": False},
     },
     {
-        "name": "skillgraph_vault_path",
-        "description": "Return absolute path to the SkillGraph vault.",
+        "name": "talaria_vault_path",
+        "description": "Return absolute path to the Talaria vault.",
         "inputSchema": {"type": "object", "properties": {}, "additionalProperties": False},
     },
     {
-        "name": "skillgraph_verify_boot",
+        "name": "talaria_verify_boot",
         "description": "SPINE entry gate: organism integrity + Mark >= Mk.1.",
         "inputSchema": {"type": "object", "properties": {}, "additionalProperties": False},
     },
     {
-        "name": "skillgraph_verify_close",
+        "name": "talaria_verify_close",
         "description": "SPINE exit gate: validate a session scorecard markdown file.",
         "inputSchema": {
             "type": "object",
@@ -79,12 +79,12 @@ TOOLS = [
         },
     },
     {
-        "name": "skillgraph_smoke",
+        "name": "talaria_smoke",
         "description": "Run Phase B smoke suite (describe, organism, verify, AXON, FORGE).",
         "inputSchema": {"type": "object", "properties": {}, "additionalProperties": False},
     },
     {
-        "name": "skillgraph_forge_list",
+        "name": "talaria_forge_list",
         "description": "List FORGE profiles (and optionally ensembles).",
         "inputSchema": {
             "type": "object",
@@ -93,7 +93,7 @@ TOOLS = [
         },
     },
     {
-        "name": "skillgraph_forge_show",
+        "name": "talaria_forge_show",
         "description": "Show a FORGE profile: gates, DoD, activation.",
         "inputSchema": {
             "type": "object",
@@ -103,7 +103,7 @@ TOOLS = [
         },
     },
     {
-        "name": "skillgraph_forge_check",
+        "name": "talaria_forge_check",
         "description": "Validate FORGE profile structure and optional deliverable gates.",
         "inputSchema": {
             "type": "object",
@@ -117,7 +117,7 @@ TOOLS = [
         },
     },
     {
-        "name": "skillgraph_forge_run",
+        "name": "talaria_forge_run",
         "description": "Emit FORGE activation packet for agents.",
         "inputSchema": {
             "type": "object",
@@ -130,7 +130,7 @@ TOOLS = [
         },
     },
     {
-        "name": "skillgraph_axon_search",
+        "name": "talaria_axon_search",
         "description": "Search AXON skills/ by query text.",
         "inputSchema": {
             "type": "object",
@@ -145,7 +145,7 @@ TOOLS = [
         },
     },
     {
-        "name": "skillgraph_axon_for_profile",
+        "name": "talaria_axon_for_profile",
         "description": "Run default axon_queries from a FORGE profile.",
         "inputSchema": {
             "type": "object",
@@ -158,12 +158,12 @@ TOOLS = [
         },
     },
     {
-        "name": "skillgraph_axon_stats",
+        "name": "talaria_axon_stats",
         "description": "AXON skill and domain counts.",
         "inputSchema": {"type": "object", "properties": {}, "additionalProperties": False},
     },
     {
-        "name": "skillgraph_ingest_doc",
+        "name": "talaria_ingest_doc",
         "description": "Convert a document or URL to Markdown into memory/inbox/converted.",
         "inputSchema": {
             "type": "object",
@@ -176,7 +176,7 @@ TOOLS = [
         },
     },
     {
-        "name": "skillgraph_ingest_project",
+        "name": "talaria_ingest_project",
         "description": "Run Graphify on a code project and mirror outputs to memory/graphs.",
         "inputSchema": {
             "type": "object",
@@ -189,49 +189,49 @@ TOOLS = [
         },
     },
     {
-        "name": "skillgraph_import_chats",
+        "name": "talaria_import_chats",
         "description": "Import Hermes / Claude Code / Cursor chats into memory/conversations.",
         "inputSchema": {"type": "object", "properties": {}, "additionalProperties": False},
     },
 ]
 
 
-class SkillGraphMCP:
+class TalariaMCP:
     def __init__(self, vault: Path):
         self.vault = vault
 
     def call(self, name: str, arguments: dict[str, Any] | None = None) -> dict[str, Any]:
         arguments = arguments or {}
-        if name == "skillgraph_describe":
+        if name == "talaria_describe":
             return agent_contract(self.vault)
-        if name == "skillgraph_doctor":
+        if name == "talaria_doctor":
             code = verify_cmd.run_doctor(self.vault, as_json=True)
             return {"ok": code == 0, "exit": code}
-        if name == "skillgraph_boot":
+        if name == "talaria_boot":
             code = boot_cmd.run_boot(self.vault, check_only=False, as_json=True)
             return {"ok": code == 0, "exit": code}
-        if name == "skillgraph_status":
+        if name == "talaria_status":
             return status_cmd.get_status(self.vault)
-        if name == "skillgraph_vault_path":
+        if name == "talaria_vault_path":
             return {"vault": str(self.vault)}
-        if name == "skillgraph_verify_boot":
+        if name == "talaria_verify_boot":
             return verify_cmd.evaluate_boot(self.vault)
-        if name == "skillgraph_verify_close":
+        if name == "talaria_verify_close":
             return verify_cmd.evaluate_close(
                 self.vault,
                 arguments["scorecard"],
                 allow_draft=bool(arguments.get("draft")),
             )
-        if name == "skillgraph_smoke":
+        if name == "talaria_smoke":
             code = smoke_cmd.run_smoke(self.vault, as_json=True)
             return {"ok": code == 0, "exit": code}
-        if name == "skillgraph_forge_list":
+        if name == "talaria_forge_list":
             profiles = forge_cmd.list_profiles(self.vault)
             data: dict[str, Any] = {"ok": True, "count": len(profiles), "profiles": profiles}
             if arguments.get("ensembles"):
                 data["ensembles"] = forge_cmd.list_ensembles(self.vault)
             return data
-        if name == "skillgraph_forge_show":
+        if name == "talaria_forge_show":
             profile = forge_cmd.load_profile(self.vault, arguments["profile"])
             if not profile:
                 return {"ok": False, "error": f"profile not found: {arguments['profile']}"}
@@ -247,7 +247,7 @@ class SkillGraphMCP:
                 },
                 "structure": forge_cmd.evaluate_profile_structure(profile),
             }
-        if name == "skillgraph_forge_check":
+        if name == "talaria_forge_check":
             profile = forge_cmd.load_profile(self.vault, arguments["profile"])
             if not profile:
                 return {"ok": False, "error": f"profile not found: {arguments['profile']}"}
@@ -284,7 +284,7 @@ class SkillGraphMCP:
                 "forge_id": arguments["profile"],
                 "results": parts,
             }
-        if name == "skillgraph_forge_run":
+        if name == "talaria_forge_run":
             profile = forge_cmd.load_profile(self.vault, arguments["profile"])
             if not profile:
                 return {"ok": False, "error": f"profile not found: {arguments['profile']}"}
@@ -309,7 +309,7 @@ class SkillGraphMCP:
                 queries = qlist or [str(meta.get("specialty") or arguments["profile"])[:60]]
                 packet["axon"] = axon_cmd.bundles_for_queries(self.vault, queries, limit=8)
             return packet
-        if name == "skillgraph_axon_search":
+        if name == "talaria_axon_search":
             return axon_cmd.search_skills(
                 self.vault,
                 arguments["query"],
@@ -317,7 +317,7 @@ class SkillGraphMCP:
                 tag=arguments.get("tag"),
                 limit=int(arguments.get("limit") or 15),
             )
-        if name == "skillgraph_axon_for_profile":
+        if name == "talaria_axon_for_profile":
             profile = forge_cmd.load_profile(self.vault, arguments["profile"])
             if not profile:
                 return {"ok": False, "error": f"profile not found: {arguments['profile']}"}
@@ -336,19 +336,19 @@ class SkillGraphMCP:
                 "axon_queries": queries,
                 "bundles": bundles,
             }
-        if name == "skillgraph_axon_stats":
+        if name == "talaria_axon_stats":
             return axon_cmd.axon_stats(self.vault)
-        if name == "skillgraph_ingest_doc":
+        if name == "talaria_ingest_doc":
             code = ingest_cmd.run_ingest_doc(
                 self.vault, arguments["source"], arguments.get("output"), as_json=True
             )
             return {"ok": code == 0, "exit": code, "source": arguments["source"]}
-        if name == "skillgraph_ingest_project":
+        if name == "talaria_ingest_project":
             code = ingest_cmd.run_ingest_project(
                 self.vault, arguments["path"], arguments.get("name"), as_json=True
             )
             return {"ok": code == 0, "exit": code, "path": arguments["path"]}
-        if name == "skillgraph_import_chats":
+        if name == "talaria_import_chats":
             code = import_cmd.run_import_chats(self.vault, as_json=True)
             return {"ok": code == 0, "exit": code}
         return {"error": f"unknown tool: {name}"}
@@ -396,7 +396,7 @@ def _error(req_id: Any, code: int, message: str) -> None:
 
 
 def serve(vault: Path) -> int:
-    api = SkillGraphMCP(vault)
+    api = TalariaMCP(vault)
     # silence tool print noise into stderr so stdio RPC stays clean
     # (boot/status print to stdout — redirect temporarily in call)
 
@@ -420,7 +420,7 @@ def serve(vault: Path) -> int:
                 {
                     "protocolVersion": params.get("protocolVersion") or "2024-11-05",
                     "capabilities": {"tools": {}},
-                    "serverInfo": {"name": "skillgraph", "version": "0.1.0"},
+                    "serverInfo": {"name": "talaria", "version": "0.1.0"},
                 },
             )
             continue
@@ -463,7 +463,7 @@ def serve(vault: Path) -> int:
 
 
 def main(argv: list[str] | None = None) -> int:
-    p = argparse.ArgumentParser(description="SkillGraph MCP server (stdio)")
+    p = argparse.ArgumentParser(description="Talaria MCP server (stdio)")
     p.add_argument("--vault", help="Vault path")
     args = p.parse_args(argv)
     vault = find_vault(args.vault)

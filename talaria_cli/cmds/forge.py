@@ -5,7 +5,7 @@ import re
 from pathlib import Path
 from typing import Any
 
-from skillgraph_cli.util import EXIT_ERROR, EXIT_OK, EXIT_USAGE, emit
+from talaria_cli.util import EXIT_ERROR, EXIT_OK, EXIT_USAGE, emit
 
 PROFILES_DIR = Path("_META/forge/profiles")
 ENSEMBLES_DIR = Path("_META/forge/ensembles")
@@ -357,15 +357,15 @@ def run_run(vault: Path, forge_id: str, *, with_axon: bool = False, as_json: boo
         "axon_queries": axon_queries,
         "instructions": [
             "Activate with the activation string",
-            "Retrieve via: skillgraph axon for-profile <id> --json (or axon search)",
+            "Retrieve via: talaria axon for-profile <id> --json (or axon search)",
             "Execute profile playbook in the profile note",
             "Write deliverable with forge_profile + forge_gates frontmatter (G1: pass, ...)",
-            "Run: skillgraph forge check --profile <id> --deliverable <path> --json",
-            "Then skillgraph verify close --scorecard <scorecard> --json",
+            "Run: talaria forge check --profile <id> --deliverable <path> --json",
+            "Then talaria verify close --scorecard <scorecard> --json",
         ],
     }
     if with_axon:
-        from skillgraph_cli.cmds import axon as axon_cmd
+        from talaria_cli.cmds import axon as axon_cmd
 
         queries = list(axon_queries) if axon_queries else [str(meta.get("specialty") or forge_id)[:60]]
         packet["axon"] = axon_cmd.bundles_for_queries(vault, queries, limit=8)

@@ -1,8 +1,8 @@
-# SkillGraph / SPINE — addendum for Hermes pilot
+# Talaria / SPINE — addendum for Hermes pilot
 
 You have a full native toolset (browser, web, file, terminal, memory/mem0, skills, MCP). Keep using it.
 
-SkillGraph vault is your canonical second brain (SPINE protocol):
+Talaria vault is your canonical second brain (SPINE protocol):
 D:\OneDrive - unicesar.edu.co\davidbarcelo0411@g\Business Ideas\SkillGraph
 
 Rules:

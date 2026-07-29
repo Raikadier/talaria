@@ -5,7 +5,7 @@ version: 1.0
 status: active
 ---
 
-# Arquitectura — CLI `skillgraph`
+# Arquitectura — CLI `talaria`
 
 Diseño: [[cli-design]] · Marco: [[ironman-framework]]
 
@@ -14,11 +14,11 @@ Diseño: [[cli-design]] · Marco: [[ironman-framework]]
 ```
 ┌─────────────────────────────────────────────┐
 │  Piloto (humano / agente)                   │
-│    skillgraph <cmd>                         │
+│    talaria <cmd>                         │
 └──────────────────┬──────────────────────────┘
                    │
 ┌──────────────────▼──────────────────────────┐
-│  skillgraph_cli (facade)                    │
+│  talaria_cli (facade)                    │
 │  · argparse · vault discovery · --json      │
 └──────────────────┬──────────────────────────┘
                    │
@@ -29,7 +29,7 @@ Diseño: [[cli-design]] · Marco: [[ironman-framework]]
        └───────────┴───────────┴──────────────┘
                    │
                    ▼
-         SkillGraph VAULT (Markdown)
+         Talaria VAULT (Markdown)
 ```
 
 La CLI **no** posee estado propio. Estado = filesystem del vault + tools del sistema.
@@ -37,17 +37,17 @@ La CLI **no** posee estado propio. Estado = filesystem del vault + tools del sis
 ## Layout de código
 
 ```
-SkillGraph/
-  pyproject.toml              # entry point skillgraph
-  skillgraph.cmd              # Windows helper
+Talaria/
+  pyproject.toml              # entry point talaria
+  talaria.cmd              # Windows helper
   bootstrap.py                # existente (invocado)
   _tools/
     ingest_document.py
     ingest_project.py
     import_agent_chats.py
-  skillgraph_cli/
+  talaria_cli/
     __init__.py
-    __main__.py               # python -m skillgraph_cli
+    __main__.py               # talaria
     cli.py                    # router argparse
     vault.py                  # resolución de raíz
     util.py                   # run, json_out, exit codes
@@ -65,16 +65,16 @@ SkillGraph/
 Orden:
 
 1. `--vault PATH`
-2. Env `SKILLGRAPH_VAULT`
+2. Env `TALARIA_VAULT`
 3. Caminar desde `cwd` hacia arriba: existe `Home.md` ∧ `AGENTS.md` ∧ `bootstrap.py`
-4. Paquete instalado: padre de `skillgraph_cli/` si cumple (3)
+4. Paquete instalado: padre de `talaria_cli/` si cumple (3)
 5. Error claro si no se encuentra
 
 ## Contratos de comandos
 
 | Cmd | Input | Side effects | Exit |
 |-----|-------|--------------|------|
-| boot | `[--check-only]` implícito en doctor | pip/npm, dirs, `.skillgraph.local.json` | 0/1 |
+| boot | `[--check-only]` implícito en doctor | pip/npm, dirs, `.talaria.local.json` | 0/1 |
 | doctor | — | ninguno (solo lectura) | 0 si Mk.2 ok else 1 |
 | status | `[--json]` | ninguno | 0 |
 | ingest doc | `source`, `[-o]` | escribe `memory/inbox/converted/` | 0/1 |
@@ -97,7 +97,7 @@ El **Orient** canónico lo sigue haciendo el agente (mover de inbox a conversati
 
 ```toml
 [project.scripts]
-skillgraph = "skillgraph_cli.cli:main"
+talaria = "talaria_cli.cli:main"
 ```
 
 `pip install -e .` desde la raíz del vault.

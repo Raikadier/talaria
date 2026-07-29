@@ -1,4 +1,4 @@
-# Research: evaluación SkillGraph / Talaria
+# Research: evaluación Talaria
 
 ## Pregunta y alcance
 ¿El sistema FORGE+SPINE produce briefs más auditables que un chat genérico?

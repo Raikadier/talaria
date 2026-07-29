@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from skillgraph_cli.util import EXIT_ERROR, EXIT_OK, emit, tool_present
+from talaria_cli.util import EXIT_ERROR, EXIT_OK, emit, tool_present
 
 
 def get_status(vault: Path) -> dict:
@@ -23,7 +23,7 @@ def get_status(vault: Path) -> dict:
         "ironman_status_note": note_present,  # legacy key
         "pipeline": "spine",
         "framework": "SPINE",
-        "cli": "skillgraph",
+        "cli": "talaria",
         "ok": bool(tools["markitdown"] and tools["graphify"] and tools["obsidian_mcp"]),
     }
 

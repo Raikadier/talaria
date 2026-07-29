@@ -5,24 +5,24 @@ import json
 import sys
 from pathlib import Path
 
-from skillgraph_cli import __version__
-from skillgraph_cli.agent_contract import agent_contract, connection_snippet
-from skillgraph_cli.cmds import axon as axon_cmd
-from skillgraph_cli.cmds import boot as boot_cmd
-from skillgraph_cli.cmds import eval_cmd
-from skillgraph_cli.cmds import forge as forge_cmd
-from skillgraph_cli.cmds import import_chats as import_cmd
-from skillgraph_cli.cmds import ingest as ingest_cmd
-from skillgraph_cli.cmds import smoke as smoke_cmd
-from skillgraph_cli.cmds import status as status_cmd
-from skillgraph_cli.cmds import verify as verify_cmd
-from skillgraph_cli.mode import mode_contract, resolve_mode
-from skillgraph_cli.util import EXIT_ERROR, EXIT_OK, EXIT_USAGE, emit
-from skillgraph_cli.vault import find_vault
+from talaria_cli import __version__
+from talaria_cli.agent_contract import agent_contract, connection_snippet
+from talaria_cli.cmds import axon as axon_cmd
+from talaria_cli.cmds import boot as boot_cmd
+from talaria_cli.cmds import eval_cmd
+from talaria_cli.cmds import forge as forge_cmd
+from talaria_cli.cmds import import_chats as import_cmd
+from talaria_cli.cmds import ingest as ingest_cmd
+from talaria_cli.cmds import smoke as smoke_cmd
+from talaria_cli.cmds import status as status_cmd
+from talaria_cli.cmds import verify as verify_cmd
+from talaria_cli.mode import mode_contract, resolve_mode
+from talaria_cli.util import EXIT_ERROR, EXIT_OK, EXIT_USAGE, emit
+from talaria_cli.vault import find_vault
 
 
 HELP_SPINE = """
-Talaria / SkillGraph CLI — SPINE + órganos.
+Talaria CLI — SPINE + órganos (TCOS).
 
 describe | connect | mcp | doctor | smoke | status
 verify boot|close   forge list|show|check|run
@@ -38,18 +38,17 @@ def _add_json(sp: argparse.ArgumentParser) -> None:
 
 def build_parser() -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(
-        prog="skillgraph",
-        description="SkillGraph CLI — SPINE orchestration + agent connector",
+        prog="talaria",
+        description="Talaria CLI — SPINE orchestration + agent connector (TCOS)",
     )
-    p.add_argument("--vault", help="Absolute path to SkillGraph vault")
+    p.add_argument("--vault", help="Absolute path to Talaria vault")
     p.add_argument("--json", action="store_true", help="JSON output when supported")
     p.add_argument(
         "--mode",
         choices=["strict", "draft"],
-        help="SPINE mode (default: .skillgraph.mode or SKILLGRAPH_MODE or strict)",
+        help="SPINE mode (default: .talaria.mode or TALARIA_MODE or strict)",
     )
-    p.add_argument("--version", action="version", version=f"skillgraph {__version__}")
-
+    p.add_argument("--version", action="version", version=f"talaria {__version__}")
     sub = p.add_subparsers(dest="command")
 
     for name, help_txt in (
@@ -171,7 +170,7 @@ def build_parser() -> argparse.ArgumentParser:
     mode_sub = mode_p.add_subparsers(dest="mode_kind")
     mget = mode_sub.add_parser("get", help="Show current mode")
     _add_json(mget)
-    mset = mode_sub.add_parser("set", help="Persist mode to .skillgraph.mode")
+    mset = mode_sub.add_parser("set", help="Persist mode to .talaria.mode")
     _add_json(mset)
     mset.add_argument("value", choices=["strict", "draft"])
 
@@ -242,7 +241,7 @@ def main(argv: list[str] | None = None) -> int:
             emit({"command": "mode get", "mode": m, **mode_contract(m)}, as_json or True)
             return EXIT_OK
         if args.mode_kind == "set":
-            (vault / ".skillgraph.mode").write_text(args.value + "\n", encoding="utf-8")
+            (vault / ".talaria.mode").write_text(args.value + "\n", encoding="utf-8")
             emit(
                 {"command": "mode set", "mode": args.value, **mode_contract(args.value)},
                 as_json or True,
@@ -317,7 +316,7 @@ def main(argv: list[str] | None = None) -> int:
         emit(data, True)
         return EXIT_OK
     if args.command == "mcp":
-        from skillgraph_cli.mcp_server import serve
+        from talaria_cli.mcp_server import serve
 
         return serve(vault)
     if args.command == "ingest":

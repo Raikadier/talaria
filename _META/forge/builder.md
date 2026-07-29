@@ -45,7 +45,7 @@ Completar: sin perfil → X; con perfil → Y; amplificadores A/B/C. Mínimo **3
 Si hay ensemble: especificar formato de entrada/salida (ADR, brief, patch set, etc.).
 
 ### 8. Retrieve map
-Listar: ejes/dominios SkillGraph, tipos de fuente externa, prohibiciones de fuente.
+Listar: ejes/dominios Talaria, tipos de fuente externa, prohibiciones de fuente.
 
 ### 9. Fallos y activación
 Tabla de fallos + bloque de activación copy-paste.

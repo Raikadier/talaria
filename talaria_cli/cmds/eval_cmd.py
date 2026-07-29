@@ -5,7 +5,7 @@ import json
 from pathlib import Path
 from typing import Any
 
-from skillgraph_cli.util import EXIT_ERROR, EXIT_OK, emit
+from talaria_cli.util import EXIT_ERROR, EXIT_OK, emit
 
 EVALS_DIR = Path("_META/evals")
 

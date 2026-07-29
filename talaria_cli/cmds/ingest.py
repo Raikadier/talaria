@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from skillgraph_cli.util import EXIT_ERROR, EXIT_OK, EXIT_USAGE, emit, run_python_script
+from talaria_cli.util import EXIT_ERROR, EXIT_OK, EXIT_USAGE, emit, run_python_script
 
 
 def run_ingest_doc(vault: Path, source: str, output: str | None = None, *, as_json: bool = False) -> int:

@@ -1,13 +1,13 @@
 ---
-tags: [meta, architecture, skillgraph, organism, api]
-aliases: [arquitectura-skillgraph, project-structure, estructura-skillgraph]
+tags: [meta, architecture, talaria, organism, api]
+aliases: [arquitectura-talaria, project-structure, estructura-talaria]
 version: 1.0
 status: active
 ---
 
-# SkillGraph — estructura del proyecto (organismo + API)
+# Talaria — estructura del proyecto (organismo + API)
 
-**Proyecto único:** SkillGraph  
+**Proyecto único:** Talaria  
 **Metáfora interna:** organismo (órganos con funciones vitales)  
 **Metáfora externa:** **API de capacidades** para cualquier agente  
 
@@ -17,7 +17,7 @@ Mapa vivo de órganos: [[organism]] · Protocolo: [[spine-framework]] · Conexi�
 
 ## Opinión de diseño (posición oficial)
 
-SkillGraph **sí** es una super-API que un agente usa para maximizar capacidad — pero **no solo** una caja de tools.
+Talaria **sí** es una super-API que un agente usa para maximizar capacidad — pero **no solo** una caja de tools.
 
 | Si solo fuera… | Faltaría… |
 |----------------|-----------|
@@ -27,7 +27,7 @@ SkillGraph **sí** es una super-API que un agente usa para maximizar capacidad �
 
 **Definición corta:**
 
-> SkillGraph = **sustrato cognitivo + estado canónico + protocolo SPINE**, expuesto como **API (CLI/MCP)** para que cualquier piloto multiplique capacidad sin inventar otro cerebro.
+> Talaria = **sustrato cognitivo + estado canónico + protocolo SPINE**, expuesto como **API (CLI/MCP)** para que cualquier piloto multiplique capacidad sin inventar otro cerebro.
 
 - **Hacia fuera:** API (descubrir → conectar → operar → persistir).  
 - **Hacia dentro:** organismo (órganos que no se pisan).  
@@ -44,7 +44,7 @@ SkillGraph **sí** es una super-API que un agente usa para maximizar capacidad �
 └───────────────────────────┬─────────────────────────────────┘
                             │ describe / connect / MCP / CLI
 ┌───────────────────────────▼─────────────────────────────────┐
-│ 1. SUPERFICIE API     skillgraph CLI + MCP + contract JSON  │
+│ 1. SUPERFICIE API     talaria CLI + MCP + contract JSON  │
 │    Órgano: interfaz     [[cli]] · [[agent-connect]]         │
 └───────────────────────────┬─────────────────────────────────┘
                             │ obedece
@@ -79,14 +79,14 @@ Los **adaptadores** (`_META/adapters/`) no son un órgano de datos: son **traduc
 ## Estructura de carpetas (layout canónico)
 
 ```
-SkillGraph/                          ← raíz del organismo (= proyecto)
+Talaria/                          ← raíz del organismo (= proyecto)
 │
 ├── Home.md                          ← puerta humana / agente
 ├── AGENTS.md · CLAUDE.md            ← constitución por piloto
 ├── SPINE-STATUS-CURSOR.md           ← notify de estado
 ├── PORTABILITY.md · README.md
-├── bootstrap.py · build_skillgraph.py
-├── pyproject.toml · skillgraph.cmd
+├── bootstrap.py · build_axon_graph.py
+├── pyproject.toml · talaria.cmd
 │
 ├── memory/                          ← ÓRGANO: Memoria
 │   ├── conversations/ decisions/ projects/ learnings/
@@ -107,7 +107,7 @@ SkillGraph/                          ← raíz del organismo (= proyecto)
 │   ├── agent-protocol.md · agent-connect.md
 │   └── cli-*.md · mcp-obsidian.md
 │
-├── skillgraph_cli/                  ← ÓRGANO: superficie API (código)
+├── talaria_cli/                  ← ÓRGANO: superficie API (código)
 │   ├── cli.py · mcp_server.py · agent_contract.py
 │   └── cmds/
 │
@@ -127,7 +127,7 @@ SkillGraph/                          ← raíz del organismo (= proyecto)
 | ID | Nombre uso | Función | Contrato de crecimiento |
 |----|------------|---------|-------------------------|
 | `memory` | Memoria | Estado episódico y decisiones | Carpetas tipadas + [[agent-protocol]] |
-| `axon` | AXON | Capacidades enlazadas | Solo vía `build_skillgraph.py` / taxonomía |
+| `axon` | AXON | Capacidades enlazadas | Solo vía `build_axon_graph.py` / taxonomía |
 | `forge` | FORGE | Roles elite | Solo vía [[forge-builder]] + Leyes I/II |
 | `spine` | SPINE | Protocolo / ownership | Cambios = decisión en `memory/decisions/` |
 | `api` | CLI/MCP | Superficie máquina | `describe --json` estable; bump version |
@@ -150,10 +150,10 @@ Plantilla mínima de hub:
 
 ```markdown
 # <ACRONIMO> — <Nombre técnico>
-Órgano de SkillGraph. Función: …
+Órgano de Talaria. Función: …
 Dónde: …
 SPINE: capas …
-API: (ninguna | skillgraph <cmd> | MCP tool)
+API: (ninguna | talaria <cmd> | MCP tool)
 Hermanos: …
 ```
 
@@ -178,7 +178,7 @@ La API **no reemplaza** al piloto: le da estado compartido, skills, roles y un p
 
 | Anti-patrón | Por qué duele |
 |-------------|----------------|
-| “SkillGraph es solo MCP tools” | Se pierde Memoria/FORGE/AXON |
+| “Talaria es solo MCP tools” | Se pierde Memoria/FORGE/AXON |
 | Nuevo órgano con su propia DB | Rompe una verdad |
 | FORGE sin gates | Deja de ser FORGE |
 | Regenerar AXON a mano archivo a archivo | Inconsistencia masiva |
@@ -186,11 +186,11 @@ La API **no reemplaza** al piloto: le da estado compartido, skills, roles y un p
 
 ## Hardening (garantías)
 
-Plan para que funcionamiento y resultados no dependan solo de disciplina del piloto: [[2026-07-28-garantias-skillgraph]]
+Plan para que funcionamiento y resultados no dependan solo de disciplina del piloto: [[2026-07-28-garantias-talaria]]
 
 ---
 
 ## Referencias
 
 - [[organism]] · [[Home]] · [[spine-framework]] · [[axon]] · [[forge]]  
-- [[cli]] · [[cli-architecture]] · [[agent-connect]] · [[SkillGraph]]
+- [[cli]] · [[cli-architecture]] · [[agent-connect]] · [[Talaria]]
