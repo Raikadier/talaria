@@ -79,14 +79,21 @@ Los **adaptadores** (`_META/adapters/`) no son un órgano de datos: son **traduc
 ## Estructura de carpetas (layout canónico)
 
 ```
-Talaria/                          ← raíz del organismo (= proyecto)
+Talaria/                          ← raíz del organismo (= vault Obsidian)
 │
-├── Home.md                          ← puerta humana / agente
-├── AGENTS.md · CLAUDE.md            ← constitución por piloto
-├── SPINE-STATUS-CURSOR.md           ← notify de estado
-├── PORTABILITY.md · README.md
+├── Home.md · AGENTS.md · CLAUDE.md
+├── README.md · PORTABILITY.md · LICENSE
+├── SPINE-STATUS-CURSOR.md
 ├── bootstrap.py · build_axon_graph.py
 ├── pyproject.toml · talaria.cmd
+│
+├── src/talaria_cli/                 ← ÓRGANO: superficie API (código instalable)
+│   ├── cli.py · mcp_server.py · agent_contract.py · vault.py
+│   └── cmds/
+│
+├── scripts/                         ← install.sh · install.ps1 · launcher unix
+├── apps/docs-web/                   ← sitio Next.js (fuera del tejido Markdown)
+├── tests/                           ← smoke unitarios del paquete
 │
 ├── memory/                          ← ÓRGANO: Memoria
 │   ├── conversations/ decisions/ projects/ learnings/
@@ -97,19 +104,10 @@ Talaria/                          ← raíz del organismo (= proyecto)
 │   └── <dominio>/…                  ← notas skill + wiki-links
 │
 ├── _META/                           ← constitución + índices
-│   ├── organism.md                  ← mapa de órganos
-│   ├── architecture.md              ← ESTE archivo
-│   ├── spine-framework.md           ← ÓRGANO: SPINE
-│   ├── axon.md                      ← hub AXON
-│   ├── forge/                       ← ÓRGANO: FORGE
-│   ├── adapters/                    ← traductores piloto
+│   ├── organism.md · architecture.md · spine-framework.md
+│   ├── axon.md · forge/ · adapters/
 │   ├── domains/ · axes/ · taxonomy.md
-│   ├── agent-protocol.md · agent-connect.md
-│   └── cli-*.md · mcp-obsidian.md
-│
-├── talaria_cli/                  ← ÓRGANO: superficie API (código)
-│   ├── cli.py · mcp_server.py · agent_contract.py
-│   └── cmds/
+│   └── agent-protocol.md · agent-connect.md · axon-build-report.md
 │
 ├── tools/                           ← ÓRGANO: Tools (manifest, connect)
 ├── _tools/                          ← scripts de ingest/import
@@ -118,7 +116,10 @@ Talaria/                          ← raíz del organismo (= proyecto)
 └── .obsidian/                       ← UI del tejido (opcional)
 ```
 
-**Regla:** si algo es “verdad durable”, vive en Markdown bajo esta raíz. El código CLI solo **orquesta**.
+**Reglas:**
+- Si algo es “verdad durable”, vive en Markdown bajo esta raíz. El código CLI solo **orquesta**.
+- El vault permanece en la raíz para no romper Obsidian/wiki-links.
+- El paquete Python usa layout `src/` (`pip install -e .`).
 
 ---
 

@@ -1,5 +1,11 @@
 #!/usr/bin/env python3
-"""Scan skill banks and build an Obsidian SkillGraph vault."""
+"""Scan skill banks and build the Talaria AXON graph (Obsidian notes).
+
+Vault root = directory of this file (portable).
+Skill sources:
+  1) TALARIA_SKILL_SOURCES — os.pathsep-separated paths
+  2) defaults below (skipped if missing)
+"""
 from __future__ import annotations
 
 import hashlib
@@ -11,11 +17,27 @@ import time
 from collections import defaultdict
 from pathlib import Path
 
-VAULT = Path(r"D:\OneDrive - unicesar.edu.co\Business Ideas\SkillGraph")
-SOURCES = [
-    Path(r"C:\Users\david\AppData\Local\hermes\skills"),
-    Path(r"C:\Users\david\Skills"),
-]
+VAULT = Path(__file__).resolve().parent
+
+
+def _default_sources() -> list[Path]:
+    home = Path.home()
+    return [
+        home / "AppData/Local/hermes/skills",
+        home / "Skills",
+        home / ".hermes/skills",
+        home / "Library/Application Support/hermes/skills",
+    ]
+
+
+def _resolve_sources() -> list[Path]:
+    env = os.environ.get("TALARIA_SKILL_SOURCES", "").strip()
+    if env:
+        return [Path(p).expanduser() for p in env.split(os.pathsep) if p.strip()]
+    return [p for p in _default_sources() if p.exists()]
+
+
+SOURCES = _resolve_sources()
 
 AXES = {
     "youtube": ["youtube", "video", "thumbnail", "script", "shorts", "channel"],
@@ -216,7 +238,9 @@ def yaml_escape(s: str) -> str:
 
 def main() -> None:
     t0 = time.time()
-    print("=== SkillGraph builder ===")
+    print("=== Talaria AXON builder ===")
+    if not SOURCES:
+        print("[warn] no skill sources found; set TALARIA_SKILL_SOURCES or install local skill banks")
     files = find_skill_files()
     print(f"[scan] found {len(files)} SKILL.md files")
 
@@ -496,13 +520,18 @@ def main() -> None:
     size_bytes = dir_size(VAULT)
     size_mb = size_bytes / (1024 * 1024)
 
-    # README
+    # Build report (never overwrite project README)
     top_domains = sorted(by_domain.items(), key=lambda x: -len(x[1]))[:25]
     domain_table = "\n".join(f"| [[{d}]] | {len(ks)} |" for d, ks in top_domains)
-    readme = f"""# SkillGraph — Segundo cerebro de skills
+    sources_list = "\n".join(f"- `{p}`" for p in SOURCES) or "- _(ninguna; define TALARIA_SKILL_SOURCES)_"
+    report = f"""---
+tags: [meta, axon, build-report]
+status: generated
+---
 
-Vault Obsidian con **grafo interconectado** de skills indexadas desde Hermes y Skills de David.
-Sincronizado vía OneDrive.
+# AXON build report
+
+Generado por `build_axon_graph.py`. El README del proyecto **no** se modifica.
 
 ## Resumen
 
@@ -517,17 +546,9 @@ Sincronizado vía OneDrive.
 
 ### Fuentes escaneadas
 
-1. `C:\\Users\\david\\AppData\\Local\\hermes\\skills\\` (banco Hermes)
-2. `C:\\Users\\david\\Skills\\` (agensi-free, aiskillsbank, youtube-social-pack)
+{sources_list}
 
 Los duplicados por nombre se indexan **una sola vez**; ambas rutas aparecen en el frontmatter `sources`.
-
-## Cómo navegar el grafo
-
-1. Abre esta carpeta como vault en Obsidian (**Open folder as vault**).
-2. Usa **Graph View** para ver el mapa; filtra por `#youtube`, `#finance`, `#coding`, etc.
-3. Entra por [[taxonomy]] o por un dominio (ej. hubs en `_META/domains/`).
-4. Cada skill enlaza a: hub de dominio, peers del mismo dominio, skills con tags solapados, y ejes temáticos.
 
 ### Ejes temáticos
 
@@ -539,42 +560,20 @@ Los duplicados por nombre se indexan **una sola vez**; ambas rutas aparecen en e
 |---------|-------:|
 {domain_table}
 
-## Regenerar el vault
+## Regenerar
 
-```powershell
-python "{VAULT / 'build_axon_graph.py'}"
+```bash
+# opcional: rutas locales de SKILL.md (separador = OS pathsep)
+export TALARIA_SKILL_SOURCES="/path/hermes/skills:/path/other"
+python build_axon_graph.py
 ```
 
 Solo **lee** los `SKILL.md` origen; no los modifica.
 
-## Consulta vía MCP de Obsidian
-
-Si tienes un servidor MCP tipo `mcp-obsidian` / `obsidian-mcp`:
-
-1. Apunta `OBSIDIAN_VAULT_PATH` (o equivalente) a:
-   `{VAULT}`
-2. Reinicia Cursor / el servidor MCP.
-3. Usa herramientas tipo `search`, `list_files`, `get_file_contents` sobre notas en `skills/` y `_META/`.
-
-Si no hay MCP de Obsidian instalado, este vault sigue siendo plenamente usable abriéndolo en la app Obsidian (desktop). OneDrive mantiene el backup en la nube automáticamente.
-
-## Estructura
-
-```
-SkillGraph/
-  README.md
-  build_axon_graph.py
-  _META/
-    taxonomy.md
-    domains/<dominio>.md
-    axes/<eje>.md
-  skills/<dominio>/<skill>.md
-```
-
 ---
-Generado automáticamente · {time.strftime('%Y-%m-%d %H:%M')} · {time.time()-t0:.1f}s
+Generado · {time.strftime('%Y-%m-%d %H:%M')} · {time.time()-t0:.1f}s
 """
-    (VAULT / "README.md").write_text(readme, encoding="utf-8")
+    (VAULT / "_META" / "axon-build-report.md").write_text(report, encoding="utf-8")
 
     stats = {
         "unique_skills": len(skills),

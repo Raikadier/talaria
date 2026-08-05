@@ -213,7 +213,10 @@ def agent_contract(vault: Path) -> dict[str, Any]:
                 "talaria_import_chats",
                 "talaria_describe",
             ],
-            "env": {"TALARIA_VAULT": vault_s},
+            "env": {
+                "TALARIA_VAULT": vault_s,
+                "PYTHONPATH": str(Path(vault_s) / "src"),
+            },
         },
         "companion_mcp": {
             "name": "obsidian",

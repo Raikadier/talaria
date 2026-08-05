@@ -57,7 +57,9 @@ def _obsidian_mcp_ok() -> bool:
     candidates = [
         home / "AppData/Roaming/npm/node_modules/obsidian-mcp/build/main.js",
         Path("/usr/local/lib/node_modules/obsidian-mcp/build/main.js"),
+        Path("/opt/homebrew/lib/node_modules/obsidian-mcp/build/main.js"),
         home / ".npm-global/lib/node_modules/obsidian-mcp/build/main.js",
+        home / ".local/lib/node_modules/obsidian-mcp/build/main.js",
     ]
     return any(c.is_file() for c in candidates)
 

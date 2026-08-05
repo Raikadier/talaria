@@ -1,4 +1,6 @@
 # Local / secrets
+.talaria.local.json
+.talaria.mode
 .skillgraph.local.json
 .skillgraph.mode
 .env
@@ -18,13 +20,17 @@ __pycache__/
 *.pyc
 .pytest_cache/
 *.egg-info/
-skillgraph_cli.egg-info/
+src/**/__pycache__/
 
 # Node
 node_modules/
+apps/**/node_modules/
+apps/**/.next/
+apps/**/out/
+.vercel/
+docs-web/node_modules/
 docs-web/.next/
 docs-web/out/
-.vercel/
 
 # Graphify / tooling caches
 **/graphify-out/
@@ -44,7 +50,9 @@ memory/archives/*.zip
 memory/archives/*.db
 memory/context/**/*.bak
 
-docs-web/_deploy_payload.json
-docs-web/_mcp_args.json
-docs-web/_mcp_args_oneline.json
-
+apps/docs-web/_deploy_payload.json
+apps/docs-web/_deploy_payload.min.json
+apps/docs-web/_deploy_payload_clean.json
+apps/docs-web/_mcp_args.json
+apps/docs-web/_mcp_args_oneline.json
+apps/docs-web/_deploy_files.json

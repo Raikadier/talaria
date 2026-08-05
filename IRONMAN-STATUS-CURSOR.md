@@ -1,9 +1,13 @@
 ---
-tags: [status, redirect, legacy]
+tags: [status, legacy]
+aliases: [IRONMAN-STATUS]
+status: archived
 ---
 
-# IRONMAN-STATUS → SPINE-STATUS
+# IRONMAN-STATUS (legacy)
 
-Renombrado: ver [[SPINE-STATUS-CURSOR]].
+**IRONMAN** fue renombrado a **SPINE**.
 
-Framework: **SPINE** (antes IRONMAN). Decisión: [[2026-07-28-spine-axon-organ-names]]
+Estado vivo: [[SPINE-STATUS-CURSOR]]
+
+No actualizar este archivo.

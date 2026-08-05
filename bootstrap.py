@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
-"""Bootstrap SkillGraph tools for any agent/machine.
+"""Bootstrap Talaria tools for any agent/machine.
 
 - Resolves vault root relative to this file (portable)
+- Ensures `pip install -e .` so `talaria` is on PATH
 - Checks markitdown / graphify / obsidian-mcp
 - Installs missing deps via pip/npm
 - Creates ingest folders
@@ -9,6 +10,7 @@
 Usage:
   python bootstrap.py
   python bootstrap.py --check-only
+  python bootstrap.py --skip-npm
 """
 from __future__ import annotations
 
@@ -24,6 +26,8 @@ VAULT = Path(__file__).resolve().parent
 TOOLS = VAULT / "tools"
 MANIFEST = TOOLS / "manifest.json"
 REQ = TOOLS / "requirements.txt"
+LOCAL_CFG = VAULT / ".talaria.local.json"
+LEGACY_LOCAL = VAULT / ".skillgraph.local.json"
 
 
 def run(cmd: list[str], check: bool = False) -> subprocess.CompletedProcess:
@@ -45,12 +49,25 @@ def ensure_dirs(manifest: dict) -> None:
         print(f"[dir] {p.relative_to(VAULT)}")
 
 
+def ensure_editable_install() -> None:
+    """Install this repo editable so `talaria` entry point works anywhere."""
+    pyproject = VAULT / "pyproject.toml"
+    if not pyproject.is_file():
+        print("[warn] pyproject.toml missing; skip editable install")
+        return
+    print("[install] pip install -e .")
+    r = run([sys.executable, "-m", "pip", "install", "-e", str(VAULT)])
+    if r.returncode != 0:
+        print(r.stderr[-2000:] if r.stderr else r.stdout[-2000:])
+        raise SystemExit(f"editable install failed ({r.returncode})")
+    print("[ok] talaria package (editable)")
+
+
 def check_markitdown() -> bool:
     if which("markitdown"):
         r = run(["markitdown", "--version"])
         print("[ok] markitdown", (r.stdout or r.stderr or "").strip()[:80])
         return r.returncode == 0 or bool(r.stdout or r.stderr)
-    # module fallback
     r = run([sys.executable, "-c", "import markitdown; print(getattr(markitdown,'__version__','ok'))"])
     if r.returncode == 0:
         print("[ok] markitdown module", r.stdout.strip())
@@ -72,21 +89,27 @@ def check_graphify() -> bool:
     return False
 
 
-def check_obsidian_mcp() -> bool:
-    # Prefer global npm package used by Cursor/Hermes configs
-    candidates = [
-        Path.home() / "AppData/Roaming/npm/node_modules/obsidian-mcp/build/main.js",
+def _obsidian_mcp_candidates() -> list[Path]:
+    home = Path.home()
+    return [
+        home / "AppData/Roaming/npm/node_modules/obsidian-mcp/build/main.js",  # Windows
+        home / ".npm-global/lib/node_modules/obsidian-mcp/build/main.js",
         Path("/usr/local/lib/node_modules/obsidian-mcp/build/main.js"),
-        Path.home() / ".npm-global/lib/node_modules/obsidian-mcp/build/main.js",
+        Path("/opt/homebrew/lib/node_modules/obsidian-mcp/build/main.js"),  # macOS Apple Silicon
+        home / ".local/lib/node_modules/obsidian-mcp/build/main.js",
     ]
-    for c in candidates:
+
+
+def check_obsidian_mcp() -> bool:
+    for c in _obsidian_mcp_candidates():
         if c.exists():
             print(f"[ok] obsidian-mcp {c}")
             return True
-    r = run(["npm", "ls", "-g", "obsidian-mcp"])
-    if r.returncode == 0 and "obsidian-mcp" in (r.stdout + r.stderr):
-        print("[ok] obsidian-mcp via npm ls -g")
-        return True
+    if which("npm"):
+        r = run(["npm", "ls", "-g", "obsidian-mcp"])
+        if r.returncode == 0 and "obsidian-mcp" in (r.stdout + r.stderr):
+            print("[ok] obsidian-mcp via npm ls -g")
+            return True
     print("[missing] obsidian-mcp (optional but recommended)")
     return False
 
@@ -120,33 +143,50 @@ def write_local_config() -> None:
         "vault_root": str(VAULT),
         "python": sys.executable,
         "generated_by": "bootstrap.py",
+        "platform": sys.platform,
     }
-    local = VAULT / ".skillgraph.local.json"
-    local.write_text(json.dumps(cfg, indent=2), encoding="utf-8")
-    print(f"[local] wrote {local.name} (gitignored)")
+    LOCAL_CFG.write_text(json.dumps(cfg, indent=2), encoding="utf-8")
+    print(f"[local] wrote {LOCAL_CFG.name} (gitignored)")
+    if LEGACY_LOCAL.exists():
+        try:
+            LEGACY_LOCAL.unlink()
+            print(f"[local] removed legacy {LEGACY_LOCAL.name}")
+        except OSError:
+            pass
 
 
 def main() -> None:
-    ap = argparse.ArgumentParser(description="Bootstrap SkillGraph tooling")
+    ap = argparse.ArgumentParser(description="Bootstrap Talaria tooling")
     ap.add_argument("--check-only", action="store_true")
     ap.add_argument("--skip-npm", action="store_true")
+    ap.add_argument("--skip-editable", action="store_true", help="Do not pip install -e .")
     args = ap.parse_args()
 
     print(f"Vault: {VAULT}")
     if sys.version_info < (3, 10):
         raise SystemExit("Python >= 3.10 required")
 
+    # Make package importable before other checks when developing from clone
+    src = VAULT / "src"
+    if src.is_dir():
+        sp = str(src)
+        if sp not in sys.path:
+            sys.path.insert(0, sp)
+
     manifest = json.loads(MANIFEST.read_text(encoding="utf-8"))
     ensure_dirs(manifest)
+
+    if not args.check_only and not args.skip_editable:
+        ensure_editable_install()
 
     md_ok = check_markitdown()
     gy_ok = check_graphify()
     om_ok = check_obsidian_mcp()
 
     if args.check_only:
-        status = {"markitdown": md_ok, "graphify": gy_ok, "obsidian-mcp": om_ok}
+        status = {"markitdown": md_ok, "graphify": gy_ok, "obsidian-mcp": om_ok, "vault": str(VAULT)}
         print(json.dumps(status, indent=2))
-        raise SystemExit(0 if all(status.values()) else 1)
+        raise SystemExit(0 if (md_ok and gy_ok) else 1)
 
     if not (md_ok and gy_ok):
         install_pip_requirements()
@@ -158,6 +198,7 @@ def main() -> None:
         om_ok = check_obsidian_mcp()
 
     write_local_config()
+    os.environ.setdefault("TALARIA_VAULT", str(VAULT))
 
     summary = {
         "vault": str(VAULT),
@@ -165,7 +206,9 @@ def main() -> None:
         "graphify": gy_ok,
         "obsidian-mcp": om_ok,
         "next": [
-            "Docs: tools/markitdown.md · tools/graphify.md · PORTABILITY.md",
+            "talaria doctor --json",
+            "talaria connect --client cursor --json",
+            "Docs: README.md · PORTABILITY.md · tools/",
             "Ingest doc: python _tools/ingest_document.py <file>",
             "Graphify project: python _tools/ingest_project.py <path>",
         ],

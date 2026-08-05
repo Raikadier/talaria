@@ -1,23 +1,21 @@
 {
   "client": "cursor",
-  "vault": "D:\\OneDrive - unicesar.edu.co\\davidbarcelo0411@g\\Business Ideas\\Talaria",
-  "describe_cmd": "C:\\Users\\david\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe -m talaria_cli describe --json",
-  "config_file": "C:\\Users\\david\\.cursor\\mcp.json",
-  "mcpServers_fragment": {
+  "describe_cmd": "talaria describe --json",
+  "config_file": "~/.cursor/mcp.json",
+  "note": "Generate a machine-specific fragment with: talaria connect --client cursor --json",
+  "mcpServers_fragment_template": {
     "talaria": {
-      "command": "C:\\Users\\david\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
-      "args": [
-        "-m",
-        "talaria_cli.mcp_server",
-        "--vault",
-        "D:\\OneDrive - unicesar.edu.co\\davidbarcelo0411@g\\Business Ideas\\Talaria"
-      ],
+      "command": "python",
+      "args": ["-m", "talaria_cli.mcp_server", "--vault", "${TALARIA_VAULT}"],
       "env": {
-        "TALARIA_VAULT": "D:\\OneDrive - unicesar.edu.co\\davidbarcelo0411@g\\Business Ideas\\Talaria"
+        "TALARIA_VAULT": "${TALARIA_VAULT}",
+        "PYTHONPATH": "${TALARIA_VAULT}/src"
       }
     }
   },
   "instructions": [
+    "Clone/install Talaria; set TALARIA_VAULT to the repo root",
+    "Run: talaria connect --client cursor --json",
     "Merge mcpServers_fragment into ~/.cursor/mcp.json",
     "Reload Cursor MCP settings",
     "Call talaria_describe then talaria_status"

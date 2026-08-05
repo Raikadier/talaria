@@ -1,3 +1,3 @@
 @echo off
-echo [legacy] use talaria instead of skillgraph
+echo [legacy] skillgraph was renamed to talaria — forwarding...
 call "%~dp0talaria.cmd" %*

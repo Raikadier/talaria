@@ -27,9 +27,10 @@ REQUIRED_DIRS = [
     "memory/decisions",
     "memory/projects",
     "skills",
-    "talaria_cli",
+    "src/talaria_cli",
     "_META/forge/profiles",
     "tools",
+    "scripts",
 ]
 
 ORGAN_FILES = {
@@ -37,7 +38,7 @@ ORGAN_FILES = {
     "axon": "_META/axon.md",
     "forge": "_META/forge/forge.md",
     "spine": "_META/spine-framework.md",
-    "api": "talaria_cli/cli.py",
+    "api": "src/talaria_cli/cli.py",
     "tools": "tools",
     "adapters": "_META/adapters/pilots.md",
 }

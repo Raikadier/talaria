@@ -31,7 +31,7 @@ SPINE convierte ese piloto en uno con **armadura compartida** (Talaria), sin des
   "args": [
     "-y",
     "obsidian-mcp",
-    "D:\\OneDrive - unicesar.edu.co\\davidbarcelo0411@g\\Business Ideas\\Talaria"
+    "D:\\OneDrive - unicesar.edu.co\\Business Ideas\\Talaria"
   ]
 }
 ```

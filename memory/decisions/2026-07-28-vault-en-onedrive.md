@@ -20,7 +20,7 @@ El segundo cerebro no puede vivir solo en disco local sin backup.
 
 ## Decisión
 Crear y usar el vault en:
-`D:\OneDrive - unicesar.edu.co\Business Ideas\SkillGraph`
+`D:\OneDrive - unicesar.edu.co\Business Ideas\Talaria`
 
 ## Por qué
 Backup automático, accesible, Markdown plano compatible con Obsidian y agentes.

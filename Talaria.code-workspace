@@ -1,0 +1,16 @@
+{
+  "folders": [
+    {
+      "path": ".",
+      "name": "Talaria"
+    }
+  ],
+  "settings": {
+    "files.exclude": {
+      "**/__pycache__": true,
+      "**/*.egg-info": true,
+      "apps/docs-web/node_modules": true,
+      "apps/docs-web/.next": true
+    }
+  }
+}

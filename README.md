@@ -1,98 +1,105 @@
-# SkillGraph — Segundo cerebro de skills
+# Talaria
 
-Vault Obsidian con **grafo interconectado** de skills indexadas desde Hermes y Skills de David.
-Sincronizado vía OneDrive.
+**Traje cognitivo** para cualquier agente de IA: memoria durable (vault Obsidian), grafo de skills (AXON), perfiles elite (FORGE) y protocolo SPINE, expuestos como **CLI + MCP**.
 
-## Resumen
+> Antes: SkillGraph. Ahora: **Talaria** — mismo organismo, API instalable en cualquier PC.
 
-| Métrica | Valor |
-|--------|------:|
-| Skills únicas | 1463 |
-| Archivos SKILL.md escaneados | 2776 |
-| Dominios | 70 |
-| Notas totales (aprox.) | 1545 |
-| Aristas (wiki-links generados) | 32470 |
-| Tamaño vault | 284.36 MB |
+## Requisitos
 
-### Fuentes escaneadas
+- Python **≥ 3.10**
+- (Opcional) Node.js **≥ 20** para `obsidian-mcp`
+- (Opcional) [Obsidian](https://obsidian.md) para navegar el vault
 
-1. `C:\Users\david\AppData\Local\hermes\skills\` (banco Hermes)
-2. `C:\Users\david\Skills\` (agensi-free, aiskillsbank, youtube-social-pack)
+## Instalación rápida (cualquier máquina)
 
-Los duplicados por nombre se indexan **una sola vez**; ambas rutas aparecen en el frontmatter `sources`.
+```bash
+git clone https://github.com/Raikadier/talaria.git
+cd talaria
+```
 
-## Cómo navegar el grafo
-
-1. Abre esta carpeta como vault en Obsidian (**Open folder as vault**).
-2. Usa **Graph View** para ver el mapa; filtra por `#youtube`, `#finance`, `#coding`, etc.
-3. Entra por [[taxonomy]] o por un dominio (ej. hubs en `_META/domains/`).
-4. Cada skill enlaza a: hub de dominio, peers del mismo dominio, skills con tags solapados, y ejes temáticos.
-
-### Ejes temáticos
-
-[[youtube]] · [[finance]] · [[coding]] · [[data]] · [[marketing]] · [[agent]] · [[design]] · [[writing]] · [[research]] · [[security]] · [[productivity]]
-
-## Top dominios
-
-| Dominio | Skills |
-|---------|-------:|
-| [[community]] | 592 |
-| [[agensi]] | 512 |
-| [[marketing]] | 83 |
-| [[aiskillsbank]] | 70 |
-| [[creative]] | 24 |
-| [[development]] | 19 |
-| [[productivity]] | 16 |
-| [[youtube]] | 14 |
-| [[agensi-pachca]] | 12 |
-| [[research]] | 9 |
-| [[software-development]] | 9 |
-| [[media]] | 8 |
-| [[enterprise]] | 6 |
-| [[github]] | 6 |
-| [[agensi-agent-operator-utility-pack]] | 5 |
-| [[autonomous-ai-agents]] | 5 |
-| [[apple]] | 4 |
-| [[engineering]] | 4 |
-| [[messaging]] | 4 |
-| [[windows]] | 4 |
-| [[automation]] | 3 |
-| [[utility]] | 2 |
-| [[templates]] | 2 |
-| [[evaluation]] | 2 |
-| [[inference]] | 2 |
-
-## Regenerar el vault
+**Windows (PowerShell):**
 
 ```powershell
-python "D:\OneDrive - unicesar.edu.co\Business Ideas\SkillGraph\build_axon_graph.py"
+powershell -ExecutionPolicy Bypass -File .\scripts\install.ps1
+# con MarkItDown + Graphify:
+powershell -ExecutionPolicy Bypass -File .\scripts\install.ps1 -WithTools
 ```
 
-Solo **lee** los `SKILL.md` origen; no los modifica.
+**macOS / Linux:**
 
-## Consulta vía MCP de Obsidian
-
-Si tienes un servidor MCP tipo `mcp-obsidian` / `obsidian-mcp`:
-
-1. Apunta `OBSIDIAN_VAULT_PATH` (o equivalente) a:
-   `D:\OneDrive - unicesar.edu.co\Business Ideas\SkillGraph`
-2. Reinicia Cursor / el servidor MCP.
-3. Usa herramientas tipo `search`, `list_files`, `get_file_contents` sobre notas en `skills/` y `_META/`.
-
-Si no hay MCP de Obsidian instalado, este vault sigue siendo plenamente usable abriéndolo en la app Obsidian (desktop). OneDrive mantiene el backup en la nube automáticamente.
-
-## Estructura
-
-```
-SkillGraph/
-  README.md
-  build_axon_graph.py
-  _META/
-    taxonomy.md
-    domains/<dominio>.md
-    axes/<eje>.md
-  skills/<dominio>/<skill>.md
+```bash
+chmod +x scripts/install.sh scripts/talaria
+./scripts/install.sh
+# con herramientas de ingest:
+./scripts/install.sh --with-tools
 ```
 
----
-Generado automáticamente · 2026-07-29 02:36 · 257.8s
+**Manual (cross-platform):**
+
+```bash
+pip install -e .
+# opcional: pip install -e ".[tools]"
+python bootstrap.py          # o: talaria boot
+talaria doctor --json
+talaria connect --client cursor --json
+```
+
+Si ejecutas fuera del clone, exporta:
+
+```bash
+# Windows PowerShell
+$env:TALARIA_VAULT = "C:\ruta\a\talaria"
+
+# bash
+export TALARIA_VAULT="/path/to/talaria"
+```
+
+## Estructura del repo
+
+```
+talaria/
+├── README.md · AGENTS.md · Home.md · PORTABILITY.md
+├── pyproject.toml · bootstrap.py · LICENSE
+├── src/talaria_cli/          ← paquete Python (CLI + MCP)
+├── scripts/                  ← install.sh / install.ps1 / launcher
+├── apps/docs-web/            ← sitio web (Next.js), separado del vault
+├── memory/ · skills/ · _META/← vault Obsidian (verdad durable)
+├── tools/ · _tools/          ← manifest + ingest helpers
+├── _templates/ · tests/
+└── .obsidian/ · .cursor/
+```
+
+El **vault** sigue en la raíz a propósito: Obsidian y los wiki-links no se rompen. El código instalable vive en `src/`.
+
+## Uso mínimo
+
+```bash
+talaria describe --json      # contrato para cualquier agente
+talaria connect --client cursor --json
+talaria status
+talaria axon search "marketing" --json
+talaria forge list --json
+talaria mcp                  # servidor MCP stdio
+```
+
+Constitución del piloto: `AGENTS.md` · mapa: `_META/architecture.md` · `_META/organism.md`.
+
+## Regenerar el grafo AXON (opcional)
+
+Las notas en `skills/` ya viajan con el repo. Para **reescanear** bancos locales de `SKILL.md`:
+
+```bash
+# variables opcionales (separadas por OS pathsep)
+export TALARIA_SKILL_SOURCES="/path/hermes/skills:/path/other/skills"
+python build_axon_graph.py
+```
+
+El informe se escribe en `_META/axon-build-report.md` (no pisa el README).
+
+## Portabilidad
+
+Ver [PORTABILITY.md](PORTABILITY.md): qué subir al git, qué queda local, cómo cablear MCP en otra máquina.
+
+## Licencia
+
+MIT — ver [LICENSE](LICENSE).
