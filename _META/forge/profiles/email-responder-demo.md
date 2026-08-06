@@ -15,7 +15,12 @@ corpus_path: memory/research/forge/email-responder-demo
 builder: 2.0
 built_from_brief: true
 brief_date: 2026-08-05
+instructed: true
+instructed_at: 2026-08-05
+corpus_bootstrap: auto
 ---
+> **Auto-instructed** `2026-08-05` (seed=generic). Corpus: `memory/research/forge/email-responder-demo/00-doctrine.md`. Calibrar antes de `status: active`.
+
 
 # FORGE Profile — Sepa responder correos
 

@@ -28,9 +28,9 @@ Si la tarea pide **crear un agente/perfil** («crea un agente que… usando tala
 Si la tarea pide especialización elite ya catalogada (research, growth, arquitectura, etc.):
 1. `talaria forge list --json` / `forge show <id>`  
 2. Builder 2.0: corpus del oficio → perfil → learn loop ([[forge-builder]] · [[forge-corpus]])  
-3. `talaria forge run <id> --json` — activar packet  
-4. Ejecutar playbook; entregable con `forge_gates` (plantilla `_templates/forge-deliverable.md`)  
-5. `talaria forge check --profile <id> --deliverable <path> --json`  
+3. `talaria forge run <id> [--pack software-delivery] --json` — packet con **skills_hydrated** + memory (default)  
+4. Ejecutar playbook; entregable con `forge_gates` + `axon_skills: [skills/…]` (`_templates/forge-deliverable.md`)  
+5. `talaria forge check --profile <id> --deliverable <path> [--require-axon] --json`  
 6. No cerrar sin gates en pass + `verify close`
 
 ## Primera visita (máquina nueva o clone)
@@ -57,8 +57,10 @@ talaria forge show <id> --json
 talaria forge build --brief "crea un agente que…" [--kind both] [--invokes a,b] --json
 talaria forge invoke <parent> <child> [--brief "…"] --json
 talaria forge graph --json
-talaria forge run <id> --json
-talaria forge check --profile <id> [--deliverable PATH] [--declare G1=pass,...] --json
+talaria forge run <id> [--pack software-delivery|youtube-channel] --json
+talaria forge check --profile <id> [--deliverable PATH] [--require-axon] [--declare G1=pass,...] --json
+talaria axon pack list|show <id> --json
+talaria memory retrieve "<query>" [--forge <id>] --json
 talaria verify boot --json
 talaria verify close --scorecard <path> --json
 talaria doctor --json

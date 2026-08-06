@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{{ app_name }} — Kanban</title>
+  <style>
+    :root { --bg:#0f1419; --card:#1a2332; --text:#e7ecf3; --muted:#8b9bb4; --accent:#3d9cf0; --ok:#3ecf8e; }
+    * { box-sizing: border-box; }
+    body { margin:0; font-family: "Segoe UI", system-ui, sans-serif; background:var(--bg); color:var(--text); }
+    header { display:flex; justify-content:space-between; align-items:center; padding:1rem 1.25rem; border-bottom:1px solid #243044; }
+    header a { color:var(--accent); }
+    .cols { display:grid; grid-template-columns: repeat(3, 1fr); gap:1rem; padding:1rem; min-height:70vh; }
+    @media (max-width:900px){ .cols { grid-template-columns:1fr; } }
+    .col { background:var(--card); border-radius:12px; padding:.75rem; }
+    .col h2 { margin:.25rem 0 .75rem; font-size:1rem; color:var(--muted); font-weight:600; }
+    .card { background:#121a26; border:1px solid #2a384c; border-radius:10px; padding:.75rem; margin-bottom:.6rem; }
+    .card strong { display:block; margin-bottom:.25rem; }
+    .meta { font-size:.8rem; color:var(--muted); }
+    button, select { margin-top:.5rem; background:var(--accent); color:#fff; border:0; border-radius:8px; padding:.35rem .6rem; cursor:pointer; }
+    select { background:#243044; }
+    #wa { padding:1rem 1.25rem; border-top:1px solid #243044; }
+    #wa pre { background:#121a26; padding:.75rem; border-radius:8px; overflow:auto; max-height:180px; font-size:.75rem; }
+    .badge { font-size:.7rem; background:#243044; padding:.15rem .4rem; border-radius:999px; color:var(--ok); }
+  </style>
+</head>
+<body>
+  <header>
+    <div>
+      <strong>{{ app_name }}</strong>
+      <span class="badge">{{ arm }}</span>
+    </div>
+    <div>
+      <a href="/book" target="_blank">Link de agendamiento</a>
+      · auth Basic (ver .env.example)
+    </div>
+  </header>
+  <div class="cols">
+    <div class="col" id="col-new_lead"><h2>Nuevo lead</h2></div>
+    <div class="col" id="col-confirmed"><h2>Cita confirmada</h2></div>
+    <div class="col" id="col-completed"><h2>Completado</h2></div>
+  </div>
+  <section id="wa">
+    <h2>WhatsApp mock (últimos mensajes)</h2>
+    <pre id="wa-log">cargando…</pre>
+  </section>
+  <script>
+    const cols = ["new_lead", "confirmed", "completed"];
+    async function load() {
+      const res = await fetch("/api/appointments");
+      if (!res.ok) { alert("Auth requerida (Basic admin)"); return; }
+      const data = await res.json();
+      cols.forEach(c => { const el = document.getElementById("col-" + c); el.innerHTML = `<h2>${el.querySelector("h2").textContent}</h2>`; });
+      for (const a of data) {
+        let col = a.status;
+        if (!cols.includes(col)) col = "new_lead";
+        const div = document.createElement("div");
+        div.className = "card";
+        div.innerHTML = `<strong>${a.customer_name}</strong>
+          <div class="meta">${a.service_name || ""} · ${a.phone}</div>
+          <div class="meta">${new Date(a.starts_at).toLocaleString()}</div>
+          <select data-id="${a.id}">
+            ${cols.map(s => `<option value="${s}" ${s===a.status?"selected":""}>${s}</option>`).join("")}
+            <option value="cancelled">cancelled</option>
+            <option value="no_show">no_show</option>
+          </select>`;
+        div.querySelector("select").onchange = async (e) => {
+          await fetch("/api/appointments/" + a.id, {
+            method: "PATCH",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({status: e.target.value})
+          });
+          load(); loadWa();
+        };
+        document.getElementById("col-" + (cols.includes(a.status)?a.status:"new_lead")).appendChild(div);
+      }
+    }
+    async function loadWa() {
+      const res = await fetch("/api/wa/messages");
+      if (!res.ok) return;
+      const data = await res.json();
+      document.getElementById("wa-log").textContent = data.map(m =>
+        `[${m.template}] → ${m.to_phone}: ${m.body}`).join("\n\n") || "(vacío)";
+    }
+    load(); loadWa();
+    setInterval(() => { load(); loadWa(); }, 8000);
+  </script>
+</body>
+</html>

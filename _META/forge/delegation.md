@@ -48,7 +48,12 @@ Delegation graph = quién *puede* llamar a quién en runtime del piloto. Pueden 
 
 Ver [[forge-example-user-graph]] — *sample*, no catálogo elite.
 
-## Anti-patrones
+## Auto-instruct (obligatorio al crear)
+
+`forge build` llama a `forge instruct` y escribe doctrina + fuentes + métodos.  
+No dejar corpus vacío. Re-aplicar: `talaria forge instruct <id> --json` o `--all-drafts`.
+
+---
 
 - Precocinar 40 roles de industria en el repo como “el” modelo  
 - ACL duro que impida al dueño `forge run`  

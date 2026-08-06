@@ -177,6 +177,7 @@ def evaluate_deliverable(
     deliverable: Path,
     *,
     declare: dict[str, str] | None = None,
+    require_axon: bool = False,
 ) -> dict[str, Any]:
     """Check deliverable against profile gates (frontmatter forge_gates or --declare)."""
     text = deliverable.read_text(encoding="utf-8")
@@ -236,6 +237,46 @@ def evaluate_deliverable(
             }
         )
 
+    # Gaxon — skills from AXON bank cited
+    pmeta = profile.get("meta") or {}
+    need_axon = require_axon or bool(pmeta.get("require_axon"))
+    axon_skills = meta.get("axon_skills") or meta.get("skills_used") or []
+    if isinstance(axon_skills, str):
+        axon_skills = [axon_skills]
+    if not isinstance(axon_skills, list):
+        axon_skills = []
+    body_skills = re.findall(r"skills/[^\s\]`'\"<>]+", text)
+    cited = [str(x).replace("\\", "/") for x in list(axon_skills) + body_skills]
+    cited = [c for i, c in enumerate(cited) if c and c not in cited[:i]]
+    gaxon_ok = len(cited) >= 1
+    if need_axon or "Gaxon" in {g["id"] for g in (profile.get("gates") or [])} or declared.get("GAXON"):
+        # if Gaxon in declared gates table as pass without cites — still fail need_axon
+        val = str(declared.get("GAXON") or declared.get("Gaxon") or "").lower()
+        if need_axon:
+            checks.append(
+                {
+                    "name": "gate_Gaxon",
+                    "ok": gaxon_ok,
+                    "detail": f"cited={cited[:5]}" if gaxon_ok else "missing axon_skills: [skills/…] in frontmatter or body",
+                }
+            )
+        elif val:
+            checks.append(
+                {
+                    "name": "gate_Gaxon",
+                    "ok": val == "pass" and gaxon_ok,
+                    "detail": f"declared={val}; cited={cited[:5]}",
+                }
+            )
+        elif gaxon_ok:
+            checks.append(
+                {
+                    "name": "gate_Gaxon",
+                    "ok": True,
+                    "detail": f"cited={cited[:5]}",
+                }
+            )
+
     ok = all(c["ok"] for c in checks)
     return {
         "kind": "deliverable_gates",
@@ -243,6 +284,7 @@ def evaluate_deliverable(
         "deliverable": str(deliverable),
         "ok": ok,
         "declared_gates": declared,
+        "axon_skills_cited": cited,
         "checks": checks,
         "next": "FORGE done allowed" if ok else "Mark remaining gates pass in deliverable or --declare",
     }
@@ -337,6 +379,7 @@ def run_check(
     *,
     deliverable: str | None = None,
     declare: str | None = None,
+    require_axon: bool = False,
     as_json: bool = False,
 ) -> int:
     profile = load_profile(vault, forge_id)
@@ -356,7 +399,9 @@ def run_check(
             emit({"error": f"deliverable not found: {deliverable}", "ok": False}, as_json or True)
             return EXIT_ERROR
         declared = _parse_declare(declare) if declare else {}
-        deliv = evaluate_deliverable(profile, path, declare=declared)
+        deliv = evaluate_deliverable(
+            profile, path, declare=declared, require_axon=require_axon
+        )
         parts.append(deliv)
         overall_ok = overall_ok and deliv["ok"]
     elif declare:
@@ -369,7 +414,9 @@ def run_check(
                 f.write(f"{k}: {v}\n")
             tmp = Path(f.name)
         try:
-            deliv = evaluate_deliverable(profile, tmp, declare=declared)
+            deliv = evaluate_deliverable(
+                profile, tmp, declare=declared, require_axon=require_axon
+            )
         finally:
             tmp.unlink(missing_ok=True)
         parts.append(deliv)
@@ -394,8 +441,17 @@ def run_check(
     return EXIT_OK if overall_ok else EXIT_ERROR
 
 
-def run_run(vault: Path, forge_id: str, *, with_axon: bool = False, as_json: bool = False) -> int:
-    """Emit playbook packet for an agent to execute the profile."""
+def run_run(
+    vault: Path,
+    forge_id: str,
+    *,
+    with_axon: bool = True,
+    hydrate: bool = True,
+    with_memory: bool = True,
+    pack: str | None = None,
+    as_json: bool = False,
+) -> int:
+    """Emit playbook packet; default hydrates AXON skill bodies + memory retrieve."""
     profile = load_profile(vault, forge_id)
     if not profile:
         emit({"error": f"profile not found: {forge_id}", "ok": False}, as_json or True)
@@ -415,13 +471,17 @@ def run_run(vault: Path, forge_id: str, *, with_axon: bool = False, as_json: boo
     axon_queries = meta.get("axon_queries") or []
     if isinstance(axon_queries, str):
         axon_queries = [axon_queries]
+    pack_id = pack or str(meta.get("skill_pack") or "").strip() or None
 
+    from talaria_cli.cmds import axon as axon_cmd
+    from talaria_cli.cmds import forge_delegation as dele
     from talaria_cli.cmds import session as session_cmd
+    from talaria_cli.cmds.context_hydrate import build_activation_context
     from talaria_cli.mode import mode_contract, resolve_mode
 
     mode = resolve_mode(vault)
     sess = session_cmd.load_session(vault)
-    packet = {
+    packet: dict[str, Any] = {
         "command": "forge run",
         "ok": True,
         "forge_id": forge_id,
@@ -432,6 +492,7 @@ def run_run(vault: Path, forge_id: str, *, with_axon: bool = False, as_json: boo
         "specialty": meta.get("specialty"),
         "path": profile["rel_path"],
         "axon_queries": axon_queries,
+        "skill_pack": pack_id,
         "mode": mode,
         "mode_contract": mode_contract(mode),
         "session": sess,
@@ -439,29 +500,49 @@ def run_run(vault: Path, forge_id: str, *, with_axon: bool = False, as_json: boo
             "strict_requires_session": mode == "strict",
             "session_active": bool(sess),
             "required_close": [
-                "talaria forge check --profile <id> --deliverable <path>",
-                "scorecard forge_critical: pass",
-                "talaria session close --json  (or verify close --scorecard)",
+                "talaria forge check --profile <id> --deliverable <path> [--require-axon]",
+                "scorecard forge_critical: pass + axon_skills cited",
+                "talaria session close --json",
             ],
         },
         "instructions": [
             "If no session: talaria session start --objective \"...\" --forge " + forge_id,
-            "Activate with the activation string",
-            "Retrieve via: talaria axon for-profile <id> --json",
-            "Execute profile playbook in the profile note",
-            "Write deliverable with forge_profile + forge_gates (incl. Gcrit/Gmem)",
-            "Run: talaria forge check --profile <id> --deliverable <path> --json",
-            "Fill scorecard evidence + forge_critical: pass",
+            "READ skills_hydrated in this packet — apply them (do not skip)",
+            "Use memory hits; cite paths in deliverable",
+            "Execute profile playbook",
+            "Deliverable frontmatter: axon_skills: [skills/…]",
+            "talaria forge check --profile <id> --deliverable <path> --require-axon --json",
             "talaria session close --json",
         ],
     }
-    if with_axon:
-        from talaria_cli.cmds import axon as axon_cmd
 
-        queries = list(axon_queries) if axon_queries else [str(meta.get("specialty") or forge_id)[:60]]
-        packet["axon"] = axon_cmd.bundles_for_queries(vault, queries, limit=8)
-
-    from talaria_cli.cmds import forge_delegation as dele
+    if with_axon or with_memory:
+        ctx = build_activation_context(
+            vault,
+            forge_id,
+            specialty=str(meta.get("specialty") or forge_id),
+            axon_queries=list(axon_queries) if axon_queries else None,
+            pack_id=pack_id if with_axon else None,
+            hydrate=bool(hydrate and with_axon),
+            with_memory=with_memory,
+            skill_limit=5,
+            memory_limit=5,
+        )
+        packet["context"] = {
+            "pack": ctx.get("pack"),
+            "pilot_must": ctx.get("pilot_must"),
+        }
+        if with_axon:
+            queries = (
+                list(axon_queries)
+                if axon_queries
+                else [str(meta.get("specialty") or forge_id)[:60]]
+            )
+            packet["axon"] = axon_cmd.bundles_for_queries(vault, queries, limit=5)
+            packet["skills_hydrated"] = ctx.get("skills_hydrated")
+            packet["skill_ids_loaded"] = ctx.get("skill_ids_loaded")
+        if with_memory:
+            packet["memory"] = ctx.get("memory")
 
     packet = dele.enrich_run_packet(vault, forge_id, packet)
 
@@ -471,16 +552,21 @@ def run_run(vault: Path, forge_id: str, *, with_axon: bool = False, as_json: boo
         print(packet["activation"])
         print("gates:", ", ".join(g["id"] for g in packet["gates"]))
         print("DoD:", len(packet["dod"]), "items — see", packet["path"])
-        if axon_queries:
-            print("axon_queries:", axon_queries)
+        if pack_id:
+            print("skill_pack:", pack_id)
+        ids = packet.get("skill_ids_loaded") or []
+        if ids:
+            print("skills_hydrated:", len(ids))
+            for pth in ids[:5]:
+                print("  -", pth)
+        mem_n = (packet.get("memory") or {}).get("hit_count") or 0
+        if mem_n:
+            print("memory_hits:", mem_n)
         d = packet.get("delegation") or {}
         if d.get("invokes"):
             print("invokes:", ", ".join(d["invokes"]))
         for i, step in enumerate(packet["instructions"], 1):
             print(f"  {i}. {step}")
-        if with_axon and packet.get("axon"):
-            for b in packet["axon"]:
-                print(f"  AXON {b['query']!r}: {b['result'].get('hit_count', 0)} hits")
     return EXIT_OK
 
 
@@ -506,10 +592,20 @@ def run_invoke(
     *,
     brief: str | None = None,
     strict: bool = False,
-    with_axon: bool = False,
+    with_axon: bool = True,
+    hydrate: bool = True,
+    with_memory: bool = True,
+    pack: str | None = None,
+    deliverable: str | None = None,
+    artifact_in: str | None = None,
+    require_deliverable: bool = False,
     as_json: bool = False,
 ) -> int:
-    """Delegate from parent profile to child specialist (user-owned graph)."""
+    """Delegate from parent profile to child specialist (user-owned graph).
+
+    With --require-deliverable, a child deliverable path is mandatory and must
+    pass forge check gates before the handoff is marked complete.
+    """
     from talaria_cli.cmds import forge_delegation as dele
     from talaria_cli.cmds import session as session_cmd
     from talaria_cli.mode import mode_contract, resolve_mode
@@ -523,6 +619,20 @@ def run_invoke(
             "policy": policy,
         }
         emit(data, as_json or True)
+        return EXIT_ERROR
+
+    if require_deliverable and not deliverable:
+        emit(
+            {
+                "command": "forge invoke",
+                "ok": False,
+                "error": "deliverable required (--deliverable PATH) when --require-deliverable",
+                "hint": "Start-only packet: omit --require-deliverable; close handoff with deliverable.",
+                "parent": parent_id,
+                "child": child_id,
+            },
+            as_json or True,
+        )
         return EXIT_ERROR
 
     child = load_profile(vault, child_id)
@@ -548,6 +658,49 @@ def run_invoke(
     if isinstance(axon_queries, str):
         axon_queries = [axon_queries]
 
+    artifact_contract = {
+        "required": bool(require_deliverable) or bool(deliverable),
+        "artifact_in": artifact_in,
+        "deliverable": deliverable,
+        "handoff_status": "open",
+        "rule": "Child must produce a vault deliverable; parent resumes only after forge check pass",
+    }
+
+    deliv_result = None
+    if deliverable:
+        path = Path(deliverable)
+        if not path.is_file():
+            path = vault / deliverable
+        if not path.is_file():
+            emit(
+                {
+                    "command": "forge invoke",
+                    "ok": False,
+                    "error": f"deliverable not found: {deliverable}",
+                    "parent": parent_id,
+                    "child": child_id,
+                },
+                as_json or True,
+            )
+            return EXIT_ERROR
+        deliv_result = evaluate_deliverable(child, path)
+        artifact_contract["handoff_status"] = (
+            "complete" if deliv_result.get("ok") else "rejected"
+        )
+        artifact_contract["deliverable_check"] = deliv_result
+        if require_deliverable and not deliv_result.get("ok"):
+            emit(
+                {
+                    "command": "forge invoke",
+                    "ok": False,
+                    "error": "deliverable failed forge check",
+                    "artifact_contract": artifact_contract,
+                    "policy": policy,
+                },
+                as_json or True,
+            )
+            return EXIT_ERROR
+
     mode = resolve_mode(vault)
     packet: dict[str, Any] = {
         "command": "forge invoke",
@@ -567,19 +720,58 @@ def run_invoke(
         "mode": mode,
         "mode_contract": mode_contract(mode),
         "session": session_cmd.load_session(vault),
+        "artifact_contract": artifact_contract,
         "instructions": [
             f"Delegated by parent `{parent_id}`" + (f" brief={brief!r}" if brief else ""),
-            "Execute child playbook; return artifact to parent contract",
-            f"Parent resumes after child gates: talaria forge run {parent_id} --json",
-            "talaria forge check --profile <child> --deliverable <path> --json",
+            (
+                f"Inbound artifact: {artifact_in}"
+                if artifact_in
+                else "Inbound artifact: (none declared — parent should pass --artifact-in)"
+            ),
+            "Execute child playbook; write deliverable with forge_profile + forge_gates (Gcrit/Gmem)",
+            (
+                f"Close handoff: talaria forge invoke {parent_id} {child_id} "
+                "--deliverable <path> --require-deliverable --json"
+                if artifact_contract["handoff_status"] == "open"
+                else f"Handoff {artifact_contract['handoff_status']}; parent resumes"
+            ),
+            f"Parent resumes: talaria forge run {parent_id} --json",
         ],
     }
     packet = dele.enrich_run_packet(vault, child_id, packet)
-    if with_axon:
-        from talaria_cli.cmds import axon as axon_cmd
+    pack_id = pack or str(meta.get("skill_pack") or "").strip() or None
+    packet["skill_pack"] = pack_id
+    if with_axon or with_memory:
+        from talaria_cli.cmds.context_hydrate import build_activation_context
 
-        queries = list(axon_queries) if axon_queries else [str(meta.get("specialty") or child_id)[:60]]
-        packet["axon"] = axon_cmd.bundles_for_queries(vault, queries, limit=8)
+        ctx = build_activation_context(
+            vault,
+            child_id,
+            specialty=str(meta.get("specialty") or child_id),
+            axon_queries=list(axon_queries) if axon_queries else None,
+            pack_id=pack_id if with_axon else None,
+            hydrate=bool(hydrate and with_axon),
+            with_memory=with_memory,
+            skill_limit=5,
+            memory_limit=5,
+        )
+        packet["context"] = {
+            "pack": ctx.get("pack"),
+            "pilot_must": ctx.get("pilot_must"),
+        }
+        if with_axon:
+            from talaria_cli.cmds import axon as axon_cmd
+
+            queries = (
+                list(axon_queries)
+                if axon_queries
+                else [str(meta.get("specialty") or child_id)[:60]]
+            )
+            packet["axon"] = axon_cmd.bundles_for_queries(vault, queries, limit=8)
+            packet["skills_hydrated"] = ctx.get("skills_hydrated")
+            packet["skill_ids_loaded"] = ctx.get("skill_ids_loaded")
+        if with_memory:
+            packet["memory"] = ctx.get("memory")
 
     if as_json:
         emit(packet, True)
@@ -588,7 +780,7 @@ def run_invoke(
         if policy.get("warnings"):
             for w in policy["warnings"]:
                 print("WARN:", w)
-        print(f"invoke {parent_id} → {child_id}")
+        print(f"invoke {parent_id} → {child_id} [{artifact_contract['handoff_status']}]")
         if brief:
             print("brief:", brief)
         for i, step in enumerate(packet["instructions"], 1):

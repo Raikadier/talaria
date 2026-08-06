@@ -68,10 +68,10 @@ talaria forge build --brief "crea un agente que sepa responder correos usando ta
 
 Eso crea:
 - perfil draft `_META/forge/profiles/<id>.md`
-- corpus scaffold `memory/research/forge/<id>/`
-- `pilot_playbook` (research → `forge check` → `active` → `forge run`)
+- corpus **auto-instruido** (doctrina + ≥5 fuentes + métodos; gates C1–C5 bootstrap)
+- `pilot_playbook` (revisar → check → active → run)
 
-Luego el piloto **ejecuta** ese playbook (rellena doctrina/fuentes, no deja cosplay).
+La instrucción del oficio es **automática al crear** (`forge instruct` interno). Calibración humana sigue siendo requerida para `status: active`.
 
 Flags útiles: `--id`, `--specialty`, `--deliverable`, `--force`,  
 `--kind orchestrator|specialist|both`, `--invokes a,b`, `--invocable-by x,y`, `--invocable-by-mode open|allowlist|deny_direct`.

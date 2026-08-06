@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Agendar — {{ app_name }}</title>
+  <style>
+    body { font-family: system-ui, sans-serif; background:#101820; color:#eef3f8; margin:0; padding:1.5rem; }
+    form { max-width:420px; margin:0 auto; background:#1c2836; padding:1.25rem; border-radius:12px; border:1px solid #2a3a4d; }
+    label { display:block; margin:.75rem 0 .25rem; font-size:.85rem; color:#9aabbf; }
+    input, select { width:100%; padding:.55rem; border-radius:8px; border:1px solid #314457; background:#121a24; color:#eef3f8; }
+    button { margin-top:1rem; width:100%; padding:.7rem; border:0; border-radius:8px; background:#2f9e7a; color:#fff; font-weight:600; cursor:pointer; }
+    button:disabled { opacity:.65; cursor:wait; }
+    .ok { color:#5ddea0; margin-top:1rem; }
+    .err { color:#e07a7a; margin-top:1rem; }
+    h1 { text-align:center; font-size:1.25rem; }
+  </style>
+</head>
+<body>
+  <h1>{{ app_name }}</h1>
+  <form id="f">
+    <label>Nombre</label>
+    <input name="customer_name" required minlength="2" />
+    <label>WhatsApp</label>
+    <input name="phone" required placeholder="+57…" />
+    <label>Servicio</label>
+    <select name="service_id" id="svc" required></select>
+    <label>Fecha y hora</label>
+    <input name="starts_at" type="datetime-local" required />
+    <label>Notas (fade, tijera, etc.)</label>
+    <input name="notes" placeholder="Fade medio" />
+    <button type="submit" id="btn">Pedir cita</button>
+    <p id="msg" hidden aria-live="polite"></p>
+  </form>
+  <script>
+    function formatApiError(data) {
+      const d = data && data.detail;
+      if (typeof d === "string") return d;
+      if (Array.isArray(d)) {
+        return d.map(item => {
+          if (typeof item === "string") return item;
+          const loc = (item.loc || []).filter(x => x !== "body").join(".");
+          const msg = item.msg || item.message || JSON.stringify(item);
+          return loc ? `${loc}: ${msg}` : msg;
+        }).join("; ");
+      }
+      if (d && typeof d === "object") {
+        return d.error || d.message || JSON.stringify(d);
+      }
+      if (data && data.error) return data.error;
+      return "Error";
+    }
+
+    fetch("/api/services").then(r => r.json()).then(list => {
+      const s = document.getElementById("svc");
+      list.forEach(x => {
+        const o = document.createElement("option");
+        o.value = x.id;
+        o.textContent = `${x.name} (${x.duration_min} min · $${x.price_usd})`;
+        s.appendChild(o);
+      });
+    });
+
+    document.getElementById("f").onsubmit = async (e) => {
+      e.preventDefault();
+      const btn = document.getElementById("btn");
+      const msg = document.getElementById("msg");
+      btn.disabled = true;
+      const prevLabel = btn.textContent;
+      btn.textContent = "Enviando…";
+      msg.hidden = false;
+      msg.className = "ok";
+      msg.textContent = "Enviando…";
+
+      const fd = new FormData(e.target);
+      const body = {
+        customer_name: fd.get("customer_name"),
+        phone: fd.get("phone"),
+        service_id: Number(fd.get("service_id")),
+        starts_at: new Date(fd.get("starts_at")).toISOString(),
+        notes: fd.get("notes") || ""
+      };
+
+      try {
+        const res = await fetch("/api/public/book", {
+          method: "POST",
+          headers: {"Content-Type": "application/json"},
+          body: JSON.stringify(body)
+        });
+        const data = await res.json().catch(() => ({}));
+        if (res.ok) {
+          msg.className = "ok";
+          msg.textContent = "Listo. WhatsApp mock: ack + recordatorio.";
+        } else {
+          msg.className = "err";
+          msg.textContent = formatApiError(data);
+        }
+      } catch (err) {
+        msg.className = "err";
+        msg.textContent = "Error de red. Intenta de nuevo.";
+      } finally {
+        btn.disabled = false;
+        btn.textContent = prevLabel;
+      }
+    };
+  </script>
+</body>
+</html>

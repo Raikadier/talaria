@@ -13,8 +13,10 @@ from talaria_cli.cmds import connect_apply as connect_apply_cmd
 from talaria_cli.cmds import eval_cmd
 from talaria_cli.cmds import forge as forge_cmd
 from talaria_cli.cmds import forge_build as forge_build_cmd
+from talaria_cli.cmds import forge_instruct as forge_instruct_cmd
 from talaria_cli.cmds import import_chats as import_cmd
 from talaria_cli.cmds import ingest as ingest_cmd
+from talaria_cli.cmds import memory_cmd
 from talaria_cli.cmds import session as session_cmd
 from talaria_cli.cmds import smoke as smoke_cmd
 from talaria_cli.cmds import status as status_cmd
@@ -29,8 +31,9 @@ Talaria CLI — SPINE + órganos (TCOS).
 
 describe | connect [--apply --yes] | mcp | doctor | smoke | status
 session start|status|close
-verify boot|close   forge list|show|check|run|build|invoke|graph
-axon search|for-profile|stats|feedback|quality
+verify boot|close   forge list|show|check|run|build|instruct|invoke|graph
+axon search|for-profile|stats|feedback|quality|pack
+memory retrieve
 eval list|show|run   mode get|set
 Global: --vault PATH  --json  --mode strict|draft
 """
@@ -100,13 +103,38 @@ def build_parser() -> argparse.ArgumentParser:
         "--declare",
         help="Comma gates e.g. G1=pass,G2=pass,G3=pass",
     )
+    fcheck.add_argument(
+        "--require-axon",
+        action="store_true",
+        help="Require axon_skills cites (Gaxon) in deliverable",
+    )
     frun = forge_sub.add_parser("run", help="Emit activation packet for agents")
     _add_json(frun)
     frun.add_argument("profile_id", help="forge_id")
     frun.add_argument(
         "--with-axon",
         action="store_true",
-        help="Include AXON search results from profile axon_queries",
+        default=True,
+        help="Include AXON search (default on)",
+    )
+    frun.add_argument(
+        "--no-axon",
+        action="store_true",
+        help="Skip AXON retrieve/hydrate",
+    )
+    frun.add_argument(
+        "--no-hydrate",
+        action="store_true",
+        help="Search hits only — do not embed skill bodies",
+    )
+    frun.add_argument(
+        "--no-memory",
+        action="store_true",
+        help="Skip memory retrieve",
+    )
+    frun.add_argument(
+        "--pack",
+        help="AXON skill pack id (e.g. software-delivery, youtube-channel)",
     )
     fbuild = forge_sub.add_parser(
         "build",
@@ -160,9 +188,57 @@ def build_parser() -> argparse.ArgumentParser:
         action="store_true",
         help="Hard-fail policy (missing invokes edge / allowlist)",
     )
-    finvoke.add_argument("--with-axon", action="store_true")
+    finvoke.add_argument(
+        "--with-axon",
+        action="store_true",
+        default=True,
+        help="Include AXON hydrate (default on)",
+    )
+    finvoke.add_argument(
+        "--no-axon",
+        action="store_true",
+        help="Skip AXON retrieve/hydrate",
+    )
+    finvoke.add_argument(
+        "--no-hydrate",
+        action="store_true",
+        help="Hits only — no skill bodies",
+    )
+    finvoke.add_argument(
+        "--no-memory",
+        action="store_true",
+        help="Skip memory retrieve",
+    )
+    finvoke.add_argument(
+        "--pack",
+        help="AXON skill pack id for child activation",
+    )
+    finvoke.add_argument(
+        "--deliverable",
+        help="Child deliverable path to validate and close handoff",
+    )
+    finvoke.add_argument(
+        "--artifact-in",
+        help="Path/id of inbound artifact from parent",
+    )
+    finvoke.add_argument(
+        "--require-deliverable",
+        action="store_true",
+        help="Fail unless --deliverable is provided and passes forge check",
+    )
     fgraph = forge_sub.add_parser("graph", help="Show user delegation graph")
     _add_json(fgraph)
+    finstruct = forge_sub.add_parser(
+        "instruct",
+        help="Auto-bootstrap doctrine/corpus for a profile (also runs inside forge build)",
+    )
+    _add_json(finstruct)
+    finstruct.add_argument("profile_id", nargs="?", help="forge_id")
+    finstruct.add_argument(
+        "--all-drafts",
+        action="store_true",
+        help="Instruct all draft / built_from_brief profiles",
+    )
 
     axon = sub.add_parser("axon", help="AXON skill search")
     _add_json(axon)
@@ -188,6 +264,22 @@ def build_parser() -> argparse.ArgumentParser:
     aqual = axon_sub.add_parser("quality", help="Show AXON quality ranking")
     _add_json(aqual)
     aqual.add_argument("--limit", type=int, default=20)
+    apack = axon_sub.add_parser("pack", help="Skill packs (curated mission sets)")
+    apack_sub = apack.add_subparsers(dest="pack_kind")
+    apack_list = apack_sub.add_parser("list", help="List packs")
+    _add_json(apack_list)
+    apack_show = apack_sub.add_parser("show", help="Show one pack")
+    _add_json(apack_show)
+    apack_show.add_argument("pack_id")
+
+    mem = sub.add_parser("memory", help="Vault memory retrieve")
+    _add_json(mem)
+    mem_sub = mem.add_subparsers(dest="memory_kind")
+    mret = mem_sub.add_parser("retrieve", help="Search memory/ Markdown")
+    _add_json(mret)
+    mret.add_argument("query", help="Search terms")
+    mret.add_argument("--forge", dest="forge_id", help="Bias to forge corpus id")
+    mret.add_argument("--limit", type=int, default=8)
 
     sess = sub.add_parser("session", help="SPINE session start/status/close (scorecard enforcement)")
     _add_json(sess)
@@ -382,13 +474,18 @@ def main(argv: list[str] | None = None) -> int:
                 args.profile_id,
                 deliverable=getattr(args, "deliverable", None),
                 declare=getattr(args, "declare", None),
+                require_axon=bool(getattr(args, "require_axon", False)),
                 as_json=as_json,
             )
         if args.forge_kind == "run":
+            no_axon = bool(getattr(args, "no_axon", False))
             return forge_cmd.run_run(
                 vault,
                 args.profile_id,
-                with_axon=bool(getattr(args, "with_axon", False)),
+                with_axon=not no_axon,
+                hydrate=not no_axon and not bool(getattr(args, "no_hydrate", False)),
+                with_memory=not bool(getattr(args, "no_memory", False)),
+                pack=getattr(args, "pack", None),
                 as_json=as_json,
             )
         if args.forge_kind == "build":
@@ -406,17 +503,31 @@ def main(argv: list[str] | None = None) -> int:
                 as_json=as_json,
             )
         if args.forge_kind == "invoke":
+            no_axon = bool(getattr(args, "no_axon", False))
             return forge_cmd.run_invoke(
                 vault,
                 args.parent_id,
                 args.child_id,
                 brief=getattr(args, "brief", None),
                 strict=bool(getattr(args, "strict", False)),
-                with_axon=bool(getattr(args, "with_axon", False)),
+                with_axon=not no_axon,
+                hydrate=not no_axon and not bool(getattr(args, "no_hydrate", False)),
+                with_memory=not bool(getattr(args, "no_memory", False)),
+                pack=getattr(args, "pack", None),
+                deliverable=getattr(args, "deliverable", None),
+                artifact_in=getattr(args, "artifact_in", None),
+                require_deliverable=bool(getattr(args, "require_deliverable", False)),
                 as_json=as_json,
             )
         if args.forge_kind == "graph":
             return forge_cmd.run_graph(vault, as_json=as_json)
+        if args.forge_kind == "instruct":
+            return forge_instruct_cmd.run_instruct(
+                vault,
+                getattr(args, "profile_id", None),
+                all_drafts=bool(getattr(args, "all_drafts", False)),
+                as_json=as_json,
+            )
         parser.parse_args(["forge", "-h"])
         return EXIT_USAGE
     if args.command == "session":
@@ -467,7 +578,34 @@ def main(argv: list[str] | None = None) -> int:
             return axon_cmd.run_quality(
                 vault, limit=int(getattr(args, "limit", 20) or 20), as_json=as_json
             )
+        if args.axon_kind == "pack":
+            from talaria_cli.cmds.context_hydrate import list_packs, load_pack
+
+            if getattr(args, "pack_kind", None) == "list":
+                packs = list_packs(vault)
+                emit({"ok": True, "command": "axon pack list", "packs": packs}, as_json or True)
+                return EXIT_OK
+            if getattr(args, "pack_kind", None) == "show":
+                pack = load_pack(vault, args.pack_id)
+                if not pack:
+                    emit({"ok": False, "error": f"pack not found: {args.pack_id}"}, True)
+                    return EXIT_ERROR
+                emit({"ok": True, "command": "axon pack show", "pack": pack}, as_json or True)
+                return EXIT_OK
+            parser.parse_args(["axon", "pack", "-h"])
+            return EXIT_USAGE
         parser.parse_args(["axon", "-h"])
+        return EXIT_USAGE
+    if args.command == "memory":
+        if getattr(args, "memory_kind", None) == "retrieve":
+            return memory_cmd.run_retrieve(
+                vault,
+                args.query,
+                forge_id=getattr(args, "forge_id", None),
+                limit=int(getattr(args, "limit", 8) or 8),
+                as_json=as_json,
+            )
+        parser.parse_args(["memory", "-h"])
         return EXIT_USAGE
     if args.command == "status":
         return status_cmd.run_status(vault, as_json=as_json)

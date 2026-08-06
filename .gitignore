@@ -57,3 +57,6 @@ apps/docs-web/_deploy_payload_clean.json
 apps/docs-web/_mcp_args.json
 apps/docs-web/_mcp_args_oneline.json
 apps/docs-web/_deploy_files.json
+
+# SQLite / local DBs
+*.db

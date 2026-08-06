@@ -453,24 +453,34 @@ FORGE profile={fid} | laws=I+II | builder=2.0 | corpus=on | spine=on
     profile = load_profile(vault, fid)
     struct = evaluate_profile_structure(profile, vault) if profile else {"ok": False}
 
+    from talaria_cli.cmds import forge_instruct as instruct_cmd
+
+    instruct = instruct_cmd.auto_instruct(
+        vault,
+        fid,
+        brief=brief,
+        title=title,
+        specialty=spec,
+        role_kind=kind,
+    )
+
     pilot_playbook = [
-        f"1. Research the craft for «{spec}» and fill {corpus_rel}/00-doctrine.md + 05-sources.md (gates C1–C5).",
-        f"2. Enrich _META/forge/profiles/{fid}.md mission/anti-mission/DoD if needed.",
-        f"3. talaria forge check --profile {fid} --json",
-        "4. When C1–C5 pass: set profile+corpus status to active; update _META/forge/catalog.md (optional — your catalog)",
-        f"5. talaria session start --objective \"Use {fid}\" --forge {fid} --json",
-        f"6. talaria forge run {fid} --with-axon --json  → execute playbook for the user task",
+        f"1. Agent already auto-instructed (seed={instruct.get('seed')}). Review {corpus_rel}/00-doctrine.md.",
+        f"2. Optionally deepen sources/doctrine; then talaria forge check --profile {fid} --json",
+        "3. When calibrated: set profile status to active; update catalog if you want",
+        f"4. talaria session start --objective \"Use {fid}\" --forge {fid} --json",
+        f"5. talaria forge run {fid} --with-axon --json",
     ]
     if invokes_list:
         pilot_playbook.append(
-            f"6b. Delegate specialists: talaria forge invoke {fid} <child> --brief \"…\" --json "
+            f"5b. Delegate: talaria forge invoke {fid} <child> --brief \"…\" --json "
             f"(declared: {', '.join(invokes_list)})"
         )
     if by_list:
         pilot_playbook.append(
-            f"6c. Preferred callers (invocable_by): {', '.join(by_list)} — mode={mode}"
+            f"5c. Preferred callers (invocable_by): {', '.join(by_list)} — mode={mode}"
         )
-    pilot_playbook.append("7. talaria session close --json")
+    pilot_playbook.append("6. talaria session close --json")
 
     return {
         "ok": True,
@@ -479,6 +489,8 @@ FORGE profile={fid} | laws=I+II | builder=2.0 | corpus=on | spine=on
         "title": title,
         "specialty": spec,
         "status": "draft",
+        "instructed": bool(instruct.get("ok")),
+        "instruct": instruct,
         "brief": brief,
         "builder": "2.0",
         "role_kind": kind,
@@ -496,9 +508,8 @@ FORGE profile={fid} | laws=I+II | builder=2.0 | corpus=on | spine=on
         "pilot_playbook": pilot_playbook,
         "activation": f"FORGE profile={fid} | laws=I+II | builder=2.0 | corpus=on | spine=on",
         "next_for_coding_agent": (
-            "You are the pilot. Execute pilot_playbook now: complete corpus research, "
-            "then forge check, then forge run for the user's real task. "
-            "Talaria does not own the org chart — the user owns this agent graph."
+            "Agent was auto-instructed at build time. Review doctrine, then forge run / forge invoke. "
+            "Promote to active only after calibration."
         ),
         "user_prompt_example": f'crea un agente que {spec} usando talaria',
     }

@@ -31,7 +31,10 @@ Companion: MCP Obsidian para notas finas (no reemplaza este server).
 | `session start\|status\|close` | `talaria_session_*` |
 | `verify boot\|close` | `talaria_verify_*` |
 | `smoke` | `talaria_smoke` |
-| `forge list\|show\|check\|run\|build\|invoke\|graph` | `talaria_forge_*` |
+| `forge run` / `check` | `talaria_forge_run` (hydrate+memory+pack) / `talaria_forge_check` (`require_axon`) |
+| `forge invoke` | `talaria_forge_invoke` (`deliverable` / `require_deliverable` / `artifact_in` / hydrate) |
+| `axon pack list\|show` | `talaria_axon_pack_list` / `talaria_axon_pack_show` |
+| `memory retrieve` | `talaria_memory_retrieve` |
 | `axon *` | `talaria_axon_*` |
 | `eval *` | `talaria_eval_*` |
 | `ingest *` / `import chats` | `talaria_ingest_*` / `talaria_import_chats` |

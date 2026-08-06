@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Agendar — {{ app_name }}</title>
+  <style>
+    body { font-family: system-ui, sans-serif; background:#0f1419; color:#e7ecf3; margin:0; padding:1.5rem; }
+    form { max-width:420px; margin:0 auto; background:#1a2332; padding:1.25rem; border-radius:12px; }
+    label { display:block; margin:.75rem 0 .25rem; font-size:.85rem; color:#8b9bb4; }
+    input, select { width:100%; padding:.55rem; border-radius:8px; border:1px solid #2a384c; background:#121a26; color:#e7ecf3; }
+    button { margin-top:1rem; width:100%; padding:.7rem; border:0; border-radius:8px; background:#3d9cf0; color:#fff; font-weight:600; cursor:pointer; }
+    .ok { color:#3ecf8e; margin-top:1rem; }
+    h1 { text-align:center; font-size:1.25rem; }
+  </style>
+</head>
+<body>
+  <h1>{{ app_name }}</h1>
+  <form id="f">
+    <label>Nombre</label>
+    <input name="customer_name" required minlength="2" />
+    <label>WhatsApp</label>
+    <input name="phone" required placeholder="+57…" />
+    <label>Servicio</label>
+    <select name="service_id" id="svc" required></select>
+    <label>Fecha y hora</label>
+    <input name="starts_at" type="datetime-local" required />
+    <label>Notas</label>
+    <input name="notes" placeholder="Fade medio, etc." />
+    <button type="submit">Pedir cita</button>
+    <p class="ok" id="msg" hidden></p>
+  </form>
+  <script>
+    fetch("/api/services").then(r => r.json()).then(list => {
+      const s = document.getElementById("svc");
+      list.forEach(x => {
+        const o = document.createElement("option");
+        o.value = x.id;
+        o.textContent = `${x.name} (${x.duration_min} min · $${x.price_usd})`;
+        s.appendChild(o);
+      });
+    });
+    document.getElementById("f").onsubmit = async (e) => {
+      e.preventDefault();
+      const fd = new FormData(e.target);
+      const starts = new Date(fd.get("starts_at"));
+      const body = {
+        customer_name: fd.get("customer_name"),
+        phone: fd.get("phone"),
+        service_id: Number(fd.get("service_id")),
+        starts_at: starts.toISOString(),
+        notes: fd.get("notes") || ""
+      };
+      const res = await fetch("/api/public/book", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify(body)
+      });
+      const data = await res.json();
+      const msg = document.getElementById("msg");
+      msg.hidden = false;
+      msg.textContent = res.ok ? "Listo. Te escribimos por WhatsApp (mock)." : (data.detail || "Error");
+    };
+  </script>
+</body>
+</html>

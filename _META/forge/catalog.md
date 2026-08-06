@@ -44,3 +44,45 @@ Manual:
 5. Fila aquí (opcional — tu vault, tu índice)  
 
 Tutorial grafo: [[forge-example-user-graph]]
+
+## Agentes usuario — equipo software (draft)
+
+> Grafo **tuyos** (industria estándar). Semilla del repo sigue arriba. Completar corpus C1–C5 antes de `active`. Ver [[forge-delegation]].
+
+| ID | kind | Nota |
+|----|------|------|
+| `product-manager` | orchestrator | draft Builder 2.0 — equipo software estándar |
+| `product-owner` | specialist | draft Builder 2.0 — equipo software estándar |
+| `business-analyst` | specialist | draft Builder 2.0 — equipo software estándar |
+| `product-designer` | both | draft Builder 2.0 — equipo software estándar |
+| `ux-designer` | orchestrator | draft Builder 2.0 — equipo software estándar |
+| `ui-designer` | specialist | draft Builder 2.0 — equipo software estándar |
+| `ux-researcher` | specialist | draft Builder 2.0 — equipo software estándar |
+| `ux-writer` | specialist | draft Builder 2.0 — equipo software estándar |
+| `software-architect` | orchestrator | draft Builder 2.0 — equipo software estándar |
+| `tech-lead` | orchestrator | draft Builder 2.0 — equipo software estándar |
+| `engineering-manager` | orchestrator | draft Builder 2.0 — equipo software estándar |
+| `backend-developer` | specialist | draft Builder 2.0 — equipo software estándar |
+| `frontend-developer` | specialist | draft Builder 2.0 — equipo software estándar |
+| `mobile-developer` | specialist | draft Builder 2.0 — equipo software estándar |
+| `fullstack-developer` | both | draft Builder 2.0 — equipo software estándar |
+| `platform-engineer` | specialist | draft Builder 2.0 — equipo software estándar |
+| `devops-sre` | specialist | draft Builder 2.0 — equipo software estándar |
+| `data-engineer` | specialist | draft Builder 2.0 — equipo software estándar |
+| `security-engineer` | specialist | draft Builder 2.0 — equipo software estándar |
+| `qa-engineer` | orchestrator | draft Builder 2.0 — equipo software estándar |
+| `automation-qa` | specialist | draft Builder 2.0 — equipo software estándar |
+| `scrum-master` | specialist | draft Builder 2.0 — equipo software estándar |
+| `code-reviewer` | specialist | draft Builder 2.0 — equipo software estándar |
+| `data-analyst` | specialist | draft Builder 2.0 — equipo software estándar |
+| `ml-engineer` | specialist | draft Builder 2.0 — equipo software estándar |
+| `technical-writer` | specialist | draft Builder 2.0 — equipo software estándar |
+| `release-manager` | specialist | draft Builder 2.0 — equipo software estándar |
+| `support-engineer` | specialist | draft Builder 2.0 — equipo software estándar |
+| `compliance-privacy` | specialist | draft Builder 2.0 — equipo software estándar |
+
+## Ensembles — vertical calibrado
+
+| ID | Nota |
+|----|------|
+| `software-delivery` | [[forge-ensemble-software-delivery]] — 8 agentes active + eval `software-delivery-v1` |

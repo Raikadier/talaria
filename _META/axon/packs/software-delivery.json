@@ -1,0 +1,25 @@
+{
+  "id": "software-delivery",
+  "title": "Software delivery vertical",
+  "mission": "Entregar features E2E con rigor de ingeniería (no solo código improvisado)",
+  "forge_profiles": [
+    "tech-lead",
+    "software-architect",
+    "backend-developer",
+    "frontend-developer",
+    "code-reviewer",
+    "qa-engineer",
+    "devops-sre"
+  ],
+  "queries": [
+    "api design rest",
+    "fastapi",
+    "testing pytest",
+    "code review",
+    "ci cd",
+    "architecture adr",
+    "security owasp"
+  ],
+  "skills": [],
+  "curation_note": "Pins vacíos a propósito: queries + quality ranking seleccionan del banco. Añade paths skills/… cuando confirmes útiles."
+}

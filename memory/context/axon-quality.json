@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "searches": 6,
+  "searches": 10,
   "skills": {
     "skills/creative/architecture-diagram.md": {
       "shown": 2,
@@ -93,9 +93,114 @@
       "noise": 0,
       "name": "parallel-debugging",
       "domain": "community"
+    },
+    "skills/community/api-design-principles.md": {
+      "shown": 2,
+      "useful": 0,
+      "noise": 0,
+      "name": "api-design-principles",
+      "domain": "community"
+    },
+    "skills/community/api-design-reviewer.md": {
+      "shown": 2,
+      "useful": 0,
+      "noise": 0,
+      "name": "api-design-reviewer",
+      "domain": "community"
+    },
+    "skills/agensi/api-contract-tester.md": {
+      "shown": 2,
+      "useful": 0,
+      "noise": 0,
+      "name": "api-contract-tester",
+      "domain": "agensi"
+    },
+    "skills/community/openapi-spec-generation.md": {
+      "shown": 2,
+      "useful": 0,
+      "noise": 0,
+      "name": "openapi-spec-generation",
+      "domain": "community"
+    },
+    "skills/community/web-component-design.md": {
+      "shown": 2,
+      "useful": 0,
+      "noise": 0,
+      "name": "web-component-design",
+      "domain": "community"
+    },
+    "skills/community/canvas-design.md": {
+      "shown": 2,
+      "useful": 0,
+      "noise": 0,
+      "name": "canvas-design",
+      "domain": "community"
+    },
+    "skills/creative/claude-design.md": {
+      "shown": 2,
+      "useful": 0,
+      "noise": 0,
+      "name": "claude-design",
+      "domain": "creative"
+    },
+    "skills/community/design-system-patterns.md": {
+      "shown": 2,
+      "useful": 0,
+      "noise": 0,
+      "name": "design-system-patterns",
+      "domain": "community"
+    },
+    "skills/community/epic-design.md": {
+      "shown": 2,
+      "useful": 0,
+      "noise": 0,
+      "name": "epic-design",
+      "domain": "community"
+    },
+    "skills/community/event-store-design.md": {
+      "shown": 2,
+      "useful": 0,
+      "noise": 0,
+      "name": "event-store-design",
+      "domain": "community"
+    },
+    "skills/models/segment-anything-model.md": {
+      "shown": 2,
+      "useful": 0,
+      "noise": 0,
+      "name": "segment-anything-model",
+      "domain": "models"
+    },
+    "skills/agensi/fidelity-trade-parser.md": {
+      "shown": 2,
+      "useful": 0,
+      "noise": 0,
+      "name": "fidelity-trade-parser",
+      "domain": "agensi"
+    },
+    "skills/community/brand-guidelines.md": {
+      "shown": 2,
+      "useful": 0,
+      "noise": 0,
+      "name": "brand-guidelines",
+      "domain": "community"
+    },
+    "skills/software-development/simplify-code.md": {
+      "shown": 2,
+      "useful": 0,
+      "noise": 0,
+      "name": "simplify-code",
+      "domain": "software-development"
+    },
+    "skills/agensi-devsecops-expert/devsecops-engineer.md": {
+      "shown": 2,
+      "useful": 0,
+      "noise": 0,
+      "name": "devsecops-engineer",
+      "domain": "agensi-devsecops-expert"
     }
   },
   "note": "Filled by talaria axon search/for-profile (shown) and axon feedback useful|noise",
-  "last_search": "2026-08-05T23:52:10.388659+00:00",
-  "last_query": "methodology"
+  "last_search": "2026-08-06T04:26:37.698460+00:00",
+  "last_query": "guía técnica del equipo, calidad de código y entrega"
 }

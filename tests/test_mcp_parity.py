@@ -14,6 +14,9 @@ REQUIRED = {
     "talaria_mode_set",
     "talaria_axon_feedback",
     "talaria_axon_quality",
+    "talaria_axon_pack_list",
+    "talaria_axon_pack_show",
+    "talaria_memory_retrieve",
     "talaria_eval_list",
     "talaria_eval_show",
     "talaria_eval_run",
@@ -21,6 +24,7 @@ REQUIRED = {
     "talaria_forge_build",
     "talaria_forge_invoke",
     "talaria_forge_graph",
+    "talaria_forge_instruct",
     "talaria_verify_boot",
 }
 

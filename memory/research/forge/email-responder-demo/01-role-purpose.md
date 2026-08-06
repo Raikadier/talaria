@@ -1,10 +1,15 @@
 ---
 tags: [forge, corpus]
 forge_id: email-responder-demo
+status: instructed
 ---
 
-# Rol y propósito — Sepa responder correos
+# Rol y propósito — Email Responder Demo
 
-**Brief:** crea un agente que sepa responder correos usando talaria
+**Brief:** Sepa responder correos
 
 **Función:** Sepa responder correos
+
+**role_kind:** both
+
+**Propósito:** Operar con excelencia profesional en este oficio, con entregables auditables y gates FORGE.

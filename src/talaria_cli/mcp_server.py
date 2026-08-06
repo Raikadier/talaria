@@ -198,13 +198,17 @@ TOOLS: list[dict[str, Any]] = [
     },
     {
         "name": "talaria_forge_check",
-        "description": "Validate FORGE profile and optional deliverable gates.",
+        "description": "Validate FORGE profile and optional deliverable gates (Gaxon with require_axon).",
         "inputSchema": {
             "type": "object",
             "properties": {
                 "profile": {"type": "string"},
                 "deliverable": {"type": "string"},
                 "declare": {"type": "string"},
+                "require_axon": {
+                    "type": "boolean",
+                    "description": "Require axon_skills cites (Gaxon)",
+                },
             },
             "required": ["profile"],
             "additionalProperties": False,
@@ -212,12 +216,30 @@ TOOLS: list[dict[str, Any]] = [
     },
     {
         "name": "talaria_forge_run",
-        "description": "Emit FORGE activation packet (session/spine enforcement included).",
+        "description": (
+            "Emit FORGE activation packet with AXON skill bodies + memory retrieve by default. "
+            "Optional pack (software-delivery, youtube-channel)."
+        ),
         "inputSchema": {
             "type": "object",
             "properties": {
                 "profile": {"type": "string"},
-                "with_axon": {"type": "boolean"},
+                "with_axon": {
+                    "type": "boolean",
+                    "description": "Default true — AXON retrieve/hydrate",
+                },
+                "hydrate": {
+                    "type": "boolean",
+                    "description": "Default true — embed skill bodies",
+                },
+                "with_memory": {
+                    "type": "boolean",
+                    "description": "Default true — memory/ retrieve",
+                },
+                "pack": {
+                    "type": "string",
+                    "description": "Skill pack id (e.g. software-delivery)",
+                },
             },
             "required": ["profile"],
             "additionalProperties": False,
@@ -276,7 +298,16 @@ TOOLS: list[dict[str, Any]] = [
                 "child": {"type": "string"},
                 "brief": {"type": "string"},
                 "strict": {"type": "boolean"},
-                "with_axon": {"type": "boolean"},
+                "with_axon": {
+                    "type": "boolean",
+                    "description": "Default true — hydrate AXON + optional pack",
+                },
+                "hydrate": {"type": "boolean"},
+                "with_memory": {"type": "boolean"},
+                "pack": {"type": "string"},
+                "deliverable": {"type": "string"},
+                "artifact_in": {"type": "string"},
+                "require_deliverable": {"type": "boolean"},
             },
             "required": ["parent", "child"],
             "additionalProperties": False,
@@ -288,6 +319,21 @@ TOOLS: list[dict[str, Any]] = [
         "inputSchema": {
             "type": "object",
             "properties": {},
+            "additionalProperties": False,
+        },
+    },
+    {
+        "name": "talaria_forge_instruct",
+        "description": (
+            "Auto-bootstrap doctrine/corpus for a profile. "
+            "Also runs automatically inside talaria_forge_build."
+        ),
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "profile": {"type": "string"},
+                "all_drafts": {"type": "boolean"},
+            },
             "additionalProperties": False,
         },
     },
@@ -345,6 +391,35 @@ TOOLS: list[dict[str, Any]] = [
         "inputSchema": {
             "type": "object",
             "properties": {"limit": {"type": "integer"}},
+            "additionalProperties": False,
+        },
+    },
+    {
+        "name": "talaria_axon_pack_list",
+        "description": "List curated AXON skill packs (mission sets; curate ≠ delete).",
+        "inputSchema": {"type": "object", "properties": {}, "additionalProperties": False},
+    },
+    {
+        "name": "talaria_axon_pack_show",
+        "description": "Show one AXON skill pack (queries + pinned skills).",
+        "inputSchema": {
+            "type": "object",
+            "properties": {"pack_id": {"type": "string"}},
+            "required": ["pack_id"],
+            "additionalProperties": False,
+        },
+    },
+    {
+        "name": "talaria_memory_retrieve",
+        "description": "Search vault memory/ Markdown for Act context.",
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "query": {"type": "string"},
+                "forge_id": {"type": "string"},
+                "limit": {"type": "integer"},
+            },
+            "required": ["query"],
             "additionalProperties": False,
         },
     },
@@ -530,14 +605,31 @@ class TalariaMCP:
                 arguments["profile"],
                 deliverable=arguments.get("deliverable"),
                 declare=arguments.get("declare"),
+                require_axon=bool(arguments.get("require_axon")),
             )
 
         if name == "talaria_forge_run":
+            with_axon = (
+                True
+                if "with_axon" not in arguments
+                else bool(arguments.get("with_axon"))
+            )
+            hydrate = (
+                True if "hydrate" not in arguments else bool(arguments.get("hydrate"))
+            )
+            with_memory = (
+                True
+                if "with_memory" not in arguments
+                else bool(arguments.get("with_memory"))
+            )
             return _capture_json_cmd(
                 forge_cmd.run_run,
                 self.vault,
                 arguments["profile"],
-                with_axon=bool(arguments.get("with_axon")),
+                with_axon=with_axon,
+                hydrate=hydrate and with_axon,
+                with_memory=with_memory,
+                pack=arguments.get("pack"),
             )
 
         if name == "talaria_forge_build":
@@ -555,6 +647,19 @@ class TalariaMCP:
             )
 
         if name == "talaria_forge_invoke":
+            with_axon = (
+                True
+                if "with_axon" not in arguments
+                else bool(arguments.get("with_axon"))
+            )
+            hydrate = (
+                True if "hydrate" not in arguments else bool(arguments.get("hydrate"))
+            )
+            with_memory = (
+                True
+                if "with_memory" not in arguments
+                else bool(arguments.get("with_memory"))
+            )
             return _capture_json_cmd(
                 forge_cmd.run_invoke,
                 self.vault,
@@ -562,13 +667,33 @@ class TalariaMCP:
                 arguments["child"],
                 brief=arguments.get("brief"),
                 strict=bool(arguments.get("strict")),
-                with_axon=bool(arguments.get("with_axon")),
+                with_axon=with_axon,
+                hydrate=hydrate and with_axon,
+                with_memory=with_memory,
+                pack=arguments.get("pack"),
+                deliverable=arguments.get("deliverable"),
+                artifact_in=arguments.get("artifact_in"),
+                require_deliverable=bool(arguments.get("require_deliverable")),
             )
 
         if name == "talaria_forge_graph":
             from talaria_cli.cmds import forge_delegation as dele
 
             return dele.build_delegation_graph(self.vault)
+
+        if name == "talaria_forge_instruct":
+            from talaria_cli.cmds import forge_instruct as instruct_cmd
+
+            if arguments.get("all_drafts"):
+                return _capture_json_cmd(
+                    instruct_cmd.run_instruct,
+                    self.vault,
+                    None,
+                    all_drafts=True,
+                )
+            if not arguments.get("profile"):
+                return {"ok": False, "error": "profile or all_drafts required"}
+            return instruct_cmd.auto_instruct(self.vault, arguments["profile"])
 
         if name == "talaria_axon_search":
             record = arguments.get("record")
@@ -608,6 +733,30 @@ class TalariaMCP:
             )
             data["command"] = "axon quality"
             return data
+
+        if name == "talaria_axon_pack_list":
+            from talaria_cli.cmds.context_hydrate import list_packs
+
+            packs = list_packs(self.vault)
+            return {"ok": True, "command": "axon pack list", "packs": packs}
+
+        if name == "talaria_axon_pack_show":
+            from talaria_cli.cmds.context_hydrate import load_pack
+
+            pack = load_pack(self.vault, arguments["pack_id"])
+            if not pack:
+                return {"ok": False, "error": f"pack not found: {arguments['pack_id']}"}
+            return {"ok": True, "command": "axon pack show", "pack": pack}
+
+        if name == "talaria_memory_retrieve":
+            from talaria_cli.cmds.context_hydrate import memory_retrieve
+
+            return memory_retrieve(
+                self.vault,
+                arguments["query"],
+                forge_id=arguments.get("forge_id"),
+                limit=int(arguments.get("limit") or 8),
+            )
 
         if name == "talaria_eval_list":
             items = eval_cmd.list_evals(self.vault)

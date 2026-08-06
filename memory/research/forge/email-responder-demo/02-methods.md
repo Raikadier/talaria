@@ -1,8 +1,13 @@
 ---
 tags: [forge, corpus]
 forge_id: email-responder-demo
+status: instructed
 ---
 
-# Métodos — Sepa responder correos
+# Métodos — Email Responder Demo
 
-Completar marcos/patrones del oficio. Ver perfil `email-responder-demo`.
+- Método del oficio (documentar en learn loop si falta)
+- Evidencia primaria/secundaria
+- Crítica adversarial pre-cierre
+
+Usar en el orden del stack cognitivo del perfil. Si falta un método concreto → learn loop → `notes/`.

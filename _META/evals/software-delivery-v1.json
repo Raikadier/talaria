@@ -1,0 +1,23 @@
+{
+  "id": "software-delivery-v1",
+  "title": "Software delivery E2E (ensemble software-delivery)",
+  "forge_profile": "tech-lead",
+  "ensemble": "software-delivery",
+  "builder": "2.0",
+  "pass_score": 80,
+  "baseline_note": "Chat genérico: salta a código, sin brief/ADR/review/QA/release ni crítica.",
+  "forge_advantage": "Cadena PM→Architect→TechLead→Impl→Review→QA→Ops con artefactos y crítica.",
+  "baseline_fixture": "_META/evals/fixtures/software-delivery-v1-baseline-fail.md",
+  "forge_fixture": "_META/evals/fixtures/software-delivery-v1-forge-pass.md",
+  "rubric": [
+    {"id": "brief", "must_contain_any": ["outcome", "brief", "producto", "usuario"], "description": "Product brief / outcome"},
+    {"id": "adr", "must_contain_any": ["adr", "decisión", "decision", "boundary", "contrato"], "description": "ADR/boundaries"},
+    {"id": "plan", "must_contain_any": ["slice", "plan técnico", "task", "tech lead"], "description": "Tech plan / slices"},
+    {"id": "impl", "must_contain_any": ["backend", "frontend", "implement", "endpoint", "api"], "description": "Implementation evidence"},
+    {"id": "review", "must_contain_any": ["review", "riesgo", "approve", "lgtm", "request changes"], "description": "Code review"},
+    {"id": "qa", "must_contain_any": ["qa", "test", "prueba", "regresión", "regression"], "description": "QA"},
+    {"id": "ops", "must_contain_any": ["release", "deploy", "slo", "rollback", "ops", "ci"], "description": "Release/ops"},
+    {"id": "critique", "must_contain_any": ["crítica", "critique", "podría estar mal", "adversarial"], "description": "Pensamiento crítico"},
+    {"id": "memorize", "must_contain_any": ["memory/", "memorize", "vault", "scorecard"], "description": "Memorize/vault"}
+  ]
+}
