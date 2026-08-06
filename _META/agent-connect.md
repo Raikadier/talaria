@@ -5,56 +5,62 @@ aliases: [agent-connect, conectar-agentes]
 
 # Cómo se conecta cualquier agente a Talaria
 
-Dos vías (preferida → fallback):
+**Un cuerpo, una API:** el MCP `talaria` es la puerta máquina completa. El CLI es el mismo traje por terminal. Parity: [[mcp-parity]].
 
-## 1) MCP (preferida)
-
-Servidor stdio `talaria` con tools `talaria_*`.
-
-```bash
-talaria connect --client cursor --json --write
-talaria connect --client hermes --json --write
-talaria connect --client claude --json --write
-```
-
-O ejecutar el server:
-
-```bash
-talaria mcp
-# = talaria.mcp_server --vault <path>
-```
-
-Ya cableado en:
-- Cursor `~/.cursor/mcp.json` → `talaria`
-- Hermes `config.yaml` → `mcp_servers.talaria`
-- Claude Code `~/.claude/settings.json` → `mcpServers.talaria`
-
-Companion: MCP `obsidian` para CRUD de notas.
-
-## 2) CLI + JSON (fallback universal)
-
-Cualquier agente con shell:
+## 1) MCP general (preferida)
 
 ```bash
 talaria describe --json
+talaria connect --client cursor --apply --yes
+# Claude: talaria connect --client claude --apply --yes  → escribe vault/.mcp.json
+talaria mcp   # stdio server
+```
+
+Tool **#1 obligatorio:** `talaria_describe`.
+
+Órganos vía tools `talaria_*`: SPINE session · verify · FORGE · AXON (+ feedback/quality) · eval · ingest · mode · connect.
+
+Companion: MCP `obsidian` para CRUD fino de notas (no es otra memoria canónica).
+
+## 2) CLI + JSON (fallback)
+
+```bash
+talaria describe --json
+talaria session start --objective "..." --forge sw-architect --json
 talaria status --json
-talaria ingest doc <src> --json
 ```
 
-## Descubrimiento en 1 comando
+## Protocolo del piloto (MCP o CLI)
+
+1. `talaria_describe`  
+2. `talaria_session_start` (strict)  
+3. `talaria_verify_boot`  
+4. Retrieve: `talaria_axon_*` / vault  
+5. Act: `talaria_forge_run` + playbook  
+6. Memorize + `forge_critical` en scorecard  
+7. `talaria_session_close` (o `talaria_verify_close`)  
+
+## Crear un agente / perfil (Builder 2.0)
+
+Cuando el usuario pida **crear un agente usando Talaria** (desde Claude Code, Cursor, etc.):
 
 ```bash
-talaria describe --json
+talaria forge build --brief "crea un agente que sepa responder correos" --json
+# MCP: talaria_forge_build
+# Grafo user-owned: --kind / --invokes / --invocable-by → forge invoke / forge graph
 ```
 
-Devuelve vault, comandos, bloque MCP, constitución SPINE y reglas.
+1. Llamar `forge build` / `talaria_forge_build`  
+2. Ejecutar el `pilot_playbook` del resultado (corpus C1–C5 → `forge check` → `active`)  
+3. Para la tarea real: `session start --forge <id>` → `forge run` → (opcional) `forge invoke` → `session close`  
 
-## Protocolo del piloto
+No inventar un perfil solo en el chat: el artefacto canónico vive en el vault ([[forge-builder]] · [[forge-delegation]]).
 
-1. `talaria_describe` / `describe --json`  
-2. `talaria_status` / `doctor`  
-3. Trabajar (Act nativo)  
-4. Ingest si hace falta  
-5. Memorize vía obsidian MCP o escribiendo en `memory/`
+## Anti-patrones
 
-Ver [[cli]] · [[pilots]] · [[spine-framework]]
+- Cablear solo Obsidian y saltarse `talaria`  
+- Inventar tools fuera del contrato `describe`  
+- `apply` sin confirmación  
+- Crear un “agente” como prompt efímero sin `forge build`  
+
+Ver [[cli]] · [[pilots]] · [[spine-framework]] · [[mcp-parity]] · [[architecture]] · [[forge-builder]]

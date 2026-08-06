@@ -1,48 +1,97 @@
-"""MCP stdio server — lets any MCP client drive Talaria SPINE tools.
+"""MCP stdio server — universal suit API for any MCP client.
+
+Parity rule: if `talaria <cmd>` can do it, there is a `talaria_*` MCP tool.
 
 Run:
-  talaria.mcp_server --vault <path>
+  python -m talaria_cli.mcp_server --vault <path>
   talaria mcp
 """
 from __future__ import annotations
 
 import argparse
+import io
 import json
 import sys
+from contextlib import redirect_stdout
 from pathlib import Path
 from typing import Any
 
 
 def _ensure_path() -> Path:
-    root = Path(__file__).resolve().parent.parent
-    if str(root) not in sys.path:
-        sys.path.insert(0, str(root))
-    return root
+    # src/ layout: …/src/talaria_cli/mcp_server.py → parents[1] = src
+    src = Path(__file__).resolve().parent.parent
+    if str(src) not in sys.path:
+        sys.path.insert(0, str(src))
+    return src
 
 
 _ensure_path()
 
-from talaria_cli.agent_contract import agent_contract  # noqa: E402
+from talaria_cli.agent_contract import agent_contract, connection_snippet  # noqa: E402
 from talaria_cli.cmds import axon as axon_cmd  # noqa: E402
 from talaria_cli.cmds import boot as boot_cmd  # noqa: E402
+from talaria_cli.cmds import connect_apply as connect_apply_cmd  # noqa: E402
+from talaria_cli.cmds import eval_cmd  # noqa: E402
 from talaria_cli.cmds import forge as forge_cmd  # noqa: E402
+from talaria_cli.cmds import forge_build as forge_build_cmd  # noqa: E402
 from talaria_cli.cmds import import_chats as import_cmd  # noqa: E402
 from talaria_cli.cmds import ingest as ingest_cmd  # noqa: E402
+from talaria_cli.cmds import session as session_cmd  # noqa: E402
 from talaria_cli.cmds import smoke as smoke_cmd  # noqa: E402
 from talaria_cli.cmds import status as status_cmd  # noqa: E402
 from talaria_cli.cmds import verify as verify_cmd  # noqa: E402
+from talaria_cli.mode import mode_contract, resolve_mode  # noqa: E402
 from talaria_cli.vault import find_vault  # noqa: E402
 
 
-TOOLS = [
+def _capture_json_cmd(fn, *args, **kwargs) -> dict[str, Any]:
+    """Run a CLI cmd that emit()s JSON to stdout; return parsed dict + exit."""
+    buf = io.StringIO()
+    with redirect_stdout(buf):
+        code = fn(*args, **kwargs, as_json=True)
+    raw = buf.getvalue().strip()
+    data: dict[str, Any]
+    try:
+        data = json.loads(raw) if raw else {}
+    except json.JSONDecodeError:
+        data = {"raw": raw}
+    if isinstance(data, dict):
+        data.setdefault("ok", code == 0)
+        data["exit"] = code
+    return data if isinstance(data, dict) else {"ok": code == 0, "exit": code, "data": data}
+
+
+TOOLS: list[dict[str, Any]] = [
     {
         "name": "talaria_describe",
-        "description": "Return Talaria agent connection contract (commands, MCP, rules).",
+        "description": "FIRST tool: Talaria connection contract (commands, MCP, organs, rules).",
         "inputSchema": {"type": "object", "properties": {}, "additionalProperties": False},
     },
     {
+        "name": "talaria_connect",
+        "description": "Emit MCP/CLI connection snippet for a client (cursor|hermes|claude|generic).",
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "client": {
+                    "type": "string",
+                    "enum": ["cursor", "hermes", "claude", "claude-code", "generic"],
+                },
+                "apply": {
+                    "type": "boolean",
+                    "description": "If true, merge into client config (requires confirm=true)",
+                },
+                "confirm": {
+                    "type": "boolean",
+                    "description": "Required safety latch for apply=true",
+                },
+            },
+            "additionalProperties": False,
+        },
+    },
+    {
         "name": "talaria_doctor",
-        "description": "Check tools + organism structure (Phase B doctor).",
+        "description": "Check tools + organism structure.",
         "inputSchema": {"type": "object", "properties": {}, "additionalProperties": False},
     },
     {
@@ -52,27 +101,69 @@ TOOLS = [
     },
     {
         "name": "talaria_status",
-        "description": "Return suit status: vault path, Mark level, tool presence.",
+        "description": "Suit status: vault, Mark level, tools.",
         "inputSchema": {"type": "object", "properties": {}, "additionalProperties": False},
     },
     {
         "name": "talaria_vault_path",
-        "description": "Return absolute path to the Talaria vault.",
+        "description": "Absolute path to the Talaria vault.",
         "inputSchema": {"type": "object", "properties": {}, "additionalProperties": False},
     },
     {
+        "name": "talaria_mode_get",
+        "description": "Get SPINE mode (strict|draft) and contract.",
+        "inputSchema": {"type": "object", "properties": {}, "additionalProperties": False},
+    },
+    {
+        "name": "talaria_mode_set",
+        "description": "Persist SPINE mode to .talaria.mode",
+        "inputSchema": {
+            "type": "object",
+            "properties": {"mode": {"type": "string", "enum": ["strict", "draft"]}},
+            "required": ["mode"],
+            "additionalProperties": False,
+        },
+    },
+    {
+        "name": "talaria_session_start",
+        "description": "Start SPINE session: create scorecard + .talaria.session.json",
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "objective": {"type": "string"},
+                "forge_profile": {"type": "string", "description": "Optional forge_id"},
+            },
+            "required": ["objective"],
+            "additionalProperties": False,
+        },
+    },
+    {
+        "name": "talaria_session_status",
+        "description": "Show active SPINE session marker.",
+        "inputSchema": {"type": "object", "properties": {}, "additionalProperties": False},
+    },
+    {
+        "name": "talaria_session_close",
+        "description": "Close session via verify close on the session scorecard.",
+        "inputSchema": {
+            "type": "object",
+            "properties": {"draft": {"type": "boolean"}},
+            "additionalProperties": False,
+        },
+    },
+    {
         "name": "talaria_verify_boot",
-        "description": "SPINE entry gate: organism integrity + Mark >= Mk.1.",
+        "description": "SPINE entry gate: organism + Mark (+ session hint).",
         "inputSchema": {"type": "object", "properties": {}, "additionalProperties": False},
     },
     {
         "name": "talaria_verify_close",
-        "description": "SPINE exit gate: validate a session scorecard markdown file.",
+        "description": "SPINE exit gate: validate scorecard markdown.",
         "inputSchema": {
             "type": "object",
             "properties": {
-                "scorecard": {"type": "string", "description": "Path to scorecard .md"},
-                "draft": {"type": "boolean", "description": "Allow close without done:true"},
+                "scorecard": {"type": "string"},
+                "draft": {"type": "boolean"},
             },
             "required": ["scorecard"],
             "additionalProperties": False,
@@ -80,21 +171,24 @@ TOOLS = [
     },
     {
         "name": "talaria_smoke",
-        "description": "Run Phase B smoke suite (describe, organism, verify, AXON, FORGE).",
+        "description": "Run organism smoke suite.",
         "inputSchema": {"type": "object", "properties": {}, "additionalProperties": False},
     },
     {
         "name": "talaria_forge_list",
-        "description": "List FORGE profiles (and optionally ensembles).",
+        "description": "List FORGE profiles (optional ensembles).",
         "inputSchema": {
             "type": "object",
-            "properties": {"ensembles": {"type": "boolean"}},
+            "properties": {
+                "ensembles": {"type": "boolean"},
+                "graph": {"type": "boolean"},
+            },
             "additionalProperties": False,
         },
     },
     {
         "name": "talaria_forge_show",
-        "description": "Show a FORGE profile: gates, DoD, activation.",
+        "description": "Show FORGE profile: gates, DoD, activation, structure.",
         "inputSchema": {
             "type": "object",
             "properties": {"profile": {"type": "string"}},
@@ -104,13 +198,13 @@ TOOLS = [
     },
     {
         "name": "talaria_forge_check",
-        "description": "Validate FORGE profile structure and optional deliverable gates.",
+        "description": "Validate FORGE profile and optional deliverable gates.",
         "inputSchema": {
             "type": "object",
             "properties": {
                 "profile": {"type": "string"},
                 "deliverable": {"type": "string"},
-                "declare": {"type": "string", "description": "G1=pass,G2=pass,..."},
+                "declare": {"type": "string"},
             },
             "required": ["profile"],
             "additionalProperties": False,
@@ -118,20 +212,88 @@ TOOLS = [
     },
     {
         "name": "talaria_forge_run",
-        "description": "Emit FORGE activation packet for agents.",
+        "description": "Emit FORGE activation packet (session/spine enforcement included).",
         "inputSchema": {
             "type": "object",
             "properties": {
                 "profile": {"type": "string"},
-                "with_axon": {"type": "boolean", "description": "Include AXON search hits"},
+                "with_axon": {"type": "boolean"},
             },
             "required": ["profile"],
             "additionalProperties": False,
         },
     },
     {
+        "name": "talaria_forge_build",
+        "description": (
+            "Create a draft FORGE agent/profile from a natural-language brief "
+            "(Builder 2.0 + optional user-owned delegation graph). "
+            "Use when the user says: create an agent that… using Talaria. "
+            "Talaria is the factory — the user owns the agent org chart."
+        ),
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "brief": {
+                    "type": "string",
+                    "description": 'e.g. "crea un agente que sepa responder correos"',
+                },
+                "id": {"type": "string", "description": "Optional forge_id kebab-case"},
+                "specialty": {"type": "string"},
+                "deliverable": {"type": "string"},
+                "force": {"type": "boolean"},
+                "kind": {
+                    "type": "string",
+                    "description": "orchestrator | specialist | both",
+                },
+                "invocable_by_mode": {
+                    "type": "string",
+                    "description": "open | allowlist | deny_direct (default open)",
+                },
+                "invocable_by": {
+                    "type": "string",
+                    "description": "Comma forge_ids that may invoke this agent",
+                },
+                "invokes": {
+                    "type": "string",
+                    "description": "Comma forge_ids this agent may delegate to",
+                },
+            },
+            "required": ["brief"],
+            "additionalProperties": False,
+        },
+    },
+    {
+        "name": "talaria_forge_invoke",
+        "description": (
+            "Delegate from parent agent to child specialist (user-owned graph). "
+            "Policy: open by default; allowlist/deny_direct optional."
+        ),
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "parent": {"type": "string"},
+                "child": {"type": "string"},
+                "brief": {"type": "string"},
+                "strict": {"type": "boolean"},
+                "with_axon": {"type": "boolean"},
+            },
+            "required": ["parent", "child"],
+            "additionalProperties": False,
+        },
+    },
+    {
+        "name": "talaria_forge_graph",
+        "description": "Show user-owned FORGE delegation graph (nodes + edges).",
+        "inputSchema": {
+            "type": "object",
+            "properties": {},
+            "additionalProperties": False,
+        },
+    },
+    {
         "name": "talaria_axon_search",
-        "description": "Search AXON skills/ by query text.",
+        "description": "Search AXON skills/ (records quality shown counts).",
         "inputSchema": {
             "type": "object",
             "properties": {
@@ -139,6 +301,7 @@ TOOLS = [
                 "domain": {"type": "string"},
                 "tag": {"type": "string"},
                 "limit": {"type": "integer"},
+                "record": {"type": "boolean", "description": "Default true"},
             },
             "required": ["query"],
             "additionalProperties": False,
@@ -146,12 +309,13 @@ TOOLS = [
     },
     {
         "name": "talaria_axon_for_profile",
-        "description": "Run default axon_queries from a FORGE profile.",
+        "description": "Run FORGE profile axon_queries (+ corpus enrichment).",
         "inputSchema": {
             "type": "object",
             "properties": {
                 "profile": {"type": "string"},
                 "limit": {"type": "integer"},
+                "record": {"type": "boolean"},
             },
             "required": ["profile"],
             "additionalProperties": False,
@@ -159,17 +323,68 @@ TOOLS = [
     },
     {
         "name": "talaria_axon_stats",
-        "description": "AXON skill and domain counts.",
+        "description": "AXON skill/domain counts + quality stats.",
         "inputSchema": {"type": "object", "properties": {}, "additionalProperties": False},
     },
     {
-        "name": "talaria_ingest_doc",
-        "description": "Convert a document or URL to Markdown into memory/inbox/converted.",
+        "name": "talaria_axon_feedback",
+        "description": "Quality loop: mark a skill useful|noise.",
         "inputSchema": {
             "type": "object",
             "properties": {
-                "source": {"type": "string", "description": "File path or URL"},
-                "output": {"type": "string", "description": "Optional output .md path"},
+                "path": {"type": "string", "description": "skills/... path"},
+                "signal": {"type": "string", "enum": ["useful", "noise"]},
+            },
+            "required": ["path", "signal"],
+            "additionalProperties": False,
+        },
+    },
+    {
+        "name": "talaria_axon_quality",
+        "description": "AXON quality ranking from feedback.",
+        "inputSchema": {
+            "type": "object",
+            "properties": {"limit": {"type": "integer"}},
+            "additionalProperties": False,
+        },
+    },
+    {
+        "name": "talaria_eval_list",
+        "description": "List Ley II gold evals.",
+        "inputSchema": {"type": "object", "properties": {}, "additionalProperties": False},
+    },
+    {
+        "name": "talaria_eval_show",
+        "description": "Show one eval spec.",
+        "inputSchema": {
+            "type": "object",
+            "properties": {"eval_id": {"type": "string"}},
+            "required": ["eval_id"],
+            "additionalProperties": False,
+        },
+    },
+    {
+        "name": "talaria_eval_run",
+        "description": "Score deliverable against eval, or A/B fixtures if ab=true / no deliverable.",
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "eval_id": {"type": "string"},
+                "deliverable": {"type": "string"},
+                "ab": {"type": "boolean"},
+            },
+            "required": ["eval_id"],
+            "additionalProperties": False,
+        },
+    },
+    {
+        "name": "talaria_ingest_doc",
+        "description": "Convert document/URL to Markdown in memory/inbox/converted.",
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "source": {"type": "string"},
+                "output": {"type": "string"},
             },
             "required": ["source"],
             "additionalProperties": False,
@@ -177,12 +392,12 @@ TOOLS = [
     },
     {
         "name": "talaria_ingest_project",
-        "description": "Run Graphify on a code project and mirror outputs to memory/graphs.",
+        "description": "Graphify a code project into memory/graphs.",
         "inputSchema": {
             "type": "object",
             "properties": {
-                "path": {"type": "string", "description": "Project directory"},
-                "name": {"type": "string", "description": "Optional graph folder name"},
+                "path": {"type": "string"},
+                "name": {"type": "string"},
             },
             "required": ["path"],
             "additionalProperties": False,
@@ -190,173 +405,253 @@ TOOLS = [
     },
     {
         "name": "talaria_import_chats",
-        "description": "Import Hermes / Claude Code / Cursor chats into memory/conversations.",
+        "description": "Import Hermes/Claude/Cursor chats into memory/conversations.",
         "inputSchema": {"type": "object", "properties": {}, "additionalProperties": False},
     },
 ]
 
 
 class TalariaMCP:
+    """Dispatcher: MCP tool name → organ function (same semantics as CLI)."""
+
     def __init__(self, vault: Path):
         self.vault = vault
 
     def call(self, name: str, arguments: dict[str, Any] | None = None) -> dict[str, Any]:
         arguments = arguments or {}
+        try:
+            return self._call(name, arguments)
+        except Exception as e:  # noqa: BLE001 — surface to MCP client
+            return {"ok": False, "error": str(e), "tool": name}
+
+    def _call(self, name: str, arguments: dict[str, Any]) -> dict[str, Any]:
         if name == "talaria_describe":
             return agent_contract(self.vault)
+
+        if name == "talaria_connect":
+            client = arguments.get("client") or "generic"
+            if arguments.get("apply"):
+                return connect_apply_cmd.apply_connection(
+                    self.vault, client, yes=bool(arguments.get("confirm"))
+                )
+            data = connection_snippet(self.vault, client)
+            data["apply_hint"] = "talaria_connect with apply=true and confirm=true"
+            data["ok"] = True
+            return data
+
         if name == "talaria_doctor":
-            code = verify_cmd.run_doctor(self.vault, as_json=True)
-            return {"ok": code == 0, "exit": code}
+            return _capture_json_cmd(verify_cmd.run_doctor, self.vault)
+
         if name == "talaria_boot":
-            code = boot_cmd.run_boot(self.vault, check_only=False, as_json=True)
-            return {"ok": code == 0, "exit": code}
+            return _capture_json_cmd(boot_cmd.run_boot, self.vault, check_only=False)
+
         if name == "talaria_status":
             return status_cmd.get_status(self.vault)
+
         if name == "talaria_vault_path":
-            return {"vault": str(self.vault)}
+            return {"ok": True, "vault": str(self.vault)}
+
+        if name == "talaria_mode_get":
+            m = resolve_mode(self.vault)
+            return {"ok": True, "command": "mode get", "mode": m, **mode_contract(m)}
+
+        if name == "talaria_mode_set":
+            mode = str(arguments["mode"]).strip().lower()
+            if mode not in {"strict", "draft"}:
+                return {"ok": False, "error": "mode must be strict|draft"}
+            (self.vault / ".talaria.mode").write_text(mode + "\n", encoding="utf-8")
+            return {"ok": True, "command": "mode set", "mode": mode, **mode_contract(mode)}
+
+        if name == "talaria_session_start":
+            return session_cmd.start_session(
+                self.vault,
+                objective=str(arguments["objective"]),
+                forge_profile=arguments.get("forge_profile"),
+            )
+
+        if name == "talaria_session_status":
+            return session_cmd.status_session(self.vault)
+
+        if name == "talaria_session_close":
+            return _capture_json_cmd(
+                session_cmd.close_session,
+                self.vault,
+                allow_draft=bool(arguments.get("draft")),
+            )
+
         if name == "talaria_verify_boot":
-            return verify_cmd.evaluate_boot(self.vault)
+            data = verify_cmd.evaluate_boot(self.vault)
+            mode = resolve_mode(self.vault)
+            data["mode"] = mode
+            data["mode_contract"] = mode_contract(mode)
+            sess = session_cmd.status_session(self.vault)
+            data["session"] = {
+                "active": sess.get("active"),
+                "scorecard": (sess.get("session") or {}).get("scorecard"),
+                "forge_profile": (sess.get("session") or {}).get("forge_profile"),
+            }
+            if mode == "draft":
+                data["ok"] = True
+            return data
+
         if name == "talaria_verify_close":
             return verify_cmd.evaluate_close(
                 self.vault,
                 arguments["scorecard"],
                 allow_draft=bool(arguments.get("draft")),
             )
+
         if name == "talaria_smoke":
-            code = smoke_cmd.run_smoke(self.vault, as_json=True)
-            return {"ok": code == 0, "exit": code}
+            return _capture_json_cmd(smoke_cmd.run_smoke, self.vault)
+
         if name == "talaria_forge_list":
             profiles = forge_cmd.list_profiles(self.vault)
-            data: dict[str, Any] = {"ok": True, "count": len(profiles), "profiles": profiles}
+            data: dict[str, Any] = {
+                "ok": True,
+                "command": "forge list",
+                "count": len(profiles),
+                "profiles": profiles,
+            }
             if arguments.get("ensembles"):
                 data["ensembles"] = forge_cmd.list_ensembles(self.vault)
-            return data
-        if name == "talaria_forge_show":
-            profile = forge_cmd.load_profile(self.vault, arguments["profile"])
-            if not profile:
-                return {"ok": False, "error": f"profile not found: {arguments['profile']}"}
-            return {
-                "ok": True,
-                "profile": {
-                    "forge_id": profile["forge_id"],
-                    "path": profile["rel_path"],
-                    "meta": profile["meta"],
-                    "gates": profile["gates"],
-                    "dod": profile["dod"],
-                    "activation": profile["activation"],
-                },
-                "structure": forge_cmd.evaluate_profile_structure(profile),
-            }
-        if name == "talaria_forge_check":
-            profile = forge_cmd.load_profile(self.vault, arguments["profile"])
-            if not profile:
-                return {"ok": False, "error": f"profile not found: {arguments['profile']}"}
-            struct = forge_cmd.evaluate_profile_structure(profile)
-            parts: list[dict[str, Any]] = [struct]
-            overall = struct["ok"]
-            if arguments.get("deliverable") or arguments.get("declare"):
-                declare = forge_cmd._parse_declare(arguments.get("declare"))
-                if arguments.get("deliverable"):
-                    path = Path(arguments["deliverable"])
-                    if not path.is_file():
-                        path = self.vault / arguments["deliverable"]
-                    if not path.is_file():
-                        return {"ok": False, "error": f"deliverable not found: {arguments['deliverable']}"}
-                    deliv = forge_cmd.evaluate_deliverable(profile, path, declare=declare)
-                else:
-                    import tempfile
+            if arguments.get("graph"):
+                from talaria_cli.cmds import forge_delegation as dele
 
-                    with tempfile.NamedTemporaryFile(
-                        "w", suffix=".md", delete=False, encoding="utf-8"
-                    ) as f:
-                        f.write(f"---\nforge_profile: {arguments['profile']}\n---\n")
-                        for k, v in declare.items():
-                            f.write(f"{k}: {v}\n")
-                        tmp = Path(f.name)
-                    try:
-                        deliv = forge_cmd.evaluate_deliverable(profile, tmp, declare=declare)
-                    finally:
-                        tmp.unlink(missing_ok=True)
-                parts.append(deliv)
-                overall = overall and deliv["ok"]
-            return {
-                "ok": overall,
-                "forge_id": arguments["profile"],
-                "results": parts,
-            }
+                data["graph"] = dele.build_delegation_graph(self.vault)
+            return data
+
+        if name == "talaria_forge_show":
+            return _capture_json_cmd(forge_cmd.run_show, self.vault, arguments["profile"])
+
+        if name == "talaria_forge_check":
+            return _capture_json_cmd(
+                forge_cmd.run_check,
+                self.vault,
+                arguments["profile"],
+                deliverable=arguments.get("deliverable"),
+                declare=arguments.get("declare"),
+            )
+
         if name == "talaria_forge_run":
-            profile = forge_cmd.load_profile(self.vault, arguments["profile"])
-            if not profile:
-                return {"ok": False, "error": f"profile not found: {arguments['profile']}"}
-            struct = forge_cmd.evaluate_profile_structure(profile)
-            if not struct["ok"]:
-                return {"ok": False, "error": "profile fails structural check", "structure": struct}
-            meta = profile.get("meta") or {}
-            qlist = meta.get("axon_queries") or []
-            if isinstance(qlist, str):
-                qlist = [qlist]
-            packet: dict[str, Any] = {
-                "ok": True,
-                "forge_id": arguments["profile"],
-                "activation": profile.get("activation"),
-                "gates": profile["gates"],
-                "dod": profile["dod"],
-                "path": profile["rel_path"],
-                "specialty": meta.get("specialty"),
-                "axon_queries": qlist,
-            }
-            if arguments.get("with_axon"):
-                queries = qlist or [str(meta.get("specialty") or arguments["profile"])[:60]]
-                packet["axon"] = axon_cmd.bundles_for_queries(self.vault, queries, limit=8)
-            return packet
+            return _capture_json_cmd(
+                forge_cmd.run_run,
+                self.vault,
+                arguments["profile"],
+                with_axon=bool(arguments.get("with_axon")),
+            )
+
+        if name == "talaria_forge_build":
+            return forge_build_cmd.build_profile_from_brief(
+                self.vault,
+                arguments["brief"],
+                forge_id=arguments.get("id"),
+                specialty=arguments.get("specialty"),
+                deliverable=arguments.get("deliverable"),
+                force=bool(arguments.get("force")),
+                role_kind=arguments.get("kind") or "both",
+                invocable_by_mode=arguments.get("invocable_by_mode") or "open",
+                invocable_by=arguments.get("invocable_by"),
+                invokes=arguments.get("invokes"),
+            )
+
+        if name == "talaria_forge_invoke":
+            return _capture_json_cmd(
+                forge_cmd.run_invoke,
+                self.vault,
+                arguments["parent"],
+                arguments["child"],
+                brief=arguments.get("brief"),
+                strict=bool(arguments.get("strict")),
+                with_axon=bool(arguments.get("with_axon")),
+            )
+
+        if name == "talaria_forge_graph":
+            from talaria_cli.cmds import forge_delegation as dele
+
+            return dele.build_delegation_graph(self.vault)
+
         if name == "talaria_axon_search":
+            record = arguments.get("record")
             return axon_cmd.search_skills(
                 self.vault,
                 arguments["query"],
                 domain=arguments.get("domain"),
                 tag=arguments.get("tag"),
                 limit=int(arguments.get("limit") or 15),
+                record=True if record is None else bool(record),
             )
+
         if name == "talaria_axon_for_profile":
-            profile = forge_cmd.load_profile(self.vault, arguments["profile"])
-            if not profile:
-                return {"ok": False, "error": f"profile not found: {arguments['profile']}"}
-            meta = profile.get("meta") or {}
-            queries = meta.get("axon_queries") or [
-                str(meta.get("specialty") or arguments["profile"])[:60]
-            ]
-            if isinstance(queries, str):
-                queries = [queries]
-            bundles = axon_cmd.bundles_for_queries(
-                self.vault, queries, limit=int(arguments.get("limit") or 10)
+            return _capture_json_cmd(
+                axon_cmd.run_for_profile,
+                self.vault,
+                arguments["profile"],
+                limit=int(arguments.get("limit") or 10),
+                record=True if arguments.get("record") is None else bool(arguments.get("record")),
             )
-            return {
-                "ok": True,
-                "forge_id": arguments["profile"],
-                "axon_queries": queries,
-                "bundles": bundles,
-            }
+
         if name == "talaria_axon_stats":
-            return axon_cmd.axon_stats(self.vault)
+            data = axon_cmd.axon_stats(self.vault)
+            data["command"] = "axon stats"
+            return data
+
+        if name == "talaria_axon_feedback":
+            data = axon_cmd.record_feedback(
+                self.vault, arguments["path"], arguments["signal"]
+            )
+            data["command"] = "axon feedback"
+            return data
+
+        if name == "talaria_axon_quality":
+            data = axon_cmd.quality_report(
+                self.vault, limit=int(arguments.get("limit") or 20)
+            )
+            data["command"] = "axon quality"
+            return data
+
+        if name == "talaria_eval_list":
+            items = eval_cmd.list_evals(self.vault)
+            return {"ok": True, "command": "eval list", "count": len(items), "evals": items}
+
+        if name == "talaria_eval_show":
+            spec = eval_cmd.load_eval(self.vault, arguments["eval_id"])
+            if not spec:
+                return {"ok": False, "error": f"eval not found: {arguments['eval_id']}"}
+            return {"ok": True, "command": "eval show", "eval": spec}
+
+        if name == "talaria_eval_run":
+            return _capture_json_cmd(
+                eval_cmd.run_run,
+                self.vault,
+                arguments["eval_id"],
+                deliverable=arguments.get("deliverable"),
+                compare_fixtures=bool(arguments.get("ab")),
+            )
+
         if name == "talaria_ingest_doc":
-            code = ingest_cmd.run_ingest_doc(
-                self.vault, arguments["source"], arguments.get("output"), as_json=True
+            return _capture_json_cmd(
+                ingest_cmd.run_ingest_doc,
+                self.vault,
+                arguments["source"],
+                arguments.get("output"),
             )
-            return {"ok": code == 0, "exit": code, "source": arguments["source"]}
+
         if name == "talaria_ingest_project":
-            code = ingest_cmd.run_ingest_project(
-                self.vault, arguments["path"], arguments.get("name"), as_json=True
+            return _capture_json_cmd(
+                ingest_cmd.run_ingest_project,
+                self.vault,
+                arguments["path"],
+                arguments.get("name"),
             )
-            return {"ok": code == 0, "exit": code, "path": arguments["path"]}
+
         if name == "talaria_import_chats":
-            code = import_cmd.run_import_chats(self.vault, as_json=True)
-            return {"ok": code == 0, "exit": code}
-        return {"error": f"unknown tool: {name}"}
+            return _capture_json_cmd(import_cmd.run_import_chats, self.vault)
+
+        return {"ok": False, "error": f"unknown tool: {name}"}
 
 
 def _read_message() -> dict[str, Any] | None:
     """Read one JSON-RPC message from stdin (Content-Length or newline JSON)."""
-    # Try Content-Length framing first
     header = b""
     while True:
         ch = sys.stdin.buffer.read(1)
@@ -365,11 +660,12 @@ def _read_message() -> dict[str, Any] | None:
         header += ch
         if header.endswith(b"\r\n\r\n"):
             break
-        # If we somehow get a raw JSON object without headers
-        if header.startswith(b"{") and b"\n" in header:
-            line = header.decode("utf-8", errors="replace").strip()
-            return json.loads(line)
-
+        if len(header) > 65536:
+            # fallback: treat as raw JSON line protocol
+            line = header.decode("utf-8", errors="replace")
+            if "\n" in line:
+                return json.loads(line.strip())
+            return None
     text = header.decode("utf-8", errors="replace")
     length = None
     for line in text.split("\r\n"):
@@ -382,8 +678,8 @@ def _read_message() -> dict[str, Any] | None:
 
 
 def _send(msg: dict[str, Any]) -> None:
-    data = json.dumps(msg, ensure_ascii=False).encode("utf-8")
-    sys.stdout.buffer.write(f"Content-Length: {len(data)}\r\n\r\n".encode("ascii") + data)
+    body = json.dumps(msg, ensure_ascii=False).encode("utf-8")
+    sys.stdout.buffer.write(f"Content-Length: {len(body)}\r\n\r\n".encode("ascii") + body)
     sys.stdout.buffer.flush()
 
 
@@ -396,20 +692,12 @@ def _error(req_id: Any, code: int, message: str) -> None:
 
 
 def serve(vault: Path) -> int:
-    api = TalariaMCP(vault)
-    # silence tool print noise into stderr so stdio RPC stays clean
-    # (boot/status print to stdout — redirect temporarily in call)
-
+    server = TalariaMCP(vault)
+    # initialize handshake loop
     while True:
-        try:
-            msg = _read_message()
-        except Exception as e:
-            # cannot recover framing
-            sys.stderr.write(f"mcp read error: {e}\n")
-            return 1
+        msg = _read_message()
         if msg is None:
             return 0
-
         method = msg.get("method")
         req_id = msg.get("id")
         params = msg.get("params") or {}
@@ -418,9 +706,9 @@ def serve(vault: Path) -> int:
             _result(
                 req_id,
                 {
-                    "protocolVersion": params.get("protocolVersion") or "2024-11-05",
+                    "protocolVersion": "2024-11-05",
                     "capabilities": {"tools": {}},
-                    "serverInfo": {"name": "talaria", "version": "0.1.0"},
+                    "serverInfo": {"name": "talaria", "version": "1.1.0"},
                 },
             )
             continue
@@ -432,40 +720,36 @@ def serve(vault: Path) -> int:
         if method == "tools/call":
             name = params.get("name")
             arguments = params.get("arguments") or {}
-            try:
-                # keep RPC stdout clean: capture prints
-                import contextlib
-                import io
-
-                buf = io.StringIO()
-                with contextlib.redirect_stdout(buf):
-                    payload = api.call(name, arguments)
-                text = json.dumps(payload, ensure_ascii=False, indent=2)
-                logs = buf.getvalue().strip()
-                if logs:
-                    text = text + "\n\n--- logs ---\n" + logs[-4000:]
-                _result(
-                    req_id,
-                    {"content": [{"type": "text", "text": text}], "isError": bool(payload.get("error"))},
-                )
-            except Exception as e:
-                _result(
-                    req_id,
-                    {"content": [{"type": "text", "text": f"error: {e}"}], "isError": True},
-                )
+            if not name:
+                _error(req_id, -32602, "missing tool name")
+                continue
+            out = server.call(name, arguments)
+            # MCP content: JSON text
+            _result(
+                req_id,
+                {
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": json.dumps(out, ensure_ascii=False, indent=2),
+                        }
+                    ],
+                    "isError": bool(isinstance(out, dict) and out.get("ok") is False),
+                },
+            )
             continue
         if method == "ping":
             _result(req_id, {})
             continue
         if req_id is not None:
-            _error(req_id, -32601, f"Method not found: {method}")
+            _error(req_id, -32601, f"method not found: {method}")
     return 0
 
 
 def main(argv: list[str] | None = None) -> int:
-    p = argparse.ArgumentParser(description="Talaria MCP server (stdio)")
-    p.add_argument("--vault", help="Vault path")
-    args = p.parse_args(argv)
+    ap = argparse.ArgumentParser(description="Talaria MCP stdio server")
+    ap.add_argument("--vault", help="Vault path")
+    args = ap.parse_args(argv)
     vault = find_vault(args.vault)
     return serve(vault)
 

@@ -87,7 +87,7 @@ done: true
         prof = forge_cmd.load_profile(vault, sample_id)
         check("forge_show_load", prof is not None, sample_id)
         if prof:
-            struct = forge_cmd.evaluate_profile_structure(prof)
+            struct = forge_cmd.evaluate_profile_structure(prof, vault)
             check("forge_structure", struct["ok"], sample_id)
             gate_ids = [g["id"] for g in prof.get("gates") or []]
             if gate_ids:

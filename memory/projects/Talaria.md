@@ -39,6 +39,7 @@ Un cuerpo vital: Memoria + **AXON** + **FORGE** + **SPINE** + CLI/MCP + tools �
 
 ## Próximos pasos
 - [x] Layout profesional + packaging portable
-- [ ] Push a `origin` tras revisar diff
+- [x] FORGE Builder 2.0 + catálogo 5/5 con corpus y evals A/B
+- [ ] Push/commit cuando David lo pida
+- [ ] Evals con sesiones reales (LLM vivo) + calibración humana
 - [ ] Abrir Cursor con `Talaria.code-workspace`
-- [ ] Regenerar AXON con `build_axon_graph.py` al cambiar bancos

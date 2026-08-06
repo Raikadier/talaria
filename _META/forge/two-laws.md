@@ -51,6 +51,8 @@ Escribir la **contrafactual**:
 
 Si Y ≈ X → **rechazar**. Si no puedes nombrar A/B/C concretos → **rechazar**.
 
+En **Builder 2.0**, A/B/C deben anclarse al **corpus del oficio** ([[forge-corpus]]): doctrina verificada de cómo piensa/razona/resuelve el profesional, no solo prompt ingenioso. El perfil en runtime refuerza Ley II con **learn loop** (Retrieve → research acotado → Memorize) y **pensamiento crítico** sobre fuentes, resultados y pedidos del usuario.
+
 ---
 
 ## Precedencia

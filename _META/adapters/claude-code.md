@@ -41,6 +41,18 @@ SPINE convierte ese piloto en uno con **armadura compartida** (Talaria), sin des
 3. Al trabajar **dentro** del vault, Claude lee automáticamente `CLAUDE.md` (constitución del piloto).  
 4. `python bootstrap.py` si faltan MarkItDown/Graphify/etc.
 
+## Crear un agente con Talaria
+
+Si el usuario pide crear un agente/perfil («usando talaria»):
+
+```bash
+talaria forge build --brief "crea un agente que sepa responder correos" --json
+# o MCP: talaria_forge_build
+```
+
+Luego ejecuta el `pilot_playbook` del JSON (research del oficio → `forge check` → active → `forge run`).  
+No dejes el “agente” solo como prompt de chat.
+
 ## Reglas Claude-específicas
 
 1. No uses solo el transcript de sesión como memoria de proyecto.  

@@ -15,6 +15,10 @@ pipeline: spine
 
 > FORGE **fabrica perfiles** (roles operativos) que un agente se pone como módulo del traje. Trabaja **con** la memoria (`memory/`) y la skill web (`skills/`), no las sustituye. No sustituye al modelo: lo **especializa, disciplina y verifica** para superar lo que un modelo potente hace “de corrido”.
 
+**Builder 2.0:** primero forma el **corpus del oficio** (doctrina verificada), luego talla el perfil ejecutable, y en runtime el perfil **aprende al vault** con learn loop + pensamiento crítico. Detalle: [[forge-builder]] · [[forge-corpus]]
+
+**User-owned:** Tú creas tus agentes (`forge build`). El grafo de delegación es tuyo ([[forge-delegation]]). Los perfiles listados abajo son **semilla/ejemplo**, no tu organigrama.
+
 ## Las 2 leyes obligatorias (no negociables)
 
 Todo perfil FORGE —y todo perfil que el builder produzca— **falla el build** si no cumple ambas:
@@ -24,7 +28,7 @@ Todo perfil FORGE —y todo perfil que el builder produzca— **falla el build**
 | **I** | **Efectividad total** | El perfil define misión, anti-misión, gates de calidad y DoD verificable. Sin “buenas intenciones”: o el entregable pasa los gates o el trabajo no se declara hecho. |
 | **II** | **Superior a modelo potente** | El perfil debe demostrar *por diseño* por qué supera a un frontier model en un solo hilo continuo: especialización, evidencia, herramientas, handoffs y verificación. Si un chat genérico lo iguala sin el perfil, el perfil está mal construido. |
 
-Detalle: [[forge-two-laws]] · Builder: [[forge-builder]] · Schema: [[forge-schema]] · Catálogo: [[forge-catalog]] · Ensembles: [[forge-ensembles]]
+Detalle: [[forge-two-laws]] · Builder: [[forge-builder]] · Schema: [[forge-schema]] · Catálogo: [[forge-catalog]] · Ensembles: [[forge-ensembles]] · Delegación: [[forge-delegation]]
 
 ## Por qué existe
 
@@ -63,17 +67,17 @@ Activación mínima:
 FORGE profile=<id> | laws=I+II | vault=Talaria | spine=on
 ```
 
-## Inventario semilla (v1)
+## Inventario semilla (v2 — Builder 2.0)
 
-| ID | Perfil | Especialidad |
-|----|--------|--------------|
-| `researcher` | [[forge-profile-researcher]] | Investigación profesional documentada |
-| `social-advisor` | [[forge-profile-social-advisor]] | Crecimiento de redes con decisiones defendibles |
-| `sw-architect` | [[forge-profile-sw-architect]] | Arquitectura de software |
-| `sw-engineer` | [[forge-profile-sw-engineer]] | Ingeniería de software (sistema) |
-| `programmer` | [[forge-profile-programmer]] | Implementación de código de alto calibre |
+| ID | Perfil | Especialidad | Eval A/B |
+|----|--------|--------------|----------|
+| `researcher` | [[forge-profile-researcher]] | Investigación documentada | `research-brief-v2` |
+| `social-advisor` | [[forge-profile-social-advisor]] | Crecimiento defendible | `growth-counsel-v2` |
+| `sw-architect` | [[forge-profile-sw-architect]] | Arquitectura de software | `adr-boundaries-v2` |
+| `sw-engineer` | [[forge-profile-sw-engineer]] | Ingeniería de software | `engineering-plan-v2` |
+| `programmer` | [[forge-profile-programmer]] | Implementación de alto calibre | `atomic-impl-v2` |
 
-Ensemble canónico de software: **Architect → Engineer → Programmer** → [[forge-ensemble-software]]
+Ensemble canónico: **Architect → Engineer → Programmer** → [[forge-ensemble-software]] (todos v2)
 
 ## Relación con skills
 
@@ -81,10 +85,12 @@ Los perfiles **enrutan** a skills del grafo (`skills/`, ejes, dominios). Un perf
 
 ## Versionado
 
-- `version` en frontmatter del perfil  
+- `version` / `forge_version` en frontmatter del perfil  
 - Cambios de leyes o schema → bump mayor + nota en `memory/decisions/`  
-- Perfiles nuevos solo vía [[forge-builder]] (checklist completa)
+- Perfiles nuevos solo vía [[forge-builder]] (checklist completa)  
+- **v1** = contrato (DoD/gates). **v2** = contrato + corpus + learn loop + crítica  
+- Perfiles v1 siguen válidos; elite v2 requiere Fase A (corpus C1–C5)
 
 ## Referencias
 
-- [[spine-framework]] · [[AGENTS]] · [[agent-protocol]] · [[pilots]]
+- [[spine-framework]] · [[AGENTS]] · [[agent-protocol]] · [[pilots]] · [[forge-corpus]]

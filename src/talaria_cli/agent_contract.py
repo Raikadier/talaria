@@ -103,6 +103,33 @@ def agent_contract(vault: Path) -> dict[str, Any]:
                     "description": "Validate profile structure and deliverable gates (Ley I)",
                 },
                 {
+                    "name": "forge_build",
+                    "argv": [
+                        "forge",
+                        "build",
+                        "--brief",
+                        "<natural language agent request>",
+                        "--json",
+                    ],
+                    "layer": "forge",
+                    "description": (
+                        "Scaffold Builder 2.0 draft agent from NL brief "
+                        "(user-owned; optional --kind/--invokes/--invocable-by)"
+                    ),
+                },
+                {
+                    "name": "forge_invoke",
+                    "argv": ["forge", "invoke", "<parent>", "<child>", "--json"],
+                    "layer": "forge",
+                    "description": "Delegate parent→child on user-owned graph",
+                },
+                {
+                    "name": "forge_graph",
+                    "argv": ["forge", "graph", "--json"],
+                    "layer": "forge",
+                    "description": "Show user delegation graph",
+                },
+                {
                     "name": "forge_run",
                     "argv": ["forge", "run", "<id>", "--with-axon", "--json"],
                     "layer": "act",
@@ -186,6 +213,36 @@ def agent_contract(vault: Path) -> dict[str, Any]:
                     "layer": "meta",
                     "description": "Emit MCP/CLI connection snippets for a client",
                 },
+                {
+                    "name": "connect_apply",
+                    "argv": ["connect", "--client", "cursor", "--apply", "--yes"],
+                    "layer": "meta",
+                    "description": "Merge MCP fragment into client config (requires --yes)",
+                },
+                {
+                    "name": "session_start",
+                    "argv": ["session", "start", "--objective", "<text>", "--forge", "<id>", "--json"],
+                    "layer": "spine",
+                    "description": "Start SPINE session + scorecard stub",
+                },
+                {
+                    "name": "session_close",
+                    "argv": ["session", "close", "--json"],
+                    "layer": "spine",
+                    "description": "verify close on active session scorecard",
+                },
+                {
+                    "name": "axon_feedback",
+                    "argv": ["axon", "feedback", "--path", "skills/...", "--signal", "useful|noise", "--json"],
+                    "layer": "retrieve",
+                    "description": "Quality loop signal for a skill",
+                },
+                {
+                    "name": "axon_quality",
+                    "argv": ["axon", "quality", "--json"],
+                    "layer": "retrieve",
+                    "description": "AXON quality ranking from feedback",
+                },
             ],
         },
         "mcp": {
@@ -194,10 +251,17 @@ def agent_contract(vault: Path) -> dict[str, Any]:
             "command": py,
             "args": ["-m", "talaria_cli.mcp_server", "--vault", vault_s],
             "tools": [
+                "talaria_describe",
+                "talaria_connect",
                 "talaria_doctor",
                 "talaria_boot",
                 "talaria_status",
                 "talaria_vault_path",
+                "talaria_mode_get",
+                "talaria_mode_set",
+                "talaria_session_start",
+                "talaria_session_status",
+                "talaria_session_close",
                 "talaria_verify_boot",
                 "talaria_verify_close",
                 "talaria_smoke",
@@ -205,14 +269,22 @@ def agent_contract(vault: Path) -> dict[str, Any]:
                 "talaria_forge_show",
                 "talaria_forge_check",
                 "talaria_forge_run",
+                "talaria_forge_build",
+                "talaria_forge_invoke",
+                "talaria_forge_graph",
                 "talaria_axon_search",
                 "talaria_axon_for_profile",
                 "talaria_axon_stats",
+                "talaria_axon_feedback",
+                "talaria_axon_quality",
+                "talaria_eval_list",
+                "talaria_eval_show",
+                "talaria_eval_run",
                 "talaria_ingest_doc",
                 "talaria_ingest_project",
                 "talaria_import_chats",
-                "talaria_describe",
             ],
+            "parity": "CLI commands map 1:1 to talaria_* MCP tools — see _META/mcp-parity.md",
             "env": {
                 "TALARIA_VAULT": vault_s,
                 "PYTHONPATH": str(Path(vault_s) / "src"),
@@ -236,6 +308,8 @@ def agent_contract(vault: Path) -> dict[str, Any]:
             "Canonical memory is the Talaria vault Markdown — not chat history",
             "Session start: talaria verify boot --json",
             "Specialized work: talaria forge run <id> --with-axon then forge check --deliverable",
+            "User asks to create an agent/profile using Talaria → talaria forge build --brief \"…\" --json (or talaria_forge_build), then execute pilot_playbook. User owns the agent graph; optional --kind/--invokes/--invocable-by",
+            "Delegate specialists: talaria forge invoke <parent> <child> --json · graph: talaria forge graph --json",
             "Retrieve skills via talaria axon search / axon for-profile",
             "After useful work: fill scorecard + talaria verify close --scorecard <path>",
             "Use talaria_* / CLI for Ingest+Boot; use obsidian MCP for note CRUD",
@@ -276,9 +350,10 @@ def connection_snippet(vault: Path, client: str) -> dict[str, Any]:
         base["config_file"] = str(Path.home() / ".cursor" / "mcp.json")
         base["mcpServers_fragment"] = cursor_block
         base["instructions"] = [
-            "Merge mcpServers_fragment into ~/.cursor/mcp.json",
+            "Or run: talaria connect --client cursor --apply --yes",
             "Reload Cursor MCP settings",
             "Call talaria_describe then talaria_status",
+            "Create agent: talaria_forge_build / talaria forge build --brief \"…\" --json",
         ]
     elif client in {"claude", "claude-code"}:
         base["config_file"] = str(Path.home() / ".claude" / "settings.json")
@@ -287,6 +362,7 @@ def connection_snippet(vault: Path, client: str) -> dict[str, Any]:
             "Merge into settings.json mcpServers (or project .mcp.json)",
             "Restart Claude Code",
             "Open Talaria folder so CLAUDE.md loads",
+            "Create agent: talaria forge build --brief \"…\" --json or talaria_forge_build",
         ]
     elif client == "hermes":
         base["config_file"] = str(Path.home() / "AppData/Local/hermes/config.yaml")

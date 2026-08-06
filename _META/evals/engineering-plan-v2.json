@@ -1,0 +1,69 @@
+{
+  "id": "engineering-plan-v2",
+  "title": "Plan de ingeniería con tasks (Builder 2.0)",
+  "forge_profile": "sw-engineer",
+  "builder": "2.0",
+  "pass_score": 80,
+  "baseline_note": "Chat genérico sin método FORGE.",
+  "forge_advantage": "DoD + crítica + Memorize vs tip genérico.",
+  "baseline_fixture": "_META/evals/fixtures/engineering-plan-v2-baseline-fail.md",
+  "forge_fixture": "_META/evals/fixtures/engineering-plan-v2-forge-pass.md",
+  "rubric": [
+    {
+      "id": "adr_ref",
+      "must_contain_any": [
+        "adr"
+      ],
+      "description": "ADR"
+    },
+    {
+      "id": "modules",
+      "must_contain_any": [
+        "módulo",
+        "module"
+      ],
+      "description": "Módulos"
+    },
+    {
+      "id": "sequence",
+      "must_contain_any": [
+        "secuencia",
+        "orden",
+        "sequence"
+      ],
+      "description": "Secuencia"
+    },
+    {
+      "id": "tests",
+      "must_contain_any": [
+        "test"
+      ],
+      "description": "Tests"
+    },
+    {
+      "id": "tasks",
+      "must_contain_any": [
+        "task",
+        "tarea"
+      ],
+      "description": "Tasks"
+    },
+    {
+      "id": "critique",
+      "must_contain_any": [
+        "crítica",
+        "critique",
+        "podría estar mal"
+      ],
+      "description": "Crítica"
+    },
+    {
+      "id": "memorize",
+      "must_contain_any": [
+        "memory/",
+        "memorize"
+      ],
+      "description": "Memorize"
+    }
+  ]
+}

@@ -17,12 +17,21 @@ Sirve igual si ya traes tools propias (**Hermes**, **Claude Code**, **Cursor**, 
 9. Si eres Claude Code: también `CLAUDE.md`
 
 ## FORGE (perfiles)
-Si la tarea pide especialización elite (research, growth, arquitectura, etc.):
+Si la tarea pide **crear un agente/perfil** («crea un agente que… usando talaria»):
+1. `talaria forge build --brief "…" [--kind …] [--invokes …] [--invocable-by …] --json` (MCP: `talaria_forge_build`)  
+2. Ejecutar el `pilot_playbook` del JSON (corpus C1–C5 → check → active)  
+3. Grafo: `talaria forge graph` · delegar: `talaria forge invoke <parent> <child>`  
+4. Luego `forge run` / sesión SPINE para la tarea real  
+
+**Importante:** Talaria es la fábrica; **tú** eres dueño del organigrama de agentes ([[forge-delegation]]).
+
+Si la tarea pide especialización elite ya catalogada (research, growth, arquitectura, etc.):
 1. `talaria forge list --json` / `forge show <id>`  
-2. `talaria forge run <id> --json` — activar packet  
-3. Ejecutar playbook; entregable con `forge_gates` (plantilla `_templates/forge-deliverable.md`)  
-4. `talaria forge check --profile <id> --deliverable <path> --json`  
-5. No cerrar sin gates en pass + `verify close`
+2. Builder 2.0: corpus del oficio → perfil → learn loop ([[forge-builder]] · [[forge-corpus]])  
+3. `talaria forge run <id> --json` — activar packet  
+4. Ejecutar playbook; entregable con `forge_gates` (plantilla `_templates/forge-deliverable.md`)  
+5. `talaria forge check --profile <id> --deliverable <path> --json`  
+6. No cerrar sin gates en pass + `verify close`
 
 ## Primera visita (máquina nueva o clone)
 
@@ -39,10 +48,15 @@ Declara el Mark (Mk.1–Mk.5). Carga tu adaptador ([[hermes-adapter]] / [[claude
 ```bash
 talaria describe --json    # descubrimiento (cualquier agente)
 talaria connect --client cursor|hermes|claude --json
-talaria axon search "<query>" [--domain X] [--tag Y] --json
-talaria axon for-profile <id> --json
+talaria connect --client cursor --apply --yes
+talaria mcp                # MCP stdio (API general del traje)
+talaria session start|status|close
+talaria axon search|for-profile|feedback|quality --json
 talaria forge list [--ensembles] --json
 talaria forge show <id> --json
+talaria forge build --brief "crea un agente que…" [--kind both] [--invokes a,b] --json
+talaria forge invoke <parent> <child> [--brief "…"] --json
+talaria forge graph --json
 talaria forge run <id> --json
 talaria forge check --profile <id> [--deliverable PATH] [--declare G1=pass,...] --json
 talaria verify boot --json
@@ -60,16 +74,18 @@ Docs: [[cli]] · [[agent-connect]] · [[cli-design]] · [[cli-architecture]]
 
 ## Orden de combate (cada tarea)
 
-0. **Verify boot** — `talaria verify boot --json` (gate de entrada)  
-1. **Retrieve** — ¿ya está en el vault / AXON / graphs?  
-2. **Ingest → Normalize** — material nuevo → staging  
-3. **Orient** — clasificar a destino canónico  
-4. **Act** — arsenal nativo con citas `[[wiki links]]`  
-5. **Memorize + scorecard** — copiar `_templates/scorecard.md`, llenar  
-6. **Verify close** — `talaria verify close --scorecard <path> --json`  
-7. **Notify** — proyecto / Home si aplica  
+0. **Session** — `talaria session start --objective "..." [--forge <id>] --json`  
+1. **Verify boot** — `talaria verify boot --json`  
+2. **Retrieve** — vault / AXON (`axon for-profile` / `axon search`) / corpus FORGE  
+3. **Ingest → Normalize** — material nuevo → staging  
+4. **Orient** — clasificar a destino canónico  
+5. **Act** — arsenal nativo + FORGE playbook  
+6. **Memorize + scorecard** — evidencia + `forge_critical: pass` si FORGE  
+7. **Session close** — `talaria session close --json` (o `verify close`)  
+8. **Notify** — proyecto / Home si aplica  
 
-Garantías: [[2026-07-28-garantias-talaria]] · `talaria smoke --json`
+AXON quality: `axon feedback --signal useful|noise` · `axon quality`  
+Connect: `talaria connect --client cursor --apply --yes`
 
 ## Routing rápido
 

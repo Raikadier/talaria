@@ -1,0 +1,65 @@
+{
+  "id": "research-brief-v2",
+  "title": "Brief de investigación defendible (Builder 2.0)",
+  "forge_profile": "researcher",
+  "builder": "2.0",
+  "pass_score": 80,
+  "baseline_note": "Chat genérico sin método FORGE.",
+  "forge_advantage": "DoD + crítica + Memorize vs tip genérico.",
+  "baseline_fixture": "_META/evals/fixtures/research-brief-v2-baseline-fail.md",
+  "forge_fixture": "_META/evals/fixtures/research-brief-v2-forge-pass.md",
+  "rubric": [
+    {
+      "id": "scope",
+      "must_contain_any": [
+        "alcance",
+        "pregunta"
+      ],
+      "description": "Scope"
+    },
+    {
+      "id": "method",
+      "must_contain_any": [
+        "método",
+        "metodo",
+        "fuentes"
+      ],
+      "description": "Método"
+    },
+    {
+      "id": "findings",
+      "must_contain_any": [
+        "hallazgo"
+      ],
+      "description": "Hallazgos"
+    },
+    {
+      "id": "limits",
+      "must_contain_any": [
+        "limitacion",
+        "limitación",
+        "limitations"
+      ],
+      "description": "Limitaciones"
+    },
+    {
+      "id": "critique",
+      "must_contain_any": [
+        "crítica",
+        "critique",
+        "adversarial",
+        "podría estar mal"
+      ],
+      "description": "Crítica"
+    },
+    {
+      "id": "memorize",
+      "must_contain_any": [
+        "memory/",
+        "memorize",
+        "vault"
+      ],
+      "description": "Memorize"
+    }
+  ]
+}

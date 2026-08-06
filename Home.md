@@ -41,7 +41,6 @@ Sincronizado en OneDrive · Vault Obsidian: **Talaria** (antes SkillGraph).
 
 ## Última sesión registrada
 
-- Layout profesional + install portable → [[2026-08-05-layout-profesional-portabilidad]]
-- Órganos renombrados: **SPINE** + **AXON** → [[2026-07-28-spine-axon-organ-names]] · [[organism]]
-- **FORGE** → [[forge]] · [[2026-07-28-forge-activado]]
-- SPINE global en chats Cursor → [[SPINE-STATUS-CURSOR]]
+- MCP general con parity CLI → [[2026-08-05-mcp-general-parity]] · [[mcp-parity]]
+- SPINE session + AXON quality + connect --apply → [[2026-08-05-spine-axon-connect-apply]]
+- FORGE catálogo v2 → [[2026-08-05-forge-catalog-v2-completo]]

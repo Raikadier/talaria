@@ -1,0 +1,23 @@
+{
+  "0": "LocalPInvoke",
+  "1": "Window",
+  "2": "TaskbarEffect",
+  "3": "Interaction",
+  "4": "MainWindow",
+  "5": "Window",
+  "6": "AppListXaml",
+  "7": "RoundedTB",
+  "8": "AppBars",
+  "9": "MonitorStuff",
+  "10": "Button",
+  "11": "RoundedTB.csproj",
+  "12": "IAppVisibility.cs",
+  "13": "TextBox",
+  "14": "RoundedTB — Mapa de arquitectura (fork base `b78e5d6`)",
+  "15": "RoutedEventArgs",
+  "16": "Settings",
+  "17": "cornerRadiusSlider",
+  "18": "RoundedTB",
+  "19": ".ShowMenuItem_Click",
+  "20": "AssemblyInfo.cs"
+}

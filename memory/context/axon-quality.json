@@ -1,0 +1,101 @@
+{
+  "version": 1,
+  "searches": 6,
+  "skills": {
+    "skills/creative/architecture-diagram.md": {
+      "shown": 2,
+      "useful": 1,
+      "noise": 0,
+      "name": "architecture-diagram",
+      "domain": "creative",
+      "last_feedback": "2026-08-05T23:03:16.898853+00:00"
+    },
+    "skills/community/architecture-decision-records.md": {
+      "shown": 1,
+      "useful": 0,
+      "noise": 0,
+      "name": "architecture-decision-records",
+      "domain": "community"
+    },
+    "skills/agensi/observability-reference-architectures-with-grok.md": {
+      "shown": 1,
+      "useful": 0,
+      "noise": 0,
+      "name": "Observability Reference Architectures with Grok",
+      "domain": "agensi"
+    },
+    "skills/research/research-paper-writing.md": {
+      "shown": 2,
+      "useful": 0,
+      "noise": 0,
+      "name": "research-paper-writing",
+      "domain": "research"
+    },
+    "skills/research/arxiv.md": {
+      "shown": 2,
+      "useful": 0,
+      "noise": 0,
+      "name": "arxiv",
+      "domain": "research"
+    },
+    "skills/research/blogwatcher.md": {
+      "shown": 2,
+      "useful": 0,
+      "noise": 0,
+      "name": "blogwatcher",
+      "domain": "research"
+    },
+    "skills/research/book-finder.md": {
+      "shown": 2,
+      "useful": 0,
+      "noise": 0,
+      "name": "book-finder",
+      "domain": "research"
+    },
+    "skills/research/finanzas-alfabetizacion-path.md": {
+      "shown": 2,
+      "useful": 0,
+      "noise": 0,
+      "name": "finanzas-alfabetizacion-path",
+      "domain": "research"
+    },
+    "skills/agensi/job-application-strategist.md": {
+      "shown": 2,
+      "useful": 0,
+      "noise": 0,
+      "name": "job-application-strategist",
+      "domain": "agensi"
+    },
+    "skills/community/kpi-dashboard-design.md": {
+      "shown": 2,
+      "useful": 0,
+      "noise": 0,
+      "name": "kpi-dashboard-design",
+      "domain": "community"
+    },
+    "skills/agensi/nextjs-app-router-audit.md": {
+      "shown": 2,
+      "useful": 0,
+      "noise": 0,
+      "name": "nextjs-app-router-audit",
+      "domain": "agensi"
+    },
+    "skills/community/stride-analysis-patterns.md": {
+      "shown": 2,
+      "useful": 0,
+      "noise": 0,
+      "name": "stride-analysis-patterns",
+      "domain": "community"
+    },
+    "skills/community/parallel-debugging.md": {
+      "shown": 2,
+      "useful": 0,
+      "noise": 0,
+      "name": "parallel-debugging",
+      "domain": "community"
+    }
+  },
+  "note": "Filled by talaria axon search/for-profile (shown) and axon feedback useful|noise",
+  "last_search": "2026-08-05T23:52:10.388659+00:00",
+  "last_query": "methodology"
+}

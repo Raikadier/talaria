@@ -1,0 +1,67 @@
+{
+  "id": "growth-counsel-v2",
+  "title": "Consejo de growth medible (Builder 2.0)",
+  "forge_profile": "social-advisor",
+  "builder": "2.0",
+  "pass_score": 80,
+  "baseline_note": "Chat genérico sin método FORGE.",
+  "forge_advantage": "DoD + crítica + Memorize vs tip genérico.",
+  "baseline_fixture": "_META/evals/fixtures/growth-counsel-v2-baseline-fail.md",
+  "forge_fixture": "_META/evals/fixtures/growth-counsel-v2-forge-pass.md",
+  "rubric": [
+    {
+      "id": "north",
+      "must_contain_any": [
+        "métrica",
+        "metrica",
+        "objetivo"
+      ],
+      "description": "North"
+    },
+    {
+      "id": "bets",
+      "must_contain_any": [
+        "apuesta",
+        "hipótesis",
+        "hipotesis"
+      ],
+      "description": "Apuestas"
+    },
+    {
+      "id": "kill",
+      "must_contain_any": [
+        "kill",
+        "parar",
+        "detener"
+      ],
+      "description": "Kill"
+    },
+    {
+      "id": "avoid",
+      "must_contain_any": [
+        "no hacer",
+        "evitar"
+      ],
+      "description": "Avoid"
+    },
+    {
+      "id": "critique",
+      "must_contain_any": [
+        "crítica",
+        "critique",
+        "podría estar mal",
+        "revisión",
+        "siguiente"
+      ],
+      "description": "Crítica/review"
+    },
+    {
+      "id": "memorize",
+      "must_contain_any": [
+        "memory/",
+        "memorize"
+      ],
+      "description": "Memorize"
+    }
+  ]
+}

@@ -28,6 +28,9 @@ def list_profiles(vault: Path) -> list[dict[str, Any]]:
         meta, body = _read_md(path)
         gates = _parse_gates(body)
         dod = _parse_dod(body)
+        from talaria_cli.cmds.forge_delegation import normalize_delegation
+
+        dele = normalize_delegation(meta)
         out.append(
             {
                 "forge_id": meta.get("forge_id") or path.stem,
@@ -41,6 +44,10 @@ def list_profiles(vault: Path) -> list[dict[str, Any]]:
                 "gates": [g["id"] for g in gates],
                 "dod_count": len(dod),
                 "axon_queries": meta.get("axon_queries") or [],
+                "role_kind": dele["role_kind"],
+                "invocable_by_mode": dele["invocable_by_mode"],
+                "invocable_by": dele["invocable_by"],
+                "invokes": dele["invokes"],
             }
         )
     return out
@@ -92,8 +99,15 @@ def load_profile(vault: Path, forge_id: str) -> dict[str, Any] | None:
     }
 
 
-def evaluate_profile_structure(profile: dict[str, Any]) -> dict[str, Any]:
-    """Ley I/II structural checks on the profile note itself."""
+def evaluate_profile_structure(
+    profile: dict[str, Any],
+    vault: Path | None = None,
+) -> dict[str, Any]:
+    """Ley I/II structural checks on the profile note itself.
+
+    Builder 2.0 profiles (meta.builder starts with "2") must point at an existing
+    corpus doctrine file when status is active.
+    """
     meta = profile.get("meta") or {}
     checks: list[dict[str, Any]] = []
 
@@ -118,10 +132,39 @@ def evaluate_profile_structure(profile: dict[str, Any]) -> dict[str, Any]:
     add("dod_ge_3", len(dod) >= 3, str(len(dod)))
     add("activation_present", bool(profile.get("activation")), (profile.get("activation") or "")[:60])
 
+    builder = str(meta.get("builder") or "1.0").strip()
+    is_v2 = builder.startswith("2")
+    status = str(meta.get("status") or "").lower()
+    corpus_rel = str(meta.get("corpus_path") or "").strip().replace("\\", "/")
+    if is_v2 and status == "active":
+        add("corpus_path_declared", bool(corpus_rel), corpus_rel or "(missing corpus_path)")
+        if vault is not None and corpus_rel:
+            doctrine = vault / corpus_rel / "00-doctrine.md"
+            add(
+                "corpus_doctrine_exists",
+                doctrine.is_file(),
+                f"{corpus_rel}/00-doctrine.md" if doctrine.is_file() else f"missing {corpus_rel}/00-doctrine.md",
+            )
+        try:
+            body = Path(profile["path"]).read_text(encoding="utf-8")
+        except Exception:
+            body = ""
+        add(
+            "learn_loop_section",
+            bool(re.search(r"(?i)learn\s*loop|bucle\s*de\s*aprendizaje", body)),
+            "section Learn loop",
+        )
+        add(
+            "critical_thinking_section",
+            bool(re.search(r"(?i)pensamiento\s*cr[ií]tico|critical\s*thinking", body)),
+            "section Pensamiento crítico",
+        )
+
     ok = all(c["ok"] for c in checks)
     return {
         "kind": "profile_structure",
         "forge_id": profile.get("forge_id"),
+        "builder": builder,
         "ok": ok,
         "checks": checks,
         "gates": gates,
@@ -142,10 +185,20 @@ def evaluate_deliverable(
     fm_gates = meta.get("forge_gates") or {}
     if isinstance(fm_gates, dict):
         for k, v in fm_gates.items():
-            declared.setdefault(str(k), str(v).lower())
+            raw = str(k)
+            gid = raw.upper() if re.fullmatch(r"G\d+", raw, re.I) else ("G" + raw[1:].lower() if raw.upper().startswith("G") else raw)
+            declared.setdefault(gid, str(v).lower())
+    # also accept top-level G*: pass keys from imperfect YAML
+    for k, v in meta.items():
+        if re.fullmatch(r"G[A-Za-z0-9]+", str(k), re.I):
+            raw = str(k)
+            gid = raw.upper() if re.fullmatch(r"G\d+", raw, re.I) else ("G" + raw[1:].lower())
+            declared.setdefault(gid, str(v).lower())
     # body lines like: G1: pass
-    for m in re.finditer(r"^\s*(G\d+)\s*[=:]\s*(pass|fail|n/a)\s*$", body, re.I | re.M):
-        declared.setdefault(m.group(1).upper(), m.group(2).lower())
+    for m in re.finditer(r"^\s*(G[A-Za-z0-9]+)\s*[=:]\s*(pass|fail|n/a)\s*$", body, re.I | re.M):
+        raw = m.group(1)
+        gid = raw.upper() if re.fullmatch(r"G\d+", raw, re.I) else ("G" + raw[1:].lower())
+        declared.setdefault(gid, m.group(2).lower())
 
     checks: list[dict[str, Any]] = []
     profile_id = profile.get("forge_id")
@@ -195,7 +248,13 @@ def evaluate_deliverable(
     }
 
 
-def run_list(vault: Path, *, ensembles: bool = False, as_json: bool = False) -> int:
+def run_list(
+    vault: Path,
+    *,
+    ensembles: bool = False,
+    graph: bool = False,
+    as_json: bool = False,
+) -> int:
     profiles = list_profiles(vault)
     data: dict[str, Any] = {
         "command": "forge list",
@@ -205,16 +264,29 @@ def run_list(vault: Path, *, ensembles: bool = False, as_json: bool = False) -> 
     }
     if ensembles:
         data["ensembles"] = list_ensembles(vault)
+    if graph:
+        from talaria_cli.cmds import forge_delegation as dele
+
+        data["graph"] = dele.build_delegation_graph(vault)
     if as_json:
         emit(data, True)
     else:
         print(f"FORGE profiles: {len(profiles)}")
         for p in profiles:
-            print(f"  - {p['forge_id']:16} [{p['status']}] gates={','.join(p['gates']) or '-'}  {p['specialty'][:60]}")
+            kind = p.get("role_kind") or "both"
+            print(
+                f"  - {p['forge_id']:20} [{p['status']}] kind={kind} "
+                f"gates={','.join(p['gates']) or '-'}  {p['specialty'][:50]}"
+            )
         if ensembles:
             print(f"Ensembles: {len(data['ensembles'])}")
             for e in data["ensembles"]:
                 print(f"  - {e['forge_id']}: {e['profiles']}")
+        if graph:
+            g = data["graph"]
+            print(f"Delegation graph: {g['node_count']} nodes, {g['edge_count']} edges")
+            for e in g["edges"]:
+                print(f"  {e['from']} --{e['kind']}--> {e['to']}")
     return EXIT_OK
 
 
@@ -223,7 +295,7 @@ def run_show(vault: Path, forge_id: str, *, as_json: bool = False) -> int:
     if not profile:
         emit({"error": f"profile not found: {forge_id}", "ok": False}, as_json or True)
         return EXIT_ERROR
-    struct = evaluate_profile_structure(profile)
+    struct = evaluate_profile_structure(profile, vault)
     data = {
         "command": "forge show",
         "ok": True,
@@ -272,7 +344,7 @@ def run_check(
         emit({"error": f"profile not found: {forge_id}", "ok": False}, as_json or True)
         return EXIT_ERROR
 
-    struct = evaluate_profile_structure(profile)
+    struct = evaluate_profile_structure(profile, vault)
     parts = [struct]
     overall_ok = struct["ok"]
 
@@ -328,7 +400,7 @@ def run_run(vault: Path, forge_id: str, *, with_axon: bool = False, as_json: boo
     if not profile:
         emit({"error": f"profile not found: {forge_id}", "ok": False}, as_json or True)
         return EXIT_ERROR
-    struct = evaluate_profile_structure(profile)
+    struct = evaluate_profile_structure(profile, vault)
     if not struct["ok"]:
         data = {
             "command": "forge run",
@@ -344,6 +416,11 @@ def run_run(vault: Path, forge_id: str, *, with_axon: bool = False, as_json: boo
     if isinstance(axon_queries, str):
         axon_queries = [axon_queries]
 
+    from talaria_cli.cmds import session as session_cmd
+    from talaria_cli.mode import mode_contract, resolve_mode
+
+    mode = resolve_mode(vault)
+    sess = session_cmd.load_session(vault)
     packet = {
         "command": "forge run",
         "ok": True,
@@ -355,13 +432,27 @@ def run_run(vault: Path, forge_id: str, *, with_axon: bool = False, as_json: boo
         "specialty": meta.get("specialty"),
         "path": profile["rel_path"],
         "axon_queries": axon_queries,
+        "mode": mode,
+        "mode_contract": mode_contract(mode),
+        "session": sess,
+        "spine_enforcement": {
+            "strict_requires_session": mode == "strict",
+            "session_active": bool(sess),
+            "required_close": [
+                "talaria forge check --profile <id> --deliverable <path>",
+                "scorecard forge_critical: pass",
+                "talaria session close --json  (or verify close --scorecard)",
+            ],
+        },
         "instructions": [
+            "If no session: talaria session start --objective \"...\" --forge " + forge_id,
             "Activate with the activation string",
-            "Retrieve via: talaria axon for-profile <id> --json (or axon search)",
+            "Retrieve via: talaria axon for-profile <id> --json",
             "Execute profile playbook in the profile note",
-            "Write deliverable with forge_profile + forge_gates frontmatter (G1: pass, ...)",
+            "Write deliverable with forge_profile + forge_gates (incl. Gcrit/Gmem)",
             "Run: talaria forge check --profile <id> --deliverable <path> --json",
-            "Then talaria verify close --scorecard <scorecard> --json",
+            "Fill scorecard evidence + forge_critical: pass",
+            "talaria session close --json",
         ],
     }
     if with_axon:
@@ -369,6 +460,10 @@ def run_run(vault: Path, forge_id: str, *, with_axon: bool = False, as_json: boo
 
         queries = list(axon_queries) if axon_queries else [str(meta.get("specialty") or forge_id)[:60]]
         packet["axon"] = axon_cmd.bundles_for_queries(vault, queries, limit=8)
+
+    from talaria_cli.cmds import forge_delegation as dele
+
+    packet = dele.enrich_run_packet(vault, forge_id, packet)
 
     if as_json:
         emit(packet, True)
@@ -378,11 +473,126 @@ def run_run(vault: Path, forge_id: str, *, with_axon: bool = False, as_json: boo
         print("DoD:", len(packet["dod"]), "items — see", packet["path"])
         if axon_queries:
             print("axon_queries:", axon_queries)
+        d = packet.get("delegation") or {}
+        if d.get("invokes"):
+            print("invokes:", ", ".join(d["invokes"]))
         for i, step in enumerate(packet["instructions"], 1):
             print(f"  {i}. {step}")
         if with_axon and packet.get("axon"):
             for b in packet["axon"]:
                 print(f"  AXON {b['query']!r}: {b['result'].get('hit_count', 0)} hits")
+    return EXIT_OK
+
+
+def run_graph(vault: Path, *, as_json: bool = False) -> int:
+    from talaria_cli.cmds import forge_delegation as dele
+
+    data = dele.build_delegation_graph(vault)
+    if as_json:
+        emit(data, True)
+    else:
+        print(f"FORGE delegation graph: {data['node_count']} nodes, {data['edge_count']} edges")
+        print(data["note"])
+        for e in data["edges"]:
+            flag = "" if e["target_exists"] else " (missing)"
+            print(f"  {e['from']} --{e['kind']}--> {e['to']}{flag}")
+    return EXIT_OK
+
+
+def run_invoke(
+    vault: Path,
+    parent_id: str,
+    child_id: str,
+    *,
+    brief: str | None = None,
+    strict: bool = False,
+    with_axon: bool = False,
+    as_json: bool = False,
+) -> int:
+    """Delegate from parent profile to child specialist (user-owned graph)."""
+    from talaria_cli.cmds import forge_delegation as dele
+    from talaria_cli.cmds import session as session_cmd
+    from talaria_cli.mode import mode_contract, resolve_mode
+
+    policy = dele.check_invoke_policy(vault, parent_id, child_id, strict=strict)
+    if not policy["allowed"]:
+        data = {
+            "command": "forge invoke",
+            "ok": False,
+            "error": "invoke policy failed",
+            "policy": policy,
+        }
+        emit(data, as_json or True)
+        return EXIT_ERROR
+
+    child = load_profile(vault, child_id)
+    if not child:
+        emit({"ok": False, "error": f"child not found: {child_id}"}, as_json or True)
+        return EXIT_ERROR
+    struct = evaluate_profile_structure(child, vault)
+    if not struct["ok"]:
+        emit(
+            {
+                "command": "forge invoke",
+                "ok": False,
+                "error": "child fails structural check",
+                "structure": struct,
+                "policy": policy,
+            },
+            as_json or True,
+        )
+        return EXIT_ERROR
+
+    meta = child.get("meta") or {}
+    axon_queries = meta.get("axon_queries") or []
+    if isinstance(axon_queries, str):
+        axon_queries = [axon_queries]
+
+    mode = resolve_mode(vault)
+    packet: dict[str, Any] = {
+        "command": "forge invoke",
+        "ok": True,
+        "parent": parent_id,
+        "child": child_id,
+        "brief": brief or "",
+        "policy": policy,
+        "forge_id": child_id,
+        "activation": child.get("activation")
+        or f"FORGE profile={child_id} | parent={parent_id} | laws=I+II | spine=on",
+        "gates": child["gates"],
+        "dod": child["dod"],
+        "specialty": meta.get("specialty"),
+        "path": child["rel_path"],
+        "axon_queries": axon_queries,
+        "mode": mode,
+        "mode_contract": mode_contract(mode),
+        "session": session_cmd.load_session(vault),
+        "instructions": [
+            f"Delegated by parent `{parent_id}`" + (f" brief={brief!r}" if brief else ""),
+            "Execute child playbook; return artifact to parent contract",
+            f"Parent resumes after child gates: talaria forge run {parent_id} --json",
+            "talaria forge check --profile <child> --deliverable <path> --json",
+        ],
+    }
+    packet = dele.enrich_run_packet(vault, child_id, packet)
+    if with_axon:
+        from talaria_cli.cmds import axon as axon_cmd
+
+        queries = list(axon_queries) if axon_queries else [str(meta.get("specialty") or child_id)[:60]]
+        packet["axon"] = axon_cmd.bundles_for_queries(vault, queries, limit=8)
+
+    if as_json:
+        emit(packet, True)
+    else:
+        print(packet["activation"])
+        if policy.get("warnings"):
+            for w in policy["warnings"]:
+                print("WARN:", w)
+        print(f"invoke {parent_id} → {child_id}")
+        if brief:
+            print("brief:", brief)
+        for i, step in enumerate(packet["instructions"], 1):
+            print(f"  {i}. {step}")
     return EXIT_OK
 
 
@@ -421,27 +631,53 @@ def _split_frontmatter(text: str) -> tuple[dict[str, Any], str]:
 def _parse_yaml_lite(block: str) -> dict[str, Any]:
     meta: dict[str, Any] = {}
     current_list_key: str | None = None
+    current_map_key: str | None = None
     for raw in block.splitlines():
         line = raw.rstrip()
         if not line.strip() or line.strip().startswith("#"):
             continue
+        # nested map values under a key (forge_gates: / axon_queries handled separately)
+        if current_map_key and line.startswith("  ") and ":" in line and not line.lstrip().startswith("-"):
+            k, v = line.strip().split(":", 1)
+            d = meta.get(current_map_key)
+            if not isinstance(d, dict):
+                d = {}
+                meta[current_map_key] = d
+            d[k.strip()] = v.strip().strip("\"'")
+            current_list_key = None
+            continue
         if current_list_key and (line.startswith("  - ") or line.startswith("- ")):
+            # promote empty dict placeholder to list if needed
+            if isinstance(meta.get(current_list_key), dict) and not meta[current_list_key]:
+                meta[current_list_key] = []
             item = line.lstrip().removeprefix("- ").strip().strip("\"'")
-            meta.setdefault(current_list_key, []).append(item)
+            meta.setdefault(current_list_key, [])
+            if not isinstance(meta[current_list_key], list):
+                meta[current_list_key] = []
+            meta[current_list_key].append(item)
+            current_map_key = None
             continue
         current_list_key = None
+        current_map_key = None
         if ":" not in line:
             continue
         key, val = line.split(":", 1)
         key = key.strip()
         val = val.strip()
-        if val == "" or val == "[]":
+        if val == "[]":
             meta[key] = []
-            if val == "":
-                current_list_key = key
+            continue
+        if val == "{}":
+            meta[key] = {}
+            current_map_key = key
+            continue
+        if val == "":
+            # child lines decide list vs map
+            meta[key] = {}
+            current_map_key = key
+            current_list_key = key
             continue
         if val.startswith("{") and val.endswith("}"):
-            # simple {G1: pass, G2: fail}
             inner = val[1:-1].strip()
             d: dict[str, str] = {}
             if inner:
@@ -462,27 +698,39 @@ def _parse_yaml_lite(block: str) -> dict[str, Any]:
 
 def _parse_gates(body: str) -> list[dict[str, str]]:
     gates: list[dict[str, str]] = []
-    # | G1 Scope | evidence | if fail |
+
+    def _norm_gid(gid: str) -> str:
+        if re.fullmatch(r"G\d+", gid, re.I):
+            return gid.upper()
+        return "G" + gid[1:].lower()
+
+    # | G1 Scope | evidence | if fail |  OR  | Gcrit Crítica | ...
     for m in re.finditer(
-        r"^\|\s*(G\d+)\s+([^|]+)\|\s*([^|]+)\|\s*([^|]+)\|",
+        r"^\|\s*(G[A-Za-z0-9]+)\s+([^|]+)\|\s*([^|]+)\|\s*([^|]+)\|",
         body,
         re.M,
     ):
-        gid = m.group(1).upper()
+        gid = m.group(1)
         if gid.lower() == "gate":
             continue
         gates.append(
             {
-                "id": gid,
+                "id": _norm_gid(gid),
                 "name": m.group(2).strip(),
                 "evidence": m.group(3).strip(),
                 "on_fail": m.group(4).strip(),
             }
         )
-    # fallback: bare G1 in table first column
     if not gates:
-        for m in re.finditer(r"^\|\s*(G\d+)\s*\|\s*([^|]+)\|", body, re.M):
-            gates.append({"id": m.group(1).upper(), "name": "", "evidence": m.group(2).strip(), "on_fail": ""})
+        for m in re.finditer(r"^\|\s*(G[A-Za-z0-9]+)\s*\|\s*([^|]+)\|", body, re.M):
+            gates.append(
+                {
+                    "id": _norm_gid(m.group(1)),
+                    "name": "",
+                    "evidence": m.group(2).strip(),
+                    "on_fail": "",
+                }
+            )
     return gates
 
 

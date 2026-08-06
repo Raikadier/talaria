@@ -1,0 +1,20 @@
+{
+  "id": "adr-boundaries-v2",
+  "title": "ADR + boundaries + crítica (Builder 2.0)",
+  "forge_profile": "sw-architect",
+  "builder": "2.0",
+  "pass_score": 80,
+  "baseline_note": "Chat genérico: salta a stack/código, una sola opción, sin boundaries ni crítica.",
+  "forge_advantage": "Fuerzas + ≥2 opciones + ADR + contratos + crítica + Memorize path.",
+  "baseline_fixture": "_META/evals/fixtures/adr-boundaries-baseline-fail.md",
+  "forge_fixture": "_META/evals/fixtures/adr-boundaries-forge-pass.md",
+  "rubric": [
+    {"id": "forces", "must_contain_any": ["fuerza", "constraint", "contexto", "context"], "description": "Fuerzas/contexto"},
+    {"id": "alts", "must_contain_any": ["alternativa", "opción", "option", "alternative"], "description": "≥ implícito alternativas"},
+    {"id": "decision", "must_contain_any": ["decisión", "decision"], "description": "Decisión"},
+    {"id": "tradeoffs", "must_contain_any": ["trade", "consecuencia", "consequence", "nfr"], "description": "Trade-offs/NFR"},
+    {"id": "boundaries", "must_contain_any": ["boundary", "contrato", "api", "límite", "c4"], "description": "Boundaries"},
+    {"id": "critique", "must_contain_any": ["crítica", "critique", "adversarial", "podría estar mal"], "description": "Pensamiento crítico"},
+    {"id": "memorize", "must_contain_any": ["memory/", "memorize", "vault", "adr-"], "description": "Ancla Memorize/vault"}
+  ]
+}

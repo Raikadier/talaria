@@ -37,7 +37,14 @@ talaria describe --json
 ```
 If deps missing: `python bootstrap.py` or `talaria boot`
 
-Prefer MCP server `skillgraph` (tools `skillgraph_*`) + MCP `obsidian` for note CRUD. See `_META/agent-connect.md`.
+Prefer MCP server `talaria` (tools `talaria_*`) + MCP `obsidian` for note CRUD. See `_META/agent-connect.md`.
+
+## Create an agent / FORGE profile
+When the user asks to create an agent using Talaria (e.g. "crea un agente que sepa responder correos usando talaria"):
+1. `talaria forge build --brief "<their request>" --json` **or** MCP `talaria_forge_build`
+2. Optional graph: `--kind orchestrator|specialist` / `--invokes` / `--invocable-by` (user owns the org chart — see `_META/forge/delegation.md`)
+3. Execute the returned `pilot_playbook` (fill corpus, `forge check`, activate, then `forge run` / `forge invoke`)
+4. Do **not** invent a disposable system prompt outside the vault
 
 ## Ingest helpers
 ```bash

@@ -20,9 +20,13 @@ Talaria es la armadura; Cursor es un piloto de primera clase.
 
 ## Boot
 
-1. Workspace = vault **o** MCP obsidian configurado en `~/.cursor/mcp.json`  
+1. Workspace = vault **o** MCP `talaria` + `obsidian` (`talaria connect --client cursor --apply --yes`)  
 2. Leer [[AGENTS]] / [[spine-framework]]  
 3. Operar; cerrar con Memorize  
+
+## Crear un agente con Talaria
+
+Pedido típico: «crea un agente que… usando talaria» → `talaria forge build --brief "…" --json` o MCP `talaria_forge_build`, luego seguir `pilot_playbook` ([[forge-builder]] · [[agent-connect]]).
 
 ## Alcance global (todos los chats)
 

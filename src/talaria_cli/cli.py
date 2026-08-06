@@ -9,10 +9,13 @@ from talaria_cli import __version__
 from talaria_cli.agent_contract import agent_contract, connection_snippet
 from talaria_cli.cmds import axon as axon_cmd
 from talaria_cli.cmds import boot as boot_cmd
+from talaria_cli.cmds import connect_apply as connect_apply_cmd
 from talaria_cli.cmds import eval_cmd
 from talaria_cli.cmds import forge as forge_cmd
+from talaria_cli.cmds import forge_build as forge_build_cmd
 from talaria_cli.cmds import import_chats as import_cmd
 from talaria_cli.cmds import ingest as ingest_cmd
+from talaria_cli.cmds import session as session_cmd
 from talaria_cli.cmds import smoke as smoke_cmd
 from talaria_cli.cmds import status as status_cmd
 from talaria_cli.cmds import verify as verify_cmd
@@ -24,9 +27,10 @@ from talaria_cli.vault import find_vault
 HELP_SPINE = """
 Talaria CLI — SPINE + órganos (TCOS).
 
-describe | connect | mcp | doctor | smoke | status
-verify boot|close   forge list|show|check|run
-axon search|for-profile|stats
+describe | connect [--apply --yes] | mcp | doctor | smoke | status
+session start|status|close
+verify boot|close   forge list|show|check|run|build|invoke|graph
+axon search|for-profile|stats|feedback|quality
 eval list|show|run   mode get|set
 Global: --vault PATH  --json  --mode strict|draft
 """
@@ -78,12 +82,13 @@ def build_parser() -> argparse.ArgumentParser:
         help="Allow close without done: true (draft mode)",
     )
 
-    forge = sub.add_parser("forge", help="FORGE profiles (list/show/check/run)")
+    forge = sub.add_parser("forge", help="FORGE profiles (list/show/check/run/build/invoke/graph)")
     _add_json(forge)
     forge_sub = forge.add_subparsers(dest="forge_kind")
     flist = forge_sub.add_parser("list", help="List profiles")
     _add_json(flist)
     flist.add_argument("--ensembles", action="store_true", help="Include ensembles")
+    flist.add_argument("--graph", action="store_true", help="Include user delegation graph")
     fshow = forge_sub.add_parser("show", help="Show one profile")
     _add_json(fshow)
     fshow.add_argument("profile_id", help="forge_id e.g. researcher")
@@ -103,6 +108,61 @@ def build_parser() -> argparse.ArgumentParser:
         action="store_true",
         help="Include AXON search results from profile axon_queries",
     )
+    fbuild = forge_sub.add_parser(
+        "build",
+        help="Create draft FORGE agent/profile from a natural-language brief (Builder 2.0)",
+    )
+    _add_json(fbuild)
+    fbuild.add_argument(
+        "--brief",
+        required=True,
+        help='e.g. "crea un agente que sepa responder correos"',
+    )
+    fbuild.add_argument("--id", dest="forge_id", help="Optional forge_id (kebab-case)")
+    fbuild.add_argument("--specialty", help="Override specialty one-liner")
+    fbuild.add_argument("--deliverable", help="Override DoD deliverable description")
+    fbuild.add_argument(
+        "--kind",
+        dest="role_kind",
+        default="both",
+        choices=["orchestrator", "specialist", "both"],
+        help="User-owned role kind (default both)",
+    )
+    fbuild.add_argument(
+        "--invocable-by-mode",
+        default="open",
+        choices=["open", "allowlist", "deny_direct"],
+        help="Who may auto-invoke this agent (default open — owner always can forge run)",
+    )
+    fbuild.add_argument(
+        "--invocable-by",
+        help="Comma forge_ids that may invoke this specialist",
+    )
+    fbuild.add_argument(
+        "--invokes",
+        help="Comma forge_ids this orchestrator may delegate to",
+    )
+    fbuild.add_argument(
+        "--force",
+        action="store_true",
+        help="Overwrite existing profile/corpus id",
+    )
+    finvoke = forge_sub.add_parser(
+        "invoke",
+        help="Delegate parent → child specialist (user-owned graph)",
+    )
+    _add_json(finvoke)
+    finvoke.add_argument("parent_id", help="Parent / orchestrator forge_id")
+    finvoke.add_argument("child_id", help="Child / specialist forge_id")
+    finvoke.add_argument("--brief", help="Delegation brief for the child")
+    finvoke.add_argument(
+        "--strict",
+        action="store_true",
+        help="Hard-fail policy (missing invokes edge / allowlist)",
+    )
+    finvoke.add_argument("--with-axon", action="store_true")
+    fgraph = forge_sub.add_parser("graph", help="Show user delegation graph")
+    _add_json(fgraph)
 
     axon = sub.add_parser("axon", help="AXON skill search")
     _add_json(axon)
@@ -113,12 +173,34 @@ def build_parser() -> argparse.ArgumentParser:
     asearch.add_argument("--domain", help="Filter by domain folder/name")
     asearch.add_argument("--tag", help="Filter by tag")
     asearch.add_argument("--limit", type=int, default=15, help="Max hits (default 15)")
+    asearch.add_argument("--no-record", action="store_true", help="Do not update axon-quality.json")
     afor = axon_sub.add_parser("for-profile", help="Run profile axon_queries")
     _add_json(afor)
     afor.add_argument("profile_id", help="forge_id")
     afor.add_argument("--limit", type=int, default=10)
+    afor.add_argument("--no-record", action="store_true", help="Do not update axon-quality.json")
     astats = axon_sub.add_parser("stats", help="AXON counts")
     _add_json(astats)
+    afeed = axon_sub.add_parser("feedback", help="Mark a skill useful|noise (quality loop)")
+    _add_json(afeed)
+    afeed.add_argument("--path", required=True, help="skills/... path")
+    afeed.add_argument("--signal", required=True, choices=["useful", "noise"])
+    aqual = axon_sub.add_parser("quality", help="Show AXON quality ranking")
+    _add_json(aqual)
+    aqual.add_argument("--limit", type=int, default=20)
+
+    sess = sub.add_parser("session", help="SPINE session start/status/close (scorecard enforcement)")
+    _add_json(sess)
+    sess_sub = sess.add_subparsers(dest="session_kind")
+    sstart = sess_sub.add_parser("start", help="Create scorecard + active session")
+    _add_json(sstart)
+    sstart.add_argument("--objective", required=True, help="Session objective")
+    sstart.add_argument("--forge", dest="forge_profile", help="Optional forge_id")
+    sstat = sess_sub.add_parser("status", help="Show active session")
+    _add_json(sstat)
+    sclose = sess_sub.add_parser("close", help="verify close on session scorecard")
+    _add_json(sclose)
+    sclose.add_argument("--draft", action="store_true", help="Allow draft close")
 
     connect = sub.add_parser("connect", help="Emit MCP/CLI snippets for a client")
     _add_json(connect)
@@ -132,6 +214,16 @@ def build_parser() -> argparse.ArgumentParser:
         "--write",
         action="store_true",
         help="Write fragment under tools/connect/<client>.json",
+    )
+    connect.add_argument(
+        "--apply",
+        action="store_true",
+        help="Merge MCP fragment into the client config file",
+    )
+    connect.add_argument(
+        "--yes",
+        action="store_true",
+        help="Required with --apply to confirm writing client config",
     )
 
     ingest = sub.add_parser("ingest", help="Ingest external content")
@@ -160,10 +252,20 @@ def build_parser() -> argparse.ArgumentParser:
     eshow = ev_sub.add_parser("show", help="Show eval spec")
     _add_json(eshow)
     eshow.add_argument("eval_id")
-    erun = ev_sub.add_parser("run", help="Score deliverable against rubric")
+    erun = ev_sub.add_parser("run", help="Score deliverable against rubric (or A/B fixtures)")
     _add_json(erun)
     erun.add_argument("eval_id")
-    erun.add_argument("--deliverable", required=True)
+    erun.add_argument(
+        "--deliverable",
+        required=False,
+        default=None,
+        help="Path to deliverable; omit to run baseline_fixture vs forge_fixture A/B",
+    )
+    erun.add_argument(
+        "--ab",
+        action="store_true",
+        help="Force A/B comparison using fixtures in the eval spec",
+    )
 
     mode_p = sub.add_parser("mode", help="Get/set SPINE mode strict|draft")
     _add_json(mode_p)
@@ -209,9 +311,20 @@ def main(argv: list[str] | None = None) -> int:
             data = verify_cmd.evaluate_boot(vault)
             data["mode"] = mode
             data["mode_contract"] = mode_contract(mode)
+            sess = session_cmd.status_session(vault)
+            data["session"] = {
+                "active": sess.get("active"),
+                "scorecard": (sess.get("session") or {}).get("scorecard"),
+                "forge_profile": (sess.get("session") or {}).get("forge_profile"),
+            }
             if mode == "draft":
                 data["ok"] = True
                 data["next"] = "Draft mode — Act allowed without hard gate (no guaranteed outcome)"
+            elif not sess.get("active"):
+                data["next"] = (
+                    (data.get("next") or "")
+                    + " | Recommended: talaria session start --objective \"...\" [--forge <id>]"
+                ).strip(" |")
             verify_cmd._emit_verify(data, as_json)
             return EXIT_OK if data["ok"] else EXIT_ERROR
         if args.verify_kind == "close":
@@ -231,7 +344,11 @@ def main(argv: list[str] | None = None) -> int:
             return eval_cmd.run_show(vault, args.eval_id, as_json=as_json)
         if args.eval_kind == "run":
             return eval_cmd.run_run(
-                vault, args.eval_id, deliverable=args.deliverable, as_json=as_json
+                vault,
+                args.eval_id,
+                deliverable=args.deliverable,
+                as_json=as_json,
+                compare_fixtures=bool(getattr(args, "ab", False)),
             )
         parser.parse_args(["eval", "-h"])
         return EXIT_USAGE
@@ -252,7 +369,10 @@ def main(argv: list[str] | None = None) -> int:
     if args.command == "forge":
         if args.forge_kind == "list":
             return forge_cmd.run_list(
-                vault, ensembles=bool(getattr(args, "ensembles", False)), as_json=as_json
+                vault,
+                ensembles=bool(getattr(args, "ensembles", False)),
+                graph=bool(getattr(args, "graph", False)),
+                as_json=as_json,
             )
         if args.forge_kind == "show":
             return forge_cmd.run_show(vault, args.profile_id, as_json=as_json)
@@ -271,7 +391,49 @@ def main(argv: list[str] | None = None) -> int:
                 with_axon=bool(getattr(args, "with_axon", False)),
                 as_json=as_json,
             )
+        if args.forge_kind == "build":
+            return forge_build_cmd.run_build(
+                vault,
+                args.brief,
+                forge_id=getattr(args, "forge_id", None),
+                specialty=getattr(args, "specialty", None),
+                deliverable=getattr(args, "deliverable", None),
+                force=bool(getattr(args, "force", False)),
+                role_kind=getattr(args, "role_kind", "both") or "both",
+                invocable_by_mode=getattr(args, "invocable_by_mode", "open") or "open",
+                invocable_by=getattr(args, "invocable_by", None),
+                invokes=getattr(args, "invokes", None),
+                as_json=as_json,
+            )
+        if args.forge_kind == "invoke":
+            return forge_cmd.run_invoke(
+                vault,
+                args.parent_id,
+                args.child_id,
+                brief=getattr(args, "brief", None),
+                strict=bool(getattr(args, "strict", False)),
+                with_axon=bool(getattr(args, "with_axon", False)),
+                as_json=as_json,
+            )
+        if args.forge_kind == "graph":
+            return forge_cmd.run_graph(vault, as_json=as_json)
         parser.parse_args(["forge", "-h"])
+        return EXIT_USAGE
+    if args.command == "session":
+        if args.session_kind == "start":
+            return session_cmd.run_start(
+                vault,
+                objective=args.objective,
+                forge_profile=getattr(args, "forge_profile", None),
+                as_json=as_json,
+            )
+        if args.session_kind == "status":
+            return session_cmd.run_status(vault, as_json=as_json)
+        if args.session_kind == "close":
+            return session_cmd.close_session(
+                vault, as_json=as_json, allow_draft=bool(getattr(args, "draft", False))
+            )
+        parser.parse_args(["session", "-h"])
         return EXIT_USAGE
     if args.command == "axon":
         if args.axon_kind == "search":
@@ -281,6 +443,7 @@ def main(argv: list[str] | None = None) -> int:
                 domain=getattr(args, "domain", None),
                 tag=getattr(args, "tag", None),
                 limit=int(getattr(args, "limit", 15) or 15),
+                record=not bool(getattr(args, "no_record", False)),
                 as_json=as_json,
             )
         if args.axon_kind == "for-profile":
@@ -288,6 +451,7 @@ def main(argv: list[str] | None = None) -> int:
                 vault,
                 args.profile_id,
                 limit=int(getattr(args, "limit", 10) or 10),
+                record=not bool(getattr(args, "no_record", False)),
                 as_json=as_json,
             )
         if args.axon_kind == "stats":
@@ -295,6 +459,14 @@ def main(argv: list[str] | None = None) -> int:
             data["command"] = "axon stats"
             emit(data, as_json or True)
             return EXIT_OK if data.get("ok") else EXIT_ERROR
+        if args.axon_kind == "feedback":
+            return axon_cmd.run_feedback(
+                vault, args.path, args.signal, as_json=as_json
+            )
+        if args.axon_kind == "quality":
+            return axon_cmd.run_quality(
+                vault, limit=int(getattr(args, "limit", 20) or 20), as_json=as_json
+            )
         parser.parse_args(["axon", "-h"])
         return EXIT_USAGE
     if args.command == "status":
@@ -306,6 +478,10 @@ def main(argv: list[str] | None = None) -> int:
         emit(agent_contract(vault), True)  # always JSON — for agents
         return EXIT_OK
     if args.command == "connect":
+        if getattr(args, "apply", False):
+            return connect_apply_cmd.run_apply(
+                vault, args.client, yes=bool(getattr(args, "yes", False)), as_json=True
+            )
         data = connection_snippet(vault, args.client)
         if args.write:
             out_dir = vault / "tools" / "connect"
@@ -313,6 +489,7 @@ def main(argv: list[str] | None = None) -> int:
             out = out_dir / f"{args.client}.json"
             out.write_text(json.dumps(data, indent=2, ensure_ascii=False), encoding="utf-8")
             data = {**data, "written": str(out)}
+        data["apply_hint"] = "talaria connect --client cursor --apply --yes"
         emit(data, True)
         return EXIT_OK
     if args.command == "mcp":

@@ -5,7 +5,7 @@ import json
 from pathlib import Path
 from typing import Any
 
-from talaria_cli.util import EXIT_ERROR, EXIT_OK, emit
+from talaria_cli.util import EXIT_ERROR, EXIT_OK, EXIT_USAGE, emit
 
 EVALS_DIR = Path("_META/evals")
 
@@ -28,6 +28,7 @@ def list_evals(vault: Path) -> list[dict[str, Any]]:
                 "forge_profile": data.get("forge_profile"),
                 "rubric_count": len(data.get("rubric") or []),
                 "path": str(path.relative_to(vault)).replace("\\", "/"),
+                "has_ab_fixtures": bool(data.get("baseline_fixture") and data.get("forge_fixture")),
             }
         )
     return out
@@ -55,21 +56,25 @@ def evaluate_deliverable_against_eval(
     checks = []
     for item in spec.get("rubric") or []:
         rid = item.get("id") or item.get("name") or "item"
-        needles = item.get("must_contain") or []
-        if isinstance(needles, str):
-            needles = [needles]
+        needles_any = item.get("must_contain_any") or item.get("must_contain") or []
+        needles_all = item.get("must_contain_all") or []
+        if isinstance(needles_any, str):
+            needles_any = [needles_any]
+        if isinstance(needles_all, str):
+            needles_all = [needles_all]
         ok = True
-        missing = []
-        for n in needles:
+        missing: list[str] = []
+        if needles_any:
+            if not any(n.lower() in text_l for n in needles_any):
+                ok = False
+                missing.extend(needles_any)
+        for n in needles_all:
             if n.lower() not in text_l:
                 ok = False
                 missing.append(n)
-        # checkbox style: if require_checked
         if item.get("require_checkbox_done"):
-            # look for - [x] near label
             label = (item.get("label") or "").lower()
             if label and f"[x] {label}" not in text_l and f"[X] {label}" not in text:
-                # softer: any [x] count
                 if text_l.count("- [x]") < 1:
                     ok = False
                     missing.append("checked checkbox")
@@ -108,7 +113,8 @@ def run_list(vault: Path, *, as_json: bool = False) -> int:
     else:
         print(f"Evals: {len(items)}")
         for e in items:
-            print(f"  - {e['id']}: {e.get('title')} (rubric={e.get('rubric_count')})")
+            ab = " A/B" if e.get("has_ab_fixtures") else ""
+            print(f"  - {e['id']}: {e.get('title')} (rubric={e.get('rubric_count')}){ab}")
     return EXIT_OK
 
 
@@ -126,13 +132,58 @@ def run_run(
     vault: Path,
     eval_id: str,
     *,
-    deliverable: str,
+    deliverable: str | None = None,
     as_json: bool = False,
+    compare_fixtures: bool = False,
 ) -> int:
     spec = load_eval(vault, eval_id)
     if not spec:
         emit({"ok": False, "error": f"eval not found: {eval_id}"}, as_json or True)
         return EXIT_ERROR
+
+    if compare_fixtures or not deliverable:
+        base_rel = spec.get("baseline_fixture")
+        forge_rel = spec.get("forge_fixture")
+        if base_rel and forge_rel:
+            base_path = vault / base_rel
+            forge_path = vault / forge_rel
+            if base_path.is_file() and forge_path.is_file():
+                base_r = evaluate_deliverable_against_eval(spec, base_path)
+                forge_r = evaluate_deliverable_against_eval(spec, forge_path)
+                ley2 = (not base_r["ok"]) and forge_r["ok"]
+                data = {
+                    "command": "eval run",
+                    "ok": ley2,
+                    "mode": "a_b_fixtures",
+                    "eval_id": eval_id,
+                    "baseline": base_r,
+                    "forge": forge_r,
+                    "ley_II_hold": ley2,
+                    "delta_score": round(forge_r["score"] - base_r["score"], 1),
+                    "next": "Ley II evidence: forge fixture beats baseline"
+                    if ley2
+                    else "Forge fixture did not beat baseline — improve profile/rubric/fixture",
+                }
+                if as_json:
+                    emit(data, True)
+                else:
+                    print(
+                        f"eval {eval_id} A/B: {'PASS' if ley2 else 'FAIL'} "
+                        f"baseline={base_r['score']}% forge={forge_r['score']}% "
+                        f"delta={data['delta_score']}"
+                    )
+                return EXIT_OK if ley2 else EXIT_ERROR
+
+    if not deliverable:
+        emit(
+            {
+                "ok": False,
+                "error": "deliverable required (or define baseline_fixture+forge_fixture)",
+            },
+            as_json or True,
+        )
+        return EXIT_USAGE
+
     path = Path(deliverable)
     if not path.is_file():
         path = vault / deliverable
@@ -151,5 +202,6 @@ def run_run(
     else:
         print(f"eval {eval_id}: {'PASS' if result['ok'] else 'FAIL'} score={result['score']}%")
         for c in result["checks"]:
-            print(f"  [{'OK' if c['ok'] else 'X'}] {c['id']}" + (f" missing={c['missing']}" if c["missing"] else ""))
+            miss = f" missing={c['missing']}" if c.get("missing") and not c["ok"] else ""
+            print(f"  [{'OK' if c['ok'] else 'X'}] {c['id']}{miss}")
     return EXIT_OK if result["ok"] else EXIT_ERROR

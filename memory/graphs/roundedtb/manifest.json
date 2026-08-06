@@ -1,0 +1,407 @@
+{
+  "RoundedTB.sln": {
+    "mtime": 1773247427.4645395,
+    "ast_hash": "3987c8649b588f53fb2580da3a29abe3",
+    "semantic_hash": ""
+  },
+  "RoundedTB/AboutWindow.xaml": {
+    "mtime": 1785534357.9358263,
+    "ast_hash": "17cc723e294cc12295f991b7d0b3aa22",
+    "semantic_hash": ""
+  },
+  "RoundedTB/AboutWindow.xaml.cs": {
+    "mtime": 1785534357.9445632,
+    "ast_hash": "ad07cbb508f18ccce5c7f8d697bdf692",
+    "semantic_hash": ""
+  },
+  "RoundedTB/App.xaml": {
+    "mtime": 1785534357.9589171,
+    "ast_hash": "6a47eec10bb95d7d19c51f2556a5466a",
+    "semantic_hash": ""
+  },
+  "RoundedTB/App.xaml.cs": {
+    "mtime": 1785534357.98623,
+    "ast_hash": "b6b076d0c4b195d44a32f9bdc4d71574",
+    "semantic_hash": ""
+  },
+  "RoundedTB/AppBars.cs": {
+    "mtime": 1773247427.468561,
+    "ast_hash": "8efc586769ebc75c625c3cafe72fcb4b",
+    "semantic_hash": ""
+  },
+  "RoundedTB/Background.cs": {
+    "mtime": 1785534357.9912271,
+    "ast_hash": "8c6218dce0844203c7790eeb2ec051e0",
+    "semantic_hash": ""
+  },
+  "RoundedTB/EnumerableExtensions.cs": {
+    "mtime": 1773247427.4705732,
+    "ast_hash": "ad181c5549d66b0d02d998c4edcb1410",
+    "semantic_hash": ""
+  },
+  "RoundedTB/IAppVisibility.cs": {
+    "mtime": 1773247427.4705732,
+    "ast_hash": "ef4e76d169737487af7043ce003ae9a5",
+    "semantic_hash": ""
+  },
+  "RoundedTB/Infobox.xaml": {
+    "mtime": 1773247427.472584,
+    "ast_hash": "57f60ff324facf7eee5b6a5647a1fee4",
+    "semantic_hash": ""
+  },
+  "RoundedTB/Infobox.xaml.cs": {
+    "mtime": 1773247427.472584,
+    "ast_hash": "571a420f752a7cfcf7e0b7d325f94c54",
+    "semantic_hash": ""
+  },
+  "RoundedTB/Interaction.cs": {
+    "mtime": 1785534357.9937296,
+    "ast_hash": "4008969033d61eb11b8c07acc64f36d4",
+    "semantic_hash": ""
+  },
+  "RoundedTB/LocalPInvoke.cs": {
+    "mtime": 1785534357.9957314,
+    "ast_hash": "5c3091b84d2e52a48836be864daec3c7",
+    "semantic_hash": ""
+  },
+  "RoundedTB/MainWindow.xaml": {
+    "mtime": 1785534358.0572941,
+    "ast_hash": "dc021d674e62b7a5d26297ad61ea5e4f",
+    "semantic_hash": ""
+  },
+  "RoundedTB/MainWindow.xaml.cs": {
+    "mtime": 1785534358.0963442,
+    "ast_hash": "71ac6b9f5bf7b0d912e89ab77c3865f9",
+    "semantic_hash": ""
+  },
+  "RoundedTB/MonitorStuff.cs": {
+    "mtime": 1773247427.4783592,
+    "ast_hash": "5fd3cb9b1eba50e4ee8259616d8b01e0",
+    "semantic_hash": ""
+  },
+  "RoundedTB/Properties/AssemblyInfo.cs": {
+    "mtime": 1773247427.4803686,
+    "ast_hash": "d11654135439813d3202c35ffea67cd5",
+    "semantic_hash": ""
+  },
+  "RoundedTB/Properties/Resources.Designer.cs": {
+    "mtime": 1773247427.4803686,
+    "ast_hash": "b6a460777fb67c75a5c94c1478e21aa0",
+    "semantic_hash": ""
+  },
+  "RoundedTB/Properties/Settings.Designer.cs": {
+    "mtime": 1785534358.1013477,
+    "ast_hash": "c7977298ed89175916d0383b5e3abd06",
+    "semantic_hash": ""
+  },
+  "RoundedTB/RoundedTB.csproj": {
+    "mtime": 1785534358.103617,
+    "ast_hash": "80036b3705e77217b0073ca8654985f1",
+    "semantic_hash": ""
+  },
+  "RoundedTB/Taskbar.cs": {
+    "mtime": 1785534358.2179291,
+    "ast_hash": "73e9f5f3aa4a662fb844ca98ad6a8a04",
+    "semantic_hash": ""
+  },
+  "RoundedTB/TaskbarEffect.xaml": {
+    "mtime": 1773247427.4961963,
+    "ast_hash": "e1de8e30bc2421459955509f5dbcb7a1",
+    "semantic_hash": ""
+  },
+  "RoundedTB/TaskbarEffect.xaml.cs": {
+    "mtime": 1773247427.4961963,
+    "ast_hash": "7033108592e2025a70b653c2cd7d0a96",
+    "semantic_hash": ""
+  },
+  "RoundedTB/Types.cs": {
+    "mtime": 1785534358.2209265,
+    "ast_hash": "f2b0021c60b486838e9babece05a6df6",
+    "semantic_hash": ""
+  },
+  ".github/workflows/ci.yml": {
+    "mtime": 1773247427.3913984,
+    "ast_hash": "88ceda3bb6ddce36e24e9e77da073fee",
+    "semantic_hash": ""
+  },
+  "ARCHITECTURE.md": {
+    "mtime": 1785604595.2634246,
+    "ast_hash": "3de1811efafdaeb9212fe7de2be482f0",
+    "semantic_hash": ""
+  },
+  "README.md": {
+    "mtime": 1773247427.46253,
+    "ast_hash": "93421c5f47a7dd4f30a09b02545661ce",
+    "semantic_hash": ""
+  },
+  "PackagingProject/Images/LargeTile.scale-100.png": {
+    "mtime": 1773247427.395422,
+    "ast_hash": "c783c7ea36a5009a3f517053e2495aa4",
+    "semantic_hash": ""
+  },
+  "PackagingProject/Images/LargeTile.scale-125.png": {
+    "mtime": 1773247427.3971808,
+    "ast_hash": "db97ef020bad9701c80e40d15996afb0",
+    "semantic_hash": ""
+  },
+  "PackagingProject/Images/LargeTile.scale-150.png": {
+    "mtime": 1773247427.4032104,
+    "ast_hash": "f17f46bab2c1bd64fc41daff1e8f5e4a",
+    "semantic_hash": ""
+  },
+  "PackagingProject/Images/LargeTile.scale-200.png": {
+    "mtime": 1773247427.4032104,
+    "ast_hash": "237d66ae2af1e2ffef505da1edfd0cde",
+    "semantic_hash": ""
+  },
+  "PackagingProject/Images/LargeTile.scale-400.png": {
+    "mtime": 1773247427.4052215,
+    "ast_hash": "ee1ab421765bcb17c17017535a0ea5f4",
+    "semantic_hash": ""
+  },
+  "PackagingProject/Images/SmallTile.scale-100.png": {
+    "mtime": 1773247427.4052215,
+    "ast_hash": "005a12127da8ab025c1e4d75ab2d1f62",
+    "semantic_hash": ""
+  },
+  "PackagingProject/Images/SmallTile.scale-125.png": {
+    "mtime": 1773247427.407231,
+    "ast_hash": "3f1c317cde63265f612021eab2443a04",
+    "semantic_hash": ""
+  },
+  "PackagingProject/Images/SmallTile.scale-150.png": {
+    "mtime": 1773247427.407231,
+    "ast_hash": "70c376367168207ea5d7bc7aca778b36",
+    "semantic_hash": ""
+  },
+  "PackagingProject/Images/SmallTile.scale-200.png": {
+    "mtime": 1773247427.407231,
+    "ast_hash": "5f10fa116f0d9477c99c9720bb7040ea",
+    "semantic_hash": ""
+  },
+  "PackagingProject/Images/SmallTile.scale-400.png": {
+    "mtime": 1773247427.4092467,
+    "ast_hash": "ac3257637ab35311b99a9ac4685449f8",
+    "semantic_hash": ""
+  },
+  "PackagingProject/Images/SplashScreen.scale-100.png": {
+    "mtime": 1773247427.4092467,
+    "ast_hash": "b18787f3f06d703bfd38fd03052f3852",
+    "semantic_hash": ""
+  },
+  "PackagingProject/Images/SplashScreen.scale-125.png": {
+    "mtime": 1773247427.4092467,
+    "ast_hash": "6cd690734f69a816794a3cfedc885335",
+    "semantic_hash": ""
+  },
+  "PackagingProject/Images/SplashScreen.scale-150.png": {
+    "mtime": 1773247427.4112628,
+    "ast_hash": "f0588937e710a82d4cdf56b46ced6c75",
+    "semantic_hash": ""
+  },
+  "PackagingProject/Images/SplashScreen.scale-200.png": {
+    "mtime": 1773247427.4112628,
+    "ast_hash": "26b55d6678148647168433548c7d0338",
+    "semantic_hash": ""
+  },
+  "PackagingProject/Images/SplashScreen.scale-400.png": {
+    "mtime": 1773247427.4130206,
+    "ast_hash": "b1ea685bff0b2a750a37fd8f9f60c91a",
+    "semantic_hash": ""
+  },
+  "PackagingProject/Images/Square150x150Logo.scale-100.png": {
+    "mtime": 1773247427.4130206,
+    "ast_hash": "d6b3a66fcfa049352110cd6ca11f2f4f",
+    "semantic_hash": ""
+  },
+  "PackagingProject/Images/Square150x150Logo.scale-125.png": {
+    "mtime": 1773247427.419055,
+    "ast_hash": "41cbc7e9689a798d1c7606160f7742b7",
+    "semantic_hash": ""
+  },
+  "PackagingProject/Images/Square150x150Logo.scale-150.png": {
+    "mtime": 1773247427.419055,
+    "ast_hash": "f938ecdbdd757251f0bee5f66e4719cf",
+    "semantic_hash": ""
+  },
+  "PackagingProject/Images/Square150x150Logo.scale-200.png": {
+    "mtime": 1773247427.4210675,
+    "ast_hash": "da4521346fe31a53cddc8604ce6ff612",
+    "semantic_hash": ""
+  },
+  "PackagingProject/Images/Square150x150Logo.scale-400.png": {
+    "mtime": 1773247427.4210675,
+    "ast_hash": "b742bb14c48d80cad3c87c56dc734db6",
+    "semantic_hash": ""
+  },
+  "PackagingProject/Images/Square44x44Logo.altform-lightunplated_targetsize-16.png": {
+    "mtime": 1773247427.4210675,
+    "ast_hash": "6dc63241e6b68e0cf0c73ea46e4c3b7d",
+    "semantic_hash": ""
+  },
+  "PackagingProject/Images/Square44x44Logo.altform-lightunplated_targetsize-24.png": {
+    "mtime": 1773247427.4230812,
+    "ast_hash": "5417dda29742f440536e942683408b24",
+    "semantic_hash": ""
+  },
+  "PackagingProject/Images/Square44x44Logo.altform-lightunplated_targetsize-256.png": {
+    "mtime": 1773247427.4230812,
+    "ast_hash": "983e254acdfc627b24e3873eaff3f4fe",
+    "semantic_hash": ""
+  },
+  "PackagingProject/Images/Square44x44Logo.altform-lightunplated_targetsize-32.png": {
+    "mtime": 1773247427.4328783,
+    "ast_hash": "f68a66181c3e5051291c7d69ce19a182",
+    "semantic_hash": ""
+  },
+  "PackagingProject/Images/Square44x44Logo.altform-lightunplated_targetsize-48.png": {
+    "mtime": 1773247427.4348917,
+    "ast_hash": "e4666c8d74a14c571651356438bec1a4",
+    "semantic_hash": ""
+  },
+  "PackagingProject/Images/Square44x44Logo.altform-unplated_targetsize-16.png": {
+    "mtime": 1773247427.4348917,
+    "ast_hash": "6dc63241e6b68e0cf0c73ea46e4c3b7d",
+    "semantic_hash": ""
+  },
+  "PackagingProject/Images/Square44x44Logo.altform-unplated_targetsize-256.png": {
+    "mtime": 1773247427.4369037,
+    "ast_hash": "983e254acdfc627b24e3873eaff3f4fe",
+    "semantic_hash": ""
+  },
+  "PackagingProject/Images/Square44x44Logo.altform-unplated_targetsize-32.png": {
+    "mtime": 1773247427.4369037,
+    "ast_hash": "f68a66181c3e5051291c7d69ce19a182",
+    "semantic_hash": ""
+  },
+  "PackagingProject/Images/Square44x44Logo.altform-unplated_targetsize-48.png": {
+    "mtime": 1773247427.4369037,
+    "ast_hash": "e4666c8d74a14c571651356438bec1a4",
+    "semantic_hash": ""
+  },
+  "PackagingProject/Images/Square44x44Logo.scale-100.png": {
+    "mtime": 1773247427.4369037,
+    "ast_hash": "3051af263f00960e4d6f4dc1a866023f",
+    "semantic_hash": ""
+  },
+  "PackagingProject/Images/Square44x44Logo.scale-125.png": {
+    "mtime": 1773247427.438917,
+    "ast_hash": "c625b3d5b0bb18e2766067ef5da02d31",
+    "semantic_hash": ""
+  },
+  "PackagingProject/Images/Square44x44Logo.scale-150.png": {
+    "mtime": 1773247427.438917,
+    "ast_hash": "2586e2866e1923e93a5d01f87e8fcc90",
+    "semantic_hash": ""
+  },
+  "PackagingProject/Images/Square44x44Logo.scale-200.png": {
+    "mtime": 1773247427.438917,
+    "ast_hash": "2ef9886db9d1348c90a3743bc6d9f740",
+    "semantic_hash": ""
+  },
+  "PackagingProject/Images/Square44x44Logo.scale-400.png": {
+    "mtime": 1773247427.4409304,
+    "ast_hash": "aa4af0439bdc62253863b09c669007c5",
+    "semantic_hash": ""
+  },
+  "PackagingProject/Images/Square44x44Logo.targetsize-16.png": {
+    "mtime": 1773247427.4446995,
+    "ast_hash": "4f1359aaae65ec3d7d64f078596fbfa2",
+    "semantic_hash": ""
+  },
+  "PackagingProject/Images/Square44x44Logo.targetsize-24.png": {
+    "mtime": 1773247427.4467077,
+    "ast_hash": "3b8ae68eedfaafceaa2017de3674ecbd",
+    "semantic_hash": ""
+  },
+  "PackagingProject/Images/Square44x44Logo.targetsize-24_altform-unplated.png": {
+    "mtime": 1773247427.4467077,
+    "ast_hash": "5417dda29742f440536e942683408b24",
+    "semantic_hash": ""
+  },
+  "PackagingProject/Images/Square44x44Logo.targetsize-256.png": {
+    "mtime": 1773247427.4467077,
+    "ast_hash": "3c0637da00ce9b7e5fee00e5c3d4a175",
+    "semantic_hash": ""
+  },
+  "PackagingProject/Images/Square44x44Logo.targetsize-32.png": {
+    "mtime": 1773247427.4487188,
+    "ast_hash": "4d50de1ef0e280272489beb33699fb73",
+    "semantic_hash": ""
+  },
+  "PackagingProject/Images/Square44x44Logo.targetsize-48.png": {
+    "mtime": 1773247427.4487188,
+    "ast_hash": "3e07b96bfc0358f0c0ea2fb0ca22d273",
+    "semantic_hash": ""
+  },
+  "PackagingProject/Images/StoreLogo.backup.png": {
+    "mtime": 1773247427.4487188,
+    "ast_hash": "3b0fd2d8bb385fdf5035d66be31076c6",
+    "semantic_hash": ""
+  },
+  "PackagingProject/Images/StoreLogo.scale-100.png": {
+    "mtime": 1773247427.4487188,
+    "ast_hash": "c30112182b5b7e6a4c9642a7043b8079",
+    "semantic_hash": ""
+  },
+  "PackagingProject/Images/StoreLogo.scale-125.png": {
+    "mtime": 1773247427.4507294,
+    "ast_hash": "a641e55c4c4df87df923d6b531ab6cd3",
+    "semantic_hash": ""
+  },
+  "PackagingProject/Images/StoreLogo.scale-150.png": {
+    "mtime": 1773247427.4507294,
+    "ast_hash": "350cb6d3b3290ef27c94059d0a799bbe",
+    "semantic_hash": ""
+  },
+  "PackagingProject/Images/StoreLogo.scale-200.png": {
+    "mtime": 1773247427.456761,
+    "ast_hash": "8fe1dbc545f0eada60a3a76fd454a86b",
+    "semantic_hash": ""
+  },
+  "PackagingProject/Images/StoreLogo.scale-400.png": {
+    "mtime": 1773247427.4587698,
+    "ast_hash": "c56a7edfe87dcbc9fb73bc2ef642dc39",
+    "semantic_hash": ""
+  },
+  "PackagingProject/Images/Wide310x150Logo.scale-100.png": {
+    "mtime": 1773247427.4587698,
+    "ast_hash": "87594032d25db71265720d6eb3c64275",
+    "semantic_hash": ""
+  },
+  "PackagingProject/Images/Wide310x150Logo.scale-125.png": {
+    "mtime": 1773247427.4587698,
+    "ast_hash": "b38d47653719d5e57a168a7d7d7c7256",
+    "semantic_hash": ""
+  },
+  "PackagingProject/Images/Wide310x150Logo.scale-150.png": {
+    "mtime": 1773247427.460521,
+    "ast_hash": "1ea35b2114f97966607915ef3dd0f43a",
+    "semantic_hash": ""
+  },
+  "PackagingProject/Images/Wide310x150Logo.scale-200.png": {
+    "mtime": 1773247427.460521,
+    "ast_hash": "b18787f3f06d703bfd38fd03052f3852",
+    "semantic_hash": ""
+  },
+  "PackagingProject/Images/Wide310x150Logo.scale-400.png": {
+    "mtime": 1773247427.460521,
+    "ast_hash": "26b55d6678148647168433548c7d0338",
+    "semantic_hash": ""
+  },
+  "RoundedTB/res/HeadBannerCan.png": {
+    "mtime": 1773247427.507982,
+    "ast_hash": "fc9d46fdadfea8c6fe84e72742abe9ec",
+    "semantic_hash": ""
+  },
+  "RoundedTB/res/HeadBannerDev.png": {
+    "mtime": 1773247427.529829,
+    "ast_hash": "a7e7aba9008bfdc90985348f16edfa66",
+    "semantic_hash": ""
+  },
+  "RoundedTB/res/Headbanner.png": {
+    "mtime": 1773247427.550668,
+    "ast_hash": "add52a62fce16365c6ddfa0934c8c440",
+    "semantic_hash": ""
+  }
+}

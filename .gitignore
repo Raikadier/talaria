@@ -1,6 +1,7 @@
 # Local / secrets
 .talaria.local.json
 .talaria.mode
+.talaria.session.json
 .skillgraph.local.json
 .skillgraph.mode
 .env

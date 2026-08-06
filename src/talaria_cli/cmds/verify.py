@@ -194,6 +194,38 @@ def evaluate_close(
     else:
         add("done", bool(done), str(done))
 
+    # FORGE Builder 2.0 close enforcement when a profile is declared
+    forge_profile = str(meta.get("forge_profile") or "").strip()
+    if forge_profile and mode != "draft":
+        crit = str(meta.get("forge_critical") or meta.get("critical") or "").strip().lower()
+        add(
+            "forge_critical",
+            crit in {"pass", "true", "yes", "1"},
+            crit or "(set forge_critical: pass in scorecard)",
+        )
+        # Memorize evidence: explicit paths or wiki-links already counted; require forge_memorize if learned
+        learned = str(meta.get("forge_learned") or "").strip().lower()
+        mem = meta.get("forge_memorize") or meta.get("forge_memorize_paths") or []
+        if isinstance(mem, str):
+            mem = [mem] if mem else []
+        if learned in {"true", "yes", "1", "pass"}:
+            add(
+                "forge_memorize_after_learn",
+                len(mem) >= 1 or len(body_links) >= 1,
+                str(mem or body_links[:3]) or "(need forge_memorize paths)",
+            )
+        else:
+            # still require some memorize signal for FORGE close
+            add(
+                "forge_memorize_signal",
+                len(evidence) >= 1 or len(body_links) >= 1 or len(mem) >= 1,
+                str(mem or evidence or body_links[:3]),
+            )
+        # optional builder tag
+        builder = str(meta.get("forge_builder") or "").strip()
+        if builder.startswith("2"):
+            add("forge_builder_2", True, builder)
+
     ok = all(c["ok"] for c in checks)
     return {
         "command": "verify close",
@@ -208,9 +240,10 @@ def evaluate_close(
             "organs_used": organs,
             "gates": gates,
             "forge_profile": meta.get("forge_profile"),
+            "forge_critical": meta.get("forge_critical"),
             "done": bool(done),
         },
-        "next": "Session may be declared done" if ok else "Fill scorecard / Memorize evidence / set done: true",
+        "next": "Session may be declared done" if ok else "Fill scorecard / Memorize evidence / forge_critical / set done: true",
     }
 
 

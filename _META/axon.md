@@ -42,9 +42,12 @@ Memoria          ──no sustituye──► AXON (capacidades ≠ episodios)
    talaria axon search "refactor testing" --json
    talaria axon search "architecture" --domain software-development --json
    talaria axon for-profile researcher --json
+   talaria axon feedback --path skills/.../skill.md --signal useful --json
+   talaria axon quality --json
    talaria axon stats --json
    ```
-5. Regenerar el grafo si cambian los bancos: `python build_axon_graph.py`
+5. **Quality loop:** cada search/for-profile registra `shown` en `memory/context/axon-quality.json`. Feedback `useful|noise` reordena futuros hits.
+6. Regenerar el grafo si cambian los bancos: `python build_axon_graph.py`
 
 ## Relación con hermanos
 
